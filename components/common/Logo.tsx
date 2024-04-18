@@ -1,12 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 const Logo = () => {
   return (
-    <Link href="/" scroll className="w-fit flex items-center">
-      <Image unoptimized alt="logo" src="/logo.svg" width={80} height={80} />
-      <h1 className="text-4xl font-bold text-gradient">Dao Tai</h1>
+    <Link href="/" className="rounded-full px-4  py-1 shadow-inner">
+      <h1 className="text-gradient text-4xl font-bold">Dao Tai</h1>
     </Link>
   );
 };

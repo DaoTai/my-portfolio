@@ -1,0 +1,78 @@
+import {
+  DownloadIcon,
+  EnvelopeOpenIcon,
+  GitHubLogoIcon,
+} from "@radix-ui/react-icons";
+import Image from "next/image";
+import Link from "next/link";
+import Facebook from "../icons/Facebook";
+import Location from "../icons/Location";
+import DownloadResumeButton from "../common/DownloadResumeButton";
+
+const About = () => {
+  return (
+    <div
+      id="about"
+      className="grid scroll-mt-16 grid-cols-1 gap-4 md:grid-cols-2"
+    >
+      {/* Text information */}
+      <div className="mx-auto space-y-8 md:mx-0">
+        <h1 className="text-4xl sm:text-6xl 2xl:text-8xl">
+          Hello! I’m Dao Duc Tai
+        </h1>
+        <p className="tex-white w-fit rounded-full bg-gradient px-8 py-2 text-center text-3xl leading-normal  md:text-4xl lg:text-5xl">
+          A Web Developer
+        </p>
+        {/* List link social */}
+        <div className="space-y-4">
+          <Link
+            href="mailto:daotai.work@gmai.com"
+            className="flex w-fit items-center gap-4 text-xl"
+          >
+            <EnvelopeOpenIcon className="h-10 w-10 rounded-full bg-gradient p-2 " />
+            <span>daotai.work@gmai.com</span>
+          </Link>
+          <Link
+            href="https://github.com/DaoTai"
+            title="https://github.com/DaoTai"
+            target="_blank"
+            className="flex w-fit items-center gap-4 text-xl"
+          >
+            <GitHubLogoIcon className="h-10 w-10 rounded-full bg-gradient p-2 " />
+            <span>https://github.com/DaoTai</span>
+          </Link>
+
+          <Link
+            href="https://www.facebook.com/YC011"
+            title="https://www.facebook.com/YC011"
+            target="_blank"
+            className="flex w-fit items-center gap-4 text-xl"
+          >
+            <Facebook className="h-10 w-10 rounded-full bg-gradient p-2 " />
+            <span>https://www.facebook.com/YC011</span>
+          </Link>
+
+          <div className="flex items-center gap-4 text-xl">
+            <Location className="h-10 w-10 rounded-full bg-gradient p-2 " />
+            <span>HaDong, HaNoi</span>
+          </div>
+        </div>
+        {/* Download resume */}
+        <DownloadResumeButton />
+      </div>
+
+      {/* Avatar */}
+      <Image
+        unoptimized
+        src="/avatar.jpg"
+        width={300}
+        height={300}
+        alt="avatar"
+        className="mx-auto h-[60%] w-full object-cover drop-shadow-2xl"
+        style={{ borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%" }}
+      />
+    </div>
+  );
+};
+
+export default About;

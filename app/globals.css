@@ -34,7 +34,7 @@
 
     --radius: 0.5rem;
 
-    --height-header: 80px;
+    --height-header: 60px;
   }
 
   .dark {
@@ -72,6 +72,23 @@
   * {
     @apply border-border;
   }
+
+  *::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  *::-webkit-scrollbar-track {
+    @apply w-3 rounded-2xl bg-transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply cursor-pointer rounded-2xl bg-gradient;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -80,5 +97,9 @@
 @layer utilities {
   .text-gradient {
     @apply bg-gradient bg-clip-text text-transparent;
+  }
+
+  .title-section-gradient {
+    @apply mx-auto mb-8 w-fit rounded-full bg-gradient px-4 py-2 text-center text-5xl;
   }
 }

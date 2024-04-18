@@ -18,8 +18,13 @@ const config = {
       },
     },
     extend: {
+      spacing: {
+        "h-header": "var(--height-header)",
+      },
       backgroundImage: {
-        gradient: "linear-gradient(to right, #23074d, #cc5333)",
+        gradient: "linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%)",
+        main: 'url("/bg-main.jpg")',
+        "main-2": 'url("/bg-main-2.jpg")',
       },
       colors: {
         border: "hsl(var(--border))",

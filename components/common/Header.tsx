@@ -5,12 +5,14 @@ import ToggleMode from "./ToggleMode";
 
 const Header = () => {
   return (
-    <div className="fixed inset-0 h-[--height-header] px-4 py-2 box-content shadow-md overflow-hidden flex justify-between items-center">
-      <Logo />
-      <div className="flex gap-4 items-center">
-        <Navigations />
+    <div className="scrollmt-4 fixed inset-0 z-50 h-[--height-header] overflow-hidden bg-black/35">
+      <div className="container flex  items-center justify-between  px-4 py-2  ">
+        <Logo />
+        <div className=" hidden items-center gap-6 lg:flex">
+          <Navigations />
+        </div>
+        <ToggleMode />
       </div>
-      <ToggleMode />
     </div>
   );
 };
