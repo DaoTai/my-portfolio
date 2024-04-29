@@ -16,7 +16,7 @@ const About = () => {
       className="grid scroll-mt-16 grid-cols-1 gap-4 md:grid-cols-2"
     >
       {/* Text information */}
-      <div className="mx-auto space-y-8 md:mx-0">
+      <div className="order-2  space-y-8 md:order-1 ">
         <h1 className="text-4xl sm:text-6xl 2xl:text-8xl">
           Hello! I’m Dao Duc Tai
         </h1>
@@ -58,7 +58,7 @@ const About = () => {
           </div>
         </div>
         {/* Download resume */}
-        <DownloadResumeButton />
+        <DownloadResumeButton className="w-full justify-center sm:w-fit" />
       </div>
 
       {/* Avatar */}
@@ -68,8 +68,17 @@ const About = () => {
         width={300}
         height={300}
         alt="avatar"
-        className="mx-auto h-[60%] w-full object-cover drop-shadow-2xl"
+        className="order-2 mx-auto hidden h-fit max-h-[80vh] w-full object-cover drop-shadow-2xl md:order-1 md:block md:h-[70%]"
         style={{ borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%" }}
+      />
+      {/* Avatar mobile */}
+      <Image
+        unoptimized
+        src="/avatar.jpg"
+        width={300}
+        height={300}
+        alt="avatar"
+        className="order-1 mx-auto block size-60 rounded-full border object-cover drop-shadow-2xl md:hidden"
       />
     </div>
   );

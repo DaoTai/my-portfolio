@@ -13,11 +13,15 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-import { GitHubLogoIcon, TriangleRightIcon } from "@radix-ui/react-icons";
+import {
+  GitHubLogoIcon,
+  Link1Icon,
+  TriangleRightIcon,
+} from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
 
-const ProjectCard = ({ data }: { data: IProject }) => {
+const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
   const {
     endTime,
     name,
@@ -28,13 +32,19 @@ const ProjectCard = ({ data }: { data: IProject }) => {
     uri,
     githubUri,
   } = data;
+
   return (
-    <Card className="">
+    <Card className="h-full ">
       <CardHeader>
-        <CardTitle>{name}</CardTitle>
-        <div className="my-2 space-y-2">
+        <CardTitle className="mb-2 flex gap-2 text-3xl">
+          <span className="flex size-8 items-center justify-center rounded-full bg-gradient text-white">
+            {index}
+          </span>
+          {name}
+        </CardTitle>
+        <div className="my-2 space-y-3">
           {/* Start - end time */}
-          <div className="flex justify-between gap-2">
+          <div className="flex justify-between gap-2 text-base capitalize">
             <div className="rounded-full border border-sky-500 p-1 px-4">
               {startTime}
             </div>
@@ -56,8 +66,16 @@ const ProjectCard = ({ data }: { data: IProject }) => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="text-justify">
-        <p>{summary}</p>
+      <CardContent className="space-y-4 text-justify">
+        <p className="text-xl">{summary}</p>
+        <Link
+          href={uri}
+          target="_blank"
+          className="group flex items-center gap-2 text-xl text-blue-400 underline decoration-current"
+        >
+          <Link1Icon className="size-6 text-slate-600" />
+          <span className="tracking-wider group-hover:opacity-90">{uri}</span>
+        </Link>
         {githubUri && (
           <div className="space-x-2">
             <GitHubLogoIcon />
@@ -65,19 +83,7 @@ const ProjectCard = ({ data }: { data: IProject }) => {
           </div>
         )}
       </CardContent>
-      <CardFooter className="block">
-        {previewImages.length === 0 && (
-          <Link
-            href={uri}
-            title={uri}
-            target="_blank"
-            className="relative w-fit rounded-full bg-yellow-100"
-          >
-            <TriangleRightIcon className="size-12" />
-            <span className="absolute inset-0  h-full w-full animate-ping rounded-full bg-yellow-100 opacity-75"></span>
-          </Link>
-        )}
-
+      <CardFooter>
         {previewImages.length > 0 && (
           <Carousel>
             <CarouselContent>
@@ -87,10 +93,10 @@ const ProjectCard = ({ data }: { data: IProject }) => {
                     href={uri}
                     title={uri}
                     target="_blank"
-                    className="absolute left-1/2 top-1/2 w-fit -translate-x-1/2 -translate-y-1/2 rounded-full border bg-yellow-100"
+                    className="absolute left-1/2 top-1/2 w-fit -translate-x-1/2 -translate-y-1/2 rounded-full border-slate-100 bg-gradient  shadow-2xl hover:border-sky-200"
                   >
-                    <TriangleRightIcon className="size-12" />
-                    <span className="absolute inset-0  h-full w-full animate-ping rounded-full bg-yellow-100 opacity-75"></span>
+                    <TriangleRightIcon className="size-12 text-white" />
+                    <span className="absolute inset-0  h-full w-full animate-ping rounded-full bg-gradient opacity-75"></span>
                   </Link>
                   <Image
                     unoptimized
@@ -98,13 +104,13 @@ const ProjectCard = ({ data }: { data: IProject }) => {
                     src={image}
                     width={200}
                     height={200}
-                    className="h-full max-h-[300px] w-full rounded-lg "
+                    className="h-full max-h-[90vh] w-full rounded-lg border object-cover object-top"
                   />
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="left-2 size-10" />
+            <CarouselNext className="right-2 size-10" />
           </Carousel>
         )}
       </CardFooter>

@@ -32,7 +32,7 @@ const navigations: INavigation[] = [
     icon: DesktopIcon,
   },
   {
-    name: "Experience",
+    name: "Experiences",
     href: "#experience",
     icon: LoopIcon,
   },
@@ -52,7 +52,7 @@ const Navigations = () => {
           <Link
             key={i}
             href={href}
-            className="group relative z-10 flex items-center gap-2 rounded-full border border-slate-300 px-4 py-1.5 text-xl text-white shadow-inner hover:bg-gradient"
+            className="group relative z-10 flex items-center gap-2 rounded-full border border-slate-300 px-4 py-1.5 text-xl text-white shadow-inner backdrop-blur-3xl hover:bg-gradient"
             style={{ textShadow: "0 1px 6px #000" }}
           >
             <Icon className="h-5 w-5 group-hover:scale-105" />
