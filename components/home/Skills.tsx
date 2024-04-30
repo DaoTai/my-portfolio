@@ -10,16 +10,21 @@ const Skills = () => {
       <div className="grid grid-cols-1 items-start gap-4 gap-y-10 md:grid-cols-2 ">
         {/* Summary skills */}
         <div className="static space-y-4 md:sticky md:top-16">
-          <p className=" rounded-3xl bg-black/20 p-2 px-4 text-left text-3xl leading-10 backdrop-blur-2xl sm:text-justify">
+          <p className="rounded-3xl border border-sky-400 bg-black/20 p-2 px-4 text-left text-2xl leading-10 backdrop-blur-2xl sm:text-justify sm:text-3xl">
             I have knowleges about Javascript and OOP. Additionally, I have more
             2 years of experience working with frameworks and libraries in
             NodeJS platform to build web apps.
+          </p>
+          <p className="rounded-3xl border border-violet-400 bg-black/20 p-2 px-4 text-left text-2xl leading-10 backdrop-blur-2xl sm:text-justify sm:text-3xl">
+            My target is to become a full-stack web developer within the next
+            2-3 years. Additionally, I am always ready to learn new knowledges
+            to serve work and develop soft skills.
           </p>
           <DownloadResumeButton className="mx-auto md:mx-0" />
         </div>
 
         {/* Tech stack */}
-        <div className="grid  grid-cols-3 gap-2 gap-y-6 lg:grid-cols-4">
+        <div className="grid  grid-cols-2 gap-2 gap-y-6 sm:grid-cols-3 lg:grid-cols-4">
           {techStack.map(({ imageUri, name }, i) => (
             <div
               key={i}
@@ -31,7 +36,7 @@ const Skills = () => {
                 alt="icon"
                 width={80}
                 height={80}
-                className="aspect-square size-16 rounded-full border bg-white object-cover p-1 shadow-2xl drop-shadow-2xl sm:size-28 "
+                className="aspect-square size-28 rounded-full border bg-white object-cover p-1 shadow-2xl drop-shadow-2xl "
               />
               <div className="rounded-full border bg-black/10 px-4 py-1 backdrop-blur-3xl">
                 <b className="text-gradient text-sm font-bold uppercase sm:text-base">

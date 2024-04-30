@@ -1,3 +1,9 @@
+type INavigation = {
+  name: string;
+  href: string;
+  icon: ForwardRefExoticComponent<IconProps & RefAttributes<SVGSVGElement>>;
+};
+
 type ITech = {
   imageUri: string;
   name: string;

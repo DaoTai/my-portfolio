@@ -1,3 +1,38 @@
+import {
+  Component1Icon,
+  DesktopIcon,
+  LoopIcon,
+  ResumeIcon,
+  RocketIcon,
+} from "@radix-ui/react-icons";
+export const navigations: INavigation[] = [
+  {
+    name: "About me",
+    href: "#about",
+    icon: RocketIcon,
+  },
+  {
+    name: "Skills",
+    href: "#skills",
+    icon: Component1Icon,
+  },
+  {
+    name: "Projects",
+    href: "#projects",
+    icon: DesktopIcon,
+  },
+  {
+    name: "Experiences",
+    href: "#experiences",
+    icon: LoopIcon,
+  },
+  {
+    name: "Resume",
+    href: "#resume",
+    icon: ResumeIcon,
+  },
+];
+
 export const techStack: ITech[] = [
   {
     imageUri: "/html.png",

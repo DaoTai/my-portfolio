@@ -2,6 +2,7 @@ import React from "react";
 import Logo from "./Logo";
 import Navigations from "./Navigations";
 import ToggleMode from "./ToggleMode";
+import ToggleBar from "./ToggleBar";
 
 const Header = () => {
   return (
@@ -11,7 +12,10 @@ const Header = () => {
         <div className=" hidden items-center gap-6 lg:flex">
           <Navigations />
         </div>
-        <ToggleMode />
+        <div className="flex items-stretch gap-4">
+          <ToggleMode />
+          <ToggleBar />
+        </div>
       </div>
     </div>
   );

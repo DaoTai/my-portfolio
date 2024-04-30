@@ -1,7 +1,12 @@
 import React from "react";
+import DownloadResumeButton from "../common/DownloadResumeButton";
 
 const Resume = () => {
-  return <div className="resume">Resume</div>;
+  return (
+    <div id="resume" className="relative">
+      <DownloadResumeButton className="mx-auto border-2 border-solid border-sky-500 bg-gradient hover:text-white dark:border-violet-500" />
+    </div>
+  );
 };
 
 export default Resume;
