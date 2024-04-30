@@ -6,7 +6,7 @@ import { techStack } from "@/lib/init";
 const Skills = () => {
   return (
     <div id="skills" className="scroll-mt-20">
-      <h1 className="title-section-gradient">My skills</h1>
+      <h1 className="title-section-gradient">Skills</h1>
       <div className="grid grid-cols-1 items-start gap-4 gap-y-10 md:grid-cols-2 ">
         {/* Summary skills */}
         <div className="static space-y-4 md:sticky md:top-16">

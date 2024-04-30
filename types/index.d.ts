@@ -14,10 +14,12 @@ type IProject = {
   summary: string;
   startTime: string;
   endTime: string;
+  uri: string;
   teckStack: string[];
   previewImages: string[];
-  uri: string;
-  githubUri?: string;
+  features: string[];
+  githubUri?: string[];
+  videoDemo?: string;
 };
 
 type IExperience = {

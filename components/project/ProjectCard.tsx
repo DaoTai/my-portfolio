@@ -5,21 +5,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import Link from "next/link";
 
 import {
-  GitHubLogoIcon,
-  Link1Icon,
-  TriangleRightIcon,
-} from "@radix-ui/react-icons";
-import Image from "next/image";
-import Link from "next/link";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+import { GitHubLogoIcon, Link1Icon, VideoIcon } from "@radix-ui/react-icons";
+import CarouselImages from "./CarouselImages";
 
 const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
   const {
@@ -31,6 +27,8 @@ const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
     teckStack,
     uri,
     githubUri,
+    features,
+    videoDemo,
   } = data;
 
   return (
@@ -64,54 +62,67 @@ const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
               </span>
             ))}
           </div>
+
+          {/* Uri */}
+          <Link
+            href={uri}
+            target="_blank"
+            className="group flex items-center gap-2 text-xl text-blue-400 underline decoration-current"
+          >
+            <Link1Icon className="size-6 text-blue-600" />
+            <span className="tracking-wider group-hover:opacity-90">{uri}</span>
+          </Link>
+          {/* Demo video */}
+          {videoDemo && (
+            <Link
+              href={videoDemo}
+              target="_blank"
+              className="group flex items-center gap-2 text-xl text-blue-400 underline decoration-current"
+            >
+              <VideoIcon className="size-6 text-rose-600" />
+              <span className="tracking-wider group-hover:opacity-90">
+                {videoDemo}
+              </span>
+            </Link>
+          )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-4 text-justify">
+      <CardContent>
+        {previewImages.length > 0 && (
+          <CarouselImages previewImages={previewImages} uri={uri} />
+        )}
+      </CardContent>
+      <CardFooter className="block space-y-2 text-justify">
         <p className="text-xl">{summary}</p>
-        <Link
-          href={uri}
-          target="_blank"
-          className="group flex items-center gap-2 text-xl text-blue-400 underline decoration-current"
-        >
-          <Link1Icon className="size-6 text-slate-600" />
-          <span className="tracking-wider group-hover:opacity-90">{uri}</span>
-        </Link>
+
+        {features.length > 0 && (
+          <Accordion
+            type="single"
+            collapsible
+            className="rounded-md border px-2"
+          >
+            <AccordionItem value="item-1">
+              <AccordionTrigger className="text-xl no-underline hover:no-underline">
+                Features
+              </AccordionTrigger>
+              <AccordionContent>
+                <ul>
+                  {features.map((feature, i) => (
+                    <li key={i} className="list-inside list-disc text-xl">
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        )}
+
         {githubUri && (
           <div className="space-x-2">
             <GitHubLogoIcon />
             <span>{githubUri}</span>
           </div>
-        )}
-      </CardContent>
-      <CardFooter>
-        {previewImages.length > 0 && (
-          <Carousel>
-            <CarouselContent>
-              {previewImages.map((image, i) => (
-                <CarouselItem className="relative" key={i}>
-                  <Link
-                    href={uri}
-                    title={uri}
-                    target="_blank"
-                    className="absolute left-1/2 top-1/2 w-fit -translate-x-1/2 -translate-y-1/2 rounded-full border-slate-100 bg-gradient  shadow-2xl hover:border-sky-200"
-                  >
-                    <TriangleRightIcon className="size-12 text-white" />
-                    <span className="absolute inset-0  h-full w-full animate-ping rounded-full bg-gradient opacity-75"></span>
-                  </Link>
-                  <Image
-                    unoptimized
-                    alt="preview"
-                    src={image}
-                    width={200}
-                    height={200}
-                    className="h-full max-h-[90vh] w-full rounded-lg border object-cover object-top"
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-2 size-10" />
-            <CarouselNext className="right-2 size-10" />
-          </Carousel>
         )}
       </CardFooter>
     </Card>
