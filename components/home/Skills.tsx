@@ -34,6 +34,8 @@ const Skills = () => {
                 unoptimized
                 src={imageUri}
                 alt="icon"
+                placeholder="blur"
+                blurDataURL="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRm4zBvW3pMXoaLmy2JX2LsUWSPVqC7GsrKU8MrzgUMQ&s"
                 width={80}
                 height={80}
                 className="aspect-square size-28 rounded-full border bg-white object-cover p-1 shadow-2xl drop-shadow-2xl "
