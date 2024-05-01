@@ -1,13 +1,9 @@
-import {
-  DownloadIcon,
-  EnvelopeOpenIcon,
-  GitHubLogoIcon,
-} from "@radix-ui/react-icons";
+import { EnvelopeOpenIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
+import DownloadResumeButton from "../common/DownloadResumeButton";
 import Facebook from "../icons/Facebook";
 import Location from "../icons/Location";
-import DownloadResumeButton from "../common/DownloadResumeButton";
 
 const About = () => {
   return (
@@ -17,10 +13,10 @@ const About = () => {
     >
       {/* Text information */}
       <div className="order-2  space-y-8 md:order-1 ">
-        <h1 className="text-4xl sm:text-6xl 2xl:text-8xl">
+        <h1 className="text-center text-4xl sm:text-left sm:text-6xl 2xl:text-8xl">
           Hello! I’m Dao Duc Tai
         </h1>
-        <p className="tex-white w-fit rounded-full bg-gradient px-8 py-2 text-center text-3xl leading-normal  md:text-4xl lg:text-5xl">
+        <p className="tex-white mx-auto w-fit rounded-full bg-gradient px-8 py-2 text-center text-3xl leading-normal sm:mx-0 md:text-4xl lg:text-5xl">
           A Web Developer
         </p>
         {/* List link social */}

@@ -165,7 +165,7 @@ export const listProject: IProject[] = [
       "Design database, build front-end and back-end for home page of a doctor's clinic.",
     startTime: "3-2024",
     endTime: "4-2024",
-    uri: "https://pkbacsyvanthanh.com",
+    uri: "https://phongkhambacsyvanthanh.com",
     features: ["Search posts", "Search experts"],
     teckStack: [
       "NextJS 14",
@@ -189,7 +189,7 @@ export const listProject: IProject[] = [
       "Design database, build front-end and back-end for admin page of a doctor's clinic.",
     startTime: "3-2024",
     endTime: "4-2024",
-    uri: "https://admin.pkbacsyvanthanh.com",
+    uri: "https://admin.phongkhambacsyvanthanh.com",
     features: [
       "Create, update, delete, search posts",
       "Create, update, customization",

@@ -32,9 +32,9 @@ const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
   } = data;
 
   return (
-    <Card className="h-full ">
+    <Card className="h-full overflow-hidden">
       <CardHeader>
-        <CardTitle className="mb-2 flex gap-2 text-3xl">
+        <CardTitle className="mb-2 flex flex-wrap gap-2 text-3xl">
           <span className="flex size-8 items-center justify-center rounded-full bg-gradient text-white">
             {index}
           </span>
@@ -67,20 +67,22 @@ const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
           <Link
             href={uri}
             target="_blank"
-            className="group flex items-center gap-2 text-xl text-blue-400 underline decoration-current"
+            className="group flex  items-center gap-2 text-xl text-blue-400 underline decoration-current"
           >
             <Link1Icon className="size-6 text-blue-600" />
-            <span className="tracking-wider group-hover:opacity-90">{uri}</span>
+            <span className="truncate tracking-wider group-hover:opacity-90">
+              {uri}
+            </span>
           </Link>
           {/* Demo video */}
           {videoDemo && (
             <Link
               href={videoDemo}
               target="_blank"
-              className="group flex items-center gap-2 text-xl text-blue-400 underline decoration-current"
+              className="group flex  items-center gap-2 text-xl text-blue-400 underline decoration-current"
             >
               <VideoIcon className="size-6 text-rose-600" />
-              <span className="tracking-wider group-hover:opacity-90">
+              <span className="truncate tracking-wider group-hover:opacity-90">
                 {videoDemo}
               </span>
             </Link>
@@ -93,7 +95,7 @@ const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
         )}
       </CardContent>
       <CardFooter className="block space-y-2 text-justify">
-        <p className="text-xl">{summary}</p>
+        <p className="text-left text-xl sm:text-justify">{summary}</p>
 
         {features.length > 0 && (
           <Accordion
@@ -108,7 +110,10 @@ const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
               <AccordionContent>
                 <ul>
                   {features.map((feature, i) => (
-                    <li key={i} className="list-inside list-disc text-xl">
+                    <li
+                      key={i}
+                      className="list-inside list-disc text-left text-xl md:text-justify"
+                    >
                       {feature}
                     </li>
                   ))}

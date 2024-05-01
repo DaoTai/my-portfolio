@@ -7,9 +7,9 @@ import Skills from "@/components/home/Skills";
 
 export default function Home() {
   return (
-    <main className="container text-white">
+    <main className=" text-white">
       <Header />
-      <div className="mt-h-header space-y-12 py-h-header ">
+      <div className="container mt-4 space-y-12 py-h-header">
         <About />
         <Skills />
         <Projects />

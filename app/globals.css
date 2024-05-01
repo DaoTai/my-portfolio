@@ -100,6 +100,6 @@
   }
 
   .title-section-gradient {
-    @apply mx-auto mb-8 w-fit rounded-full bg-gradient px-4 py-2 text-center text-5xl;
+    @apply mx-auto mb-8 w-fit rounded-full bg-gradient px-4 py-2 text-center text-3xl md:text-5xl;
   }
 }

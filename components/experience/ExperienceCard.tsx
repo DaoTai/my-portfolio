@@ -25,7 +25,7 @@ const ExperienceCard = ({ data }: { data: IExperience }) => {
         />
       </div>
 
-      <div className=" basis-full space-y-2 text-justify text-xl sm:basis-9/12">
+      <div className=" basis-full space-y-2 text-left text-xl sm:basis-9/12 sm:text-justify">
         <strong className="text-2xl">{companyName}</strong>
         <b className="block">{positionWork}</b>
         <div className="flex gap-2">
@@ -38,7 +38,7 @@ const ExperienceCard = ({ data }: { data: IExperience }) => {
           {tags.map((tag, i) => (
             <span
               key={i}
-              className="rounded-full border border-violet-500 p-1 px-2"
+              className="rounded-full border border-violet-500 p-1 px-2 text-base"
             >
               {tag}
             </span>
