@@ -23,8 +23,8 @@ const config = {
       },
       backgroundImage: {
         gradient: "linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%)",
-        main: 'url("/bg-main.jpg")',
-        "main-2": 'url("/bg-main-2.jpg")',
+        cyber: 'url("/bg-cyber.jpg")',
+        light: 'url("/bg-light.jpg")',
       },
       colors: {
         border: "hsl(var(--border))",

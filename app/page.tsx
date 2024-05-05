@@ -7,7 +7,7 @@ import Skills from "@/components/home/Skills";
 
 export default function Home() {
   return (
-    <main className=" text-white">
+    <main className="text-slate-800 dark:text-white">
       <Header />
       <div className="container mt-4 space-y-12 py-h-header">
         <About />

@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${cormarantGramond.className} bg-main-2 bg-cover bg-center bg-repeat-y `}
+        className={`${cormarantGramond.className} bg-light dark:bg-cyber bg-cover bg-center bg-repeat-y `}
       >
         <ThemeProvider
           attribute="class"
