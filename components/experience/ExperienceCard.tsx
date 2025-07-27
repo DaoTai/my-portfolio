@@ -21,7 +21,7 @@ const ExperienceCard = ({ data }: { data: IExperience }) => {
           src={comanyLogo}
           width={80}
           height={80}
-          className="h-52 w-full rounded-lg object-cover shadow sm:h-auto"
+          className="h-32 w-full rounded-lg object-contain shadow sm:h-48 md:h-52 "
         />
       </div>
 

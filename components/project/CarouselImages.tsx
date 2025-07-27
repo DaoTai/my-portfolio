@@ -20,10 +20,10 @@ type IProps = {
 const CarouselImages = ({ uri, previewImages }: IProps) => {
   return (
     <Carousel
-      className="rounded-lg border"
+      className="rounded-lg "
       plugins={[
         Autoplay({
-          delay: 3800,
+          delay: 5000,
         }),
       ]}
       opts={{
@@ -33,23 +33,26 @@ const CarouselImages = ({ uri, previewImages }: IProps) => {
     >
       <CarouselContent>
         {previewImages.map((image, i) => (
-          <CarouselItem className="relative" key={i}>
-            <Link
-              href={uri}
-              title={uri}
-              target="_blank"
-              className="absolute left-1/2 top-1/2 w-fit -translate-x-1/2 -translate-y-1/2 rounded-full border-slate-100 bg-gradient  shadow-2xl hover:border-sky-200"
-            >
-              <TriangleRightIcon className="size-12 text-white" />
-              <span className="absolute inset-0  h-full w-full animate-ping rounded-full bg-gradient opacity-75"></span>
-            </Link>
+          <CarouselItem className="relative bg-black/90" key={i}>
+            {uri && (
+              <Link
+                href={uri}
+                title={uri}
+                target="_blank"
+                className="absolute left-1/2 top-1/2 w-fit -translate-x-1/2 -translate-y-1/2 rounded-full  bg-gradient  shadow-2xl "
+              >
+                <TriangleRightIcon className="size-12 text-white" />
+                <span className="absolute inset-0  h-full w-full animate-ping rounded-full bg-gradient opacity-75"></span>
+              </Link>
+            )}
+
             <Image
               unoptimized
               alt="preview"
               src={image}
               width={200}
               height={200}
-              className="h-full w-full rounded-lg border object-cover object-top md:h-[600px]"
+              className="h-full w-full rounded-lg  object-contain object-top md:h-[600px]"
             />
           </CarouselItem>
         ))}
