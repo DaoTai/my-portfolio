@@ -9,9 +9,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 export default function Home() {
   return (
     <TooltipProvider>
-      <main className="text-slate-800  dark:text-white">
+      <main className="text-foreground">
         <Header />
-        <div className="container mt-8 space-y-12 py-h-header">
+        <div className="container mt-8 space-y-24 pb-16 pt-[--height-header]">
           <About />
           <Skills />
           <Projects />

@@ -1,25 +1,24 @@
 type INavigation = {
   name: string;
   href: string;
-  icon: ForwardRefExoticComponent<IconProps & RefAttributes<SVGSVGElement>>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  icon: React.ComponentType<any>;
 };
 
 type ITech = {
   imageUri: string;
   name: string;
+  category?: "frontend" | "backend" | "tools";
 };
 
 type IProject = {
-  name: string;
-  summary: string;
-  startTime: string;
-  endTime: string;
-  uri: string;
-  teckStack: string[];
-  previewImages: string[];
-  features: string[];
-  githubUri?: string[];
-  videoDemo?: string;
+  name: string
+  role: string
+  summary: string
+  responsibilities: string[]
+  technicalHighlights: string[]
+  previewImages: string[]
+  url?:string;
 };
 
 type IExperience = {
@@ -30,4 +29,10 @@ type IExperience = {
   endTime: string;
   summary: string;
   tags: string[];
+};
+
+type IStat = {
+  label: string;
+  value: number;
+  suffix?: string;
 };

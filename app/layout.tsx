@@ -1,10 +1,19 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond } from "next/font/google";
+import { Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "@/components/common/ThemeProvider";
 import "./globals.css";
 
-const cormarantGramond = Cormorant_Garamond({
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
   weight: ["300", "400", "500", "600", "700"],
+  preload: false,
+});
+
+const grotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["400", "500", "600", "700"],
   preload: false,
 });
 
@@ -21,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${cormarantGramond.className} bg-light dark:bg-cyber bg-cover bg-center bg-repeat-y `}
+        className={`${jakarta.variable} ${grotesk.variable} bg-light bg-cover bg-center bg-repeat-y dark:bg-cyber`}
       >
         <ThemeProvider
           attribute="class"

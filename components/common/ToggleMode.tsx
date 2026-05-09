@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import { Moon, Sun, Monitor } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
@@ -18,30 +18,21 @@ const ToggleMode = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 text-slate-800 transition-all dark:-rotate-90 dark:scale-0" />
-          <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0  transition-all dark:rotate-0 dark:scale-100" />
+        <Button variant="outline" size="icon" className="border-white/20 bg-background/50 backdrop-blur-sm">
+          <Sun className="h-[1.1rem] w-[1.1rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-[1.1rem] w-[1.1rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          className="cursor-pointer text-base"
-          onClick={() => setTheme("light")}
-        >
-          Light
+      <DropdownMenuContent align="end" className="glass-card">
+        <DropdownMenuItem className="cursor-pointer gap-2 text-sm" onClick={() => setTheme("light")}>
+          <Sun size={14} /> Light
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="cursor-pointer text-base"
-          onClick={() => setTheme("dark")}
-        >
-          Dark
+        <DropdownMenuItem className="cursor-pointer gap-2 text-sm" onClick={() => setTheme("dark")}>
+          <Moon size={14} /> Dark
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="cursor-pointer text-base"
-          onClick={() => setTheme("system")}
-        >
-          System
+        <DropdownMenuItem className="cursor-pointer gap-2 text-sm" onClick={() => setTheme("system")}>
+          <Monitor size={14} /> System
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

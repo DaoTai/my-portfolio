@@ -1,231 +1,148 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import Link from "next/link";
 import * as motion from "motion/react-client";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-
-import {
-  ArrowRightIcon,
-  GitHubLogoIcon,
-  Link1Icon,
-  VideoIcon,
-} from "@radix-ui/react-icons";
+import { CheckCircle2, Zap, UserRound } from "lucide-react";
 import CarouselImages from "./CarouselImages";
-import ArrowRight from "../icons/ArrowRight";
 
-const techContainerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.1,
-    },
+type RoleStyle = {
+  badge: string;
+  border: string;
+  glow: string;
+  dot: string;
+  section: string;
+};
+
+const roleStyleMap: Record<string, RoleStyle> = {
+  "Frontend Developer": {
+    badge: "bg-sky-500/15 text-sky-400 border-sky-500/40",
+    border: "border-sky-500/25",
+    glow: "hover:shadow-[0_8px_48px_rgba(14,165,233,0.18)]",
+    dot: "bg-sky-400",
+    section: "text-sky-400",
+  },
+  "Backend Developer": {
+    badge: "bg-emerald-500/15 text-emerald-400 border-emerald-500/40",
+    border: "border-emerald-500/25",
+    glow: "hover:shadow-[0_8px_48px_rgba(16,185,129,0.18)]",
+    dot: "bg-emerald-400",
+    section: "text-emerald-400",
+  },
+  "Full-stack Developer": {
+    badge: "bg-violet-500/15 text-violet-400 border-violet-500/40",
+    border: "border-violet-500/25",
+    glow: "hover:shadow-[0_8px_48px_rgba(139,92,246,0.18)]",
+    dot: "bg-violet-400",
+    section: "text-violet-400",
   },
 };
 
-const techItemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-      type: "spring",
-      stiffness: 100,
-      damping: 12,
-    },
-  },
+const fallbackStyle: RoleStyle = {
+  badge: "bg-primary/15 text-primary border-primary/40",
+  border: "border-primary/25",
+  glow: "hover:shadow-[0_8px_48px_rgba(99,102,241,0.18)]",
+  dot: "bg-primary",
+  section: "text-primary",
 };
 
 const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
-  const {
-    endTime,
-    name,
-    previewImages,
-    startTime,
-    summary,
-    teckStack,
-    uri,
-    githubUri,
-    features,
-    videoDemo,
-  } = data;
+  const { name, role, summary, responsibilities, technicalHighlights, previewImages } = data;
+  const s = roleStyleMap[role] ?? fallbackStyle;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      initial={{ opacity: 0, y: 48 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.08 }}
+      transition={{ duration: 0.55, ease: "easeOut" }}
+      className={`overflow-hidden rounded-2xl border bg-background/60 backdrop-blur-md transition-shadow duration-300 ${s.border} ${s.glow}`}
     >
-      <Card className="h-full overflow-hidden">
-        <CardHeader>
-          <CardTitle className="mb-2 flex flex-wrap gap-2 text-3xl">
-            <motion.span
-              layout
-              whileHover={{ scale: 1.1 }}
-              className="flex size-8 items-center justify-center rounded-full bg-gradient text-white"
-            >
-              {index}
-            </motion.span>
-            {name}
-          </CardTitle>
+      {/* ── Header ── */}
+      <div className="flex flex-wrap items-center gap-4 border-b border-white/10 px-6 py-5">
+        <motion.span
+          whileHover={{ scale: 1.1 }}
+          className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient text-sm font-bold text-white shadow-lg"
+        >
+          {index}
+        </motion.span>
 
-          <div className="my-2 space-y-4">
-            {/* Start - End time */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="flex items-center gap-1 text-base capitalize"
-            >
-              <div className="rounded-full border bg-sky-700 p-1 px-4 text-white">
-                {startTime}
-              </div>
-              <ArrowRightIcon />
-              <div className="rounded-full border bg-sky-700 p-1 px-4 text-white">
-                {endTime}
-              </div>
-            </motion.div>
+        <div className="flex flex-1 flex-wrap items-center gap-3">
+          <h3 className="text-2xl font-bold tracking-tight sm:text-3xl">{name}</h3>
 
-            {/* Tech stack */}
-            <motion.div
-              className="flex flex-wrap gap-2"
-              variants={techContainerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-            >
-              {teckStack.map((tech, i) => (
+          {/* Role badge — the main highlight */}
+          <span
+            className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${s.badge}`}
+          >
+            <UserRound size={12} />
+            {role}
+          </span>
+        </div>
+      </div>
+
+      {/* ── Body ── */}
+      <div className="grid gap-6 p-6 lg:grid-cols-2">
+        {/* Left column — details */}
+        <div className="space-y-6">
+          {/* Summary */}
+          <p className="leading-relaxed text-foreground/80">{summary}</p>
+
+          {/* Responsibilities */}
+          <div>
+            <h4 className={`mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest ${s.section}`}>
+              <CheckCircle2 size={13} />
+              My Responsibilities
+            </h4>
+            <ul className="space-y-2">
+              {responsibilities.map((item, i) => (
+                <motion.li
+                  key={i}
+                  initial={{ opacity: 0, x: -14 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.045, duration: 0.35 }}
+                  className="flex items-start gap-2.5 text-sm text-foreground/75"
+                >
+                  <span className={`mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full ${s.dot}`} />
+                  {item}
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Technical Highlights */}
+          <div>
+            <h4 className={`mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest ${s.section}`}>
+              <Zap size={13} />
+              Technical Highlights
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {technicalHighlights.map((highlight, i) => (
                 <motion.span
                   key={i}
-                  variants={techItemVariants as any}
-                  whileHover={{
-                    scale: 1.08,
-                    boxShadow: "0px 4px 10px rgba(100, 100, 255, 0.3)",
-                  }}
-                  transition={{ type: "spring", stiffness: 200 }}
-                  className="rounded-full border border-violet-400 bg-violet-500 px-4 py-1 font-bold  text-white transition-colors duration-300"
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.06 }}
+                  whileHover={{ scale: 1.06 }}
+                  className={`rounded-full border px-3 py-1 text-xs font-medium ${s.badge}`}
                 >
-                  {tech}
+                  {highlight}
                 </motion.span>
               ))}
-            </motion.div>
-
-            {/* URI */}
-            {uri && (
-              <motion.div whileHover={{ scale: 1.02 }}>
-                <Link
-                  href={uri}
-                  target="_blank"
-                  className="group flex items-center gap-2 text-xl text-blue-400 underline decoration-current"
-                >
-                  <Link1Icon className="size-6 text-blue-600" />
-                  <span className="truncate tracking-wider group-hover:opacity-90">
-                    {uri}
-                  </span>
-                </Link>
-              </motion.div>
-            )}
-
-            {/* Demo video */}
-            {videoDemo && (
-              <motion.div whileHover={{ scale: 1.02 }}>
-                <Link
-                  href={videoDemo}
-                  target="_blank"
-                  className="group flex items-center gap-2 text-xl text-blue-400 underline decoration-current"
-                >
-                  <VideoIcon className="size-6 text-rose-600" />
-                  <span className="truncate tracking-wider group-hover:opacity-90">
-                    {videoDemo}
-                  </span>
-                </Link>
-              </motion.div>
-            )}
+            </div>
           </div>
-        </CardHeader>
+        </div>
 
-        <CardContent>
-          {previewImages.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
-            >
-              <CarouselImages previewImages={previewImages} uri={uri} />
-            </motion.div>
-          )}
-        </CardContent>
-
-        <CardFooter className="block space-y-2 text-justify">
-          <motion.p
-            className="text-justify text-xl font-semibold sm:text-left"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
+        {/* Right column — image preview */}
+        {previewImages.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="overflow-hidden rounded-xl border border-white/10"
           >
-            {summary}
-          </motion.p>
-
-          {/* Features */}
-          {features.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              whileInView={{ opacity: 1, height: "auto" }}
-              transition={{ duration: 0.5 }}
-            >
-              <Accordion
-                type="single"
-                collapsible
-                className="rounded-md border px-2"
-              >
-                <AccordionItem value="item-1">
-                  <AccordionTrigger className="text-xl font-bold no-underline hover:no-underline">
-                    Features
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <ul>
-                      {features.map((feature, i) => (
-                        <motion.li
-                          key={i}
-                          className="list-inside list-disc text-left text-xl md:text-justify"
-                          initial={{ opacity: 0, x: -10 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.1 }}
-                        >
-                          {feature}
-                        </motion.li>
-                      ))}
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </motion.div>
-          )}
-
-          {githubUri && (
-            <motion.div
-              className="space-x-2"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <GitHubLogoIcon />
-              <span>{githubUri}</span>
-            </motion.div>
-          )}
-        </CardFooter>
-      </Card>
+            <CarouselImages previewImages={previewImages} />
+          </motion.div>
+        )}
+      </div>
     </motion.div>
   );
 };

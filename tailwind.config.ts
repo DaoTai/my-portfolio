@@ -21,8 +21,19 @@ const config = {
       spacing: {
         "h-header": "var(--height-header)",
       },
+      fontFamily: {
+        body: ["var(--font-body)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
+      },
       backgroundImage: {
-        gradient: "linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%)",
+        gradient:
+          "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%)",
+        "gradient-reverse":
+          "linear-gradient(135deg, #06b6d4 0%, #8b5cf6 50%, #6366f1 100%)",
+        spotlight:
+          "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,0.35), transparent)",
+        "spotlight-hero":
+          "radial-gradient(ellipse 60% 70% at 50% 0%, rgba(139,92,246,0.25), transparent 70%)",
         cyber: 'url("/bg-cyber.jpg")',
         light: 'url("/bg-light.jpg")',
       },
@@ -78,10 +89,25 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+        "marquee-reverse": {
+          from: { transform: "translateX(-50%)" },
+          to: { transform: "translateX(0)" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-12px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        marquee: "marquee 30s linear infinite",
+        "marquee-reverse": "marquee-reverse 30s linear infinite",
+        float: "float 4s ease-in-out infinite",
       },
     },
   },
