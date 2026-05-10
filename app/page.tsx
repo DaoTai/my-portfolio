@@ -9,7 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 export default function Home() {
   return (
     <TooltipProvider>
-      <main className="text-foreground">
+      <main className="overflow-x-hidden text-foreground">
         <Header />
         <div className="container mt-8 space-y-24 pb-16 pt-[--height-header]">
           <About />

@@ -29,7 +29,7 @@ const Skills = () => {
 
   return (
     <section id="skills" className="scroll-mt-20">
-      <div className="flex flex-col items-center justify-center mb-10">
+      <div className="mb-10 flex flex-col items-center justify-center">
         <h2 className="mb-3 text-center text-4xl font-bold md:text-5xl">
           <span className="bg-[linear-gradient(90deg,#06b6d4,#22d3ee)] bg-clip-text text-transparent">
             Tech
@@ -72,7 +72,7 @@ const Skills = () => {
       {/* Grid */}
       <motion.div
         layout
-        className="grid grid-cols-2 gap-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
+        className="-mx-8 grid grid-cols-4 gap-1 gap-y-1 sm:mx-0 sm:gap-4 sm:gap-y-5 lg:grid-cols-5 xl:grid-cols-6"
       >
         <AnimatePresence mode="popLayout">
           {filtered.map(({ imageUri, name, category }, i) => (
@@ -90,27 +90,43 @@ const Skills = () => {
               drag
               dragElastic={0.4}
               dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
-              whileTap={{ scale: 1.05 }}
+              whileTap={{ scale: 1.04 }}
               whileHover={{
-                scale: 1.1,
+                scale: 1.08,
                 rotate: [0, 2, -2, 2, 0],
                 transition: { duration: 0.4 },
               }}
-              className="group relative flex cursor-grab flex-col items-center gap-3 rounded-2xl border border-white/10 bg-background/40 p-4 text-center backdrop-blur-sm transition-all duration-300 hover:border-violet-500/60 hover:bg-background/60 hover:shadow-[0_0_30px_rgba(139,92,246,0.25)] active:cursor-grabbing"
+              className="
+        md: group relative flex cursor-grab flex-col
+        items-center gap-2 rounded-xl border-none border-white/10 bg-background/40
+        bg-transparent px-2 py-2.5 text-center
+        backdrop-blur-sm transition-all
+        duration-300 hover:border-violet-500/60
+        hover:bg-background/60
+        hover:shadow-[0_0_30px_rgba(139,92,246,0.25)]
+        active:cursor-grabbing
+        sm:gap-3
+
+        sm:rounded-2xl
+        sm:p-4
+        md:border
+  "
             >
               {/* Category indicator dot */}
               {category && (
                 <span
-                  className={`absolute right-2.5 top-2.5 size-2 rounded-full opacity-70 ${categoryDot[category]}`}
+                  className={`absolute right-2 top-2 hidden size-2 rounded-full opacity-70 sm:block ${categoryDot[category]}`}
                 />
               )}
 
-              {/* Icon with gradient border + glow on hover */}
+              {/* Icon */}
               <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-gradient opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-60" />
-                {/* Gradient border ring */}
-                <div className="relative rounded-full bg-gradient p-[2px] shadow-lg transition-transform duration-300 group-hover:scale-105">
-                  <div className="flex items-center justify-center rounded-full bg-background/80 backdrop-blur-sm size-12 sm:size-14">
+                {/* glow only desktop */}
+                <div className="absolute inset-0 hidden rounded-full bg-gradient opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-60 sm:block" />
+
+                {/* Gradient border */}
+                <div className="relative rounded-full bg-gradient p-[1.5px] shadow-lg transition-transform duration-300 group-hover:scale-105 sm:p-[2px]">
+                  <div className="flex size-10 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm sm:size-14">
                     <Image
                       unoptimized
                       src={imageUri}
@@ -119,14 +135,23 @@ const Skills = () => {
                       blurDataURL="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRm4zBvW3pMXoaLmy2JX2LsUWSPVqC7GsrKU8MrzgUMQ&s"
                       width={72}
                       height={72}
-                      className="size-8 object-cover rounded-full sm:size-10"
+                      className="size-6 rounded-full object-cover sm:size-10"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Name */}
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground/75 transition-colors duration-200 group-hover:text-white sm:text-xs">
+              <span
+                className="
+      text-[9px] font-semibold uppercase tracking-wide
+      text-foreground/75 transition-colors duration-200
+      group-hover:text-white
+
+      sm:text-xs
+      sm:tracking-wider
+    "
+              >
                 {name}
               </span>
             </motion.div>

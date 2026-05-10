@@ -8,7 +8,8 @@ const ExperienceCard = ({
   data: IExperience;
   index: number;
 }) => {
-  const { comanyLogo, companyName, endTime, positionWork, startTime, summary, tags } = data;
+  const { comanyLogo, companyName, endTime, positionWork, startTime, summary } =
+    data;
   const isLeft = index % 2 === 0;
 
   return (
@@ -23,23 +24,23 @@ const ExperienceCard = ({
         <div className="flex flex-wrap gap-4 sm:flex-nowrap">
           {/* Company logo */}
           <div className="shrink-0">
-            <div className="overflow-hidden rounded-xl border border-white/10 bg-background/50 p-1">
-              <Image
-                unoptimized
-                alt={companyName}
-                src={comanyLogo}
-                width={80}
-                height={80}
-                className="h-20 w-20 rounded-lg object-contain sm:h-24 sm:w-24"
-              />
-            </div>
+            <Image
+              unoptimized
+              alt={companyName}
+              src={comanyLogo}
+              width={80}
+              height={80}
+              className="size-20 rounded-lg object-contain "
+            />
           </div>
 
           {/* Content */}
           <div className="flex flex-1 flex-col gap-2">
             <div>
               <h3 className="font-display text-xl font-bold">{companyName}</h3>
-              <p className="font-semibold text-violet-400 dark:text-violet-300">{positionWork}</p>
+              <p className="font-semibold text-violet-400 dark:text-violet-300">
+                {positionWork}
+              </p>
             </div>
 
             {/* Date badge */}
@@ -53,19 +54,9 @@ const ExperienceCard = ({
               </span>
             </div>
 
-            <p className="text-sm leading-relaxed text-foreground/75">{summary}</p>
-
-            {/* Tags */}
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {tags.map((tag, i) => (
-                <span
-                  key={i}
-                  className="rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-0.5 text-xs font-medium text-violet-400 dark:text-violet-300"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+            <p className="text-sm leading-relaxed text-foreground/75">
+              {summary}
+            </p>
           </div>
         </div>
       </div>

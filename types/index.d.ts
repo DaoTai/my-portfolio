@@ -12,13 +12,14 @@ type ITech = {
 };
 
 type IProject = {
-  name: string
-  role: string
-  summary: string
-  responsibilities: string[]
-  technicalHighlights: string[]
-  previewImages: string[]
-  url?:string;
+  name: string;
+  role: string;
+  summary: string;
+  responsibilities: string[];
+  technicalHighlights: string[];
+  previewImages: string[];
+  url?: string;
+  logo?: string;
 };
 
 type IExperience = {
@@ -28,7 +29,6 @@ type IExperience = {
   startTime: string;
   endTime: string;
   summary: string;
-  tags: string[];
 };
 
 type IStat = {

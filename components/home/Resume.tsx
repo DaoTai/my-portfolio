@@ -1,4 +1,4 @@
-import { Mail, MapPin } from "lucide-react";
+import { Mail, MapPin, ExternalLink } from "lucide-react";
 import * as motion from "motion/react-client";
 import Link from "next/link";
 import DownloadResumeButton from "../common/DownloadResumeButton";
@@ -30,83 +30,135 @@ const contacts = [
   {
     href: "#",
     label: "Location",
-    value: "Ho Chi Minh City, Vietnam",
+    value: "Ha Noi City, Vietnam",
     icon: MapPin,
     isSvg: false,
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+    },
+  },
+} as const;
+
 const Resume = () => {
   return (
-    <section id="contact" className="scroll-mt-20">
-      {/* Spotlight bg */}
-      <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 h-64 w-full max-w-2xl rounded-full bg-gradient opacity-10 blur-3xl" />
-
-      <h2 className="title-section-gradient">Get In Touch</h2>
-
-      <div className="relative mx-auto max-w-3xl space-y-8">
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center text-base text-muted-foreground"
-        >
-          I&apos;m open to new opportunities. Whether you have a question or just want to say hi — my inbox is always open!
-        </motion.p>
-
-        {/* Contact cards */}
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {contacts.map(({ href, label, value, icon: Icon, isSvg }, i) => (
-            <motion.div
-              key={label}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.4 }}
-              whileHover={{ y: -3 }}
-            >
-              <Link
-                href={href}
-                target={href.startsWith("http") ? "_blank" : undefined}
-                className="flex items-center gap-4 rounded-xl border border-white/10 bg-background/60 p-4 backdrop-blur-sm transition-all duration-300 hover:border-violet-500/40 hover:shadow-[0_0_20px_rgba(99,102,241,0.15)]"
-              >
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient text-white">
-                  {isSvg ? (
-                    <Icon className="h-5 w-5" />
-                  ) : (
-                    <Icon size={18} />
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-muted-foreground">{label}</p>
-                  <p className="truncate text-sm font-semibold">{value}</p>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Download resume */}
+    <section id="contact" className="relative scroll-mt-20 overflow-hidden">
+      <div className="relative">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.5, duration: 0.4 }}
-          className="flex justify-center pt-2"
+          transition={{ duration: 0.6 }}
+          className="mb-12"
         >
-          <DownloadResumeButton className="border-violet-500/50 bg-gradient text-white hover:opacity-90 hover:text-white" />
+          <h2 className="mb-3 text-center text-4xl font-bold md:text-5xl">
+            <span className="bg-[linear-gradient(90deg,#06b6d4,#22d3ee)] bg-clip-text text-transparent">
+              Get
+            </span>{" "}
+            <span className="bg-[linear-gradient(90deg,#a78bfa,#8b5cf6)] bg-clip-text text-transparent">
+              In
+            </span>{" "}
+            <span className="bg-[linear-gradient(90deg,#06b6d4,#22d3ee)] bg-clip-text text-transparent">
+              Touch
+            </span>
+          </h2>
+          <p className="mx-auto max-w-2xl text-center text-base text-foreground/75">
+            I&apos;m always interested in hearing about new projects and
+            opportunities.
+          </p>
         </motion.div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.7 }}
-          className="pb-8 text-center text-sm text-muted-foreground"
-        >
-          Built with Next.js · TailwindCSS · Motion
-        </motion.p>
+        <div className="mx-auto max-w-4xl px-4">
+          {/* Contact Icons Baseline */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="mb-10 flex flex-wrap items-center justify-center gap-8"
+          >
+            {contacts.map(({ href, label, value, icon: Icon, isSvg }, i) => (
+              <motion.div key={label} variants={itemVariants}>
+                <Link
+                  href={href}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  title={value}
+                  className="group relative flex flex-col items-center gap-2 transition-all duration-300"
+                >
+                  {/* Icon */}
+                  <motion.div
+                    whileHover={{ scale: 1.2, rotate: 5 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 400,
+                      damping: 10,
+                    }}
+                    className="flex size-12 items-center justify-center rounded-xl bg-gradient text-white shadow-lg transition-all duration-300 group-hover:shadow-violet-500/50"
+                  >
+                    {isSvg ? <Icon className="h-5 w-5" /> : <Icon size={20} />}
+                  </motion.div>
+
+                  {/* Label */}
+                  <p className="text-xs font-semibold uppercase tracking-wider text-foreground/75 transition-colors group-hover:text-teal-500">
+                    {label}
+                  </p>
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* CTA Section */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="relative mb-12"
+          >
+            <div className="rounded-2xl border border-violet-500/30 bg-gradient-to-r from-violet-500/10 via-transparent to-indigo-500/10 p-8 backdrop-blur-xl">
+              {/* Animated border effect */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-violet-500 to-indigo-500 opacity-0 transition-opacity group-hover:opacity-10" />
+
+              <div className="relative flex flex-col items-center gap-6">
+                <div className="text-center">
+                  <h3 className="mb-2 text-lg font-semibold text-black/75 dark:text-white">
+                    Ready to work together?
+                  </h3>
+                  <p className="text-sm text-foreground/75">
+                    Get my resume or reach out through any of the channels
+                    above.
+                  </p>
+                </div>
+
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <DownloadResumeButton className="border-violet-500/50 bg-gradient text-white shadow-lg shadow-violet-500/30 hover:text-white hover:opacity-90" />
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -18,23 +18,27 @@ const CarouselImages = ({ previewImages }: IProps) => {
   return (
     <Carousel
       className="rounded-xl"
-      plugins={[Autoplay({ delay: 5000 })]}
+      plugins={[Autoplay({ delay: 9000 })]}
       opts={{ align: "start", loop: true }}
     >
       <CarouselContent>
         {previewImages.map((image, i) => (
-          <CarouselItem className="relative bg-black/80" key={i}>
+          <CarouselItem
+            key={i}
+            className="relative flex h-full items-center justify-center bg-black/80"
+          >
             <Image
               unoptimized
               alt="preview"
               src={image}
               width={800}
               height={500}
-              className="h-[220px] w-full rounded-xl object-contain object-top sm:h-[320px] lg:h-[400px]"
+              className="h-[220px] w-full rounded-xl  object-contain sm:h-[320px] lg:h-[400px]"
             />
           </CarouselItem>
         ))}
       </CarouselContent>
+
       <CarouselPrevious className="left-2 size-8" />
       <CarouselNext className="right-2 size-8" />
     </Carousel>
