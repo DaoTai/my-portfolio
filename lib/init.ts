@@ -15,44 +15,198 @@ export const stats: IStat[] = [
 ];
 
 export const techStack: ITech[] = [
-  { imageUri: "/next-js.png", name: "Next JS", category: "frontend" },
+  {
+    imageUri: "/next-js.png",
+    name: "Next JS",
+    category: "frontend",
+    description:
+      "React framework powering SSR, SSG, and file-based routing for production-grade web apps with optimal performance.",
+  },
   {
     imageUri: "/react-js.png",
     name: "React JS & React Native",
     category: "frontend",
+    description:
+      "Declarative UI library for building component-driven web and cross-platform mobile applications.",
   },
-  { imageUri: "/tailwind-css.png", name: "Tailwind", category: "frontend" },
-  { imageUri: "/shadcn-ui.png", name: "Shadcn UI", category: "frontend" },
-  { imageUri: "/mantine.png", name: "Mantine UI", category: "frontend" },
-  { imageUri: "/ant-design.svg", name: "Ant Design", category: "frontend" },
-  { imageUri: "/mui.png", name: "Material UI", category: "frontend" },
+  {
+    imageUri: "/tailwind-css.png",
+    name: "Tailwind",
+    category: "frontend",
+    description:
+      "Utility-first CSS framework for building custom, responsive UIs with speed and design consistency.",
+  },
+  {
+    imageUri: "/shadcn-ui.png",
+    name: "Shadcn UI",
+    category: "frontend",
+    description:
+      "Accessible, composable component library built on Radix UI primitives and styled with Tailwind CSS.",
+  },
+  {
+    imageUri: "/mantine.png",
+    name: "Mantine UI",
+    category: "frontend",
+    description:
+      "Full-featured React component library with built-in hooks, accessibility, and comprehensive theming support.",
+  },
+  {
+    imageUri: "/ant-design.svg",
+    name: "Ant Design",
+    category: "frontend",
+    description:
+      "Enterprise-grade React UI system with a rich component set and a comprehensive design language.",
+  },
+  {
+    imageUri: "/mui.png",
+    name: "Material UI",
+    category: "frontend",
+    description:
+      "Google Material Design–based React component library for building polished, consistent web interfaces.",
+  },
   {
     imageUri: "/tanstack.png",
     name: "Tanstack Ecosystem",
     category: "frontend",
+    description:
+      "Powerful headless toolkit covering data fetching (Query), tables (Table), and virtual scrolling (Virtual).",
   },
-  { imageUri: "/redux.png", name: "Redux Ecosystem", category: "frontend" },
-  { imageUri: "/zustand.jpg", name: "Zustand", category: "frontend" },
-  { imageUri: "/node-js.png", name: "Node JS", category: "backend" },
-  { imageUri: "/nest-js.png", name: "Nest JS", category: "backend" },
-  { imageUri: "/express-js.png", name: "Express JS", category: "backend" },
-  { imageUri: "/mongo-db.png", name: "MongoDB", category: "backend" },
-  { imageUri: "/postgresql.png", name: "PostgreSQL", category: "backend" },
-  { imageUri: "/redis.svg", name: "Redis", category: "backend" },
-  { imageUri: "/rabbitmq.svg", name: "RabbitMQ", category: "backend" },
-  { imageUri: "/prisma.png", name: "Prisma", category: "backend" },
-  { imageUri: "/socket.png", name: "Socket.io", category: "backend" },
-  { imageUri: "/docker.png", name: "Docker", category: "tools" },
-  { imageUri: "/web-rtc.png", name: "WebRTC", category: "tools" },
+  {
+    imageUri: "/redux.png",
+    name: "Redux Ecosystem",
+    category: "frontend",
+    description:
+      "Predictable state container with Redux Toolkit for scalable, maintainable application state management.",
+  },
+  {
+    imageUri: "/zustand.jpg",
+    name: "Zustand",
+    category: "frontend",
+    description:
+      "Minimalist, high-performance global state library with a simple hook-based API for React.",
+  },
+  {
+    imageUri: "/node-js.png",
+    name: "Node JS",
+    category: "backend",
+    description:
+      "JavaScript runtime built on V8 for scalable, non-blocking server-side and network applications.",
+  },
+  {
+    imageUri: "/nest-js.png",
+    name: "Nest JS",
+    category: "backend",
+    description:
+      "Progressive Node.js framework with modular architecture and built-in support for DI, guards, and pipes.",
+  },
+  {
+    imageUri: "/express-js.png",
+    name: "Express JS",
+    category: "backend",
+    description:
+      "Minimalist, unopinionated web framework for Node.js with fast routing and flexible middleware composition.",
+  },
+  {
+    imageUri: "/mongo-db.png",
+    name: "MongoDB",
+    category: "backend",
+    description:
+      "NoSQL document database built for flexible schema design and high-volume read/write operations.",
+  },
+  {
+    imageUri: "/postgresql.png",
+    name: "PostgreSQL",
+    category: "backend",
+    description:
+      "Powerful open-source relational database with advanced SQL, JSONB support, and strong ACID compliance.",
+  },
+  {
+    imageUri: "/redis.svg",
+    name: "Redis",
+    category: "backend",
+    description:
+      "In-memory data store used for caching, session management, and real-time pub/sub messaging.",
+  },
+  {
+    imageUri: "/rabbitmq.svg",
+    name: "RabbitMQ",
+    category: "backend",
+    description:
+      "Message broker enabling reliable, asynchronous event-driven communication between distributed services.",
+  },
+  {
+    imageUri: "/prisma.png",
+    name: "Prisma",
+    category: "backend",
+    description:
+      "Type-safe ORM with an intuitive schema, auto-generated client, and first-class database migration support.",
+  },
+  {
+    imageUri: "/socket.png",
+    name: "Socket.io",
+    category: "backend",
+    description:
+      "Real-time bidirectional communication library enabling live data streaming and collaborative features.",
+  },
+  {
+    imageUri: "/docker.png",
+    name: "Docker",
+    category: "tools",
+    description:
+      "Container platform for packaging, shipping, and running apps consistently across any environment.",
+  },
+  {
+    imageUri: "/web-rtc.png",
+    name: "WebRTC",
+    category: "tools",
+    description:
+      "Browser-native API for real-time peer-to-peer audio, video, and data streaming without plugins.",
+  },
   // { imageUri: "/metamask.png", name: "MetaMask", category: "tools" },
   // { imageUri: "/phantom.jpg", name: "Phantom", category: "tools" },
   // { imageUri: "/ton.jpg", name: "Ton", category: "tools" },
-  { imageUri: "/ubuntu.png", name: "Ubuntu", category: "tools" },
-  { imageUri: "/aws-s3.png", name: "Amazon S3", category: "tools" },
-  { imageUri: "/aws-ec2.png", name: "Amazon EC2", category: "tools" },
-  { imageUri: "/aws-kms.png", name: "Amazon KMS", category: "tools" },
-  { imageUri: "/firebase.png", name: "Firebase", category: "tools" },
-  { imageUri: "/claude.svg", name: "Claude", category: "tools" },
+  {
+    imageUri: "/ubuntu.png",
+    name: "Ubuntu",
+    category: "tools",
+    description:
+      "Linux distribution used for cloud server provisioning, deployment, and infrastructure management.",
+  },
+  {
+    imageUri: "/aws-s3.png",
+    name: "Amazon S3",
+    category: "tools",
+    description:
+      "Scalable object storage for static files, media assets, and application data with high durability.",
+  },
+  {
+    imageUri: "/aws-ec2.png",
+    name: "Amazon EC2",
+    category: "tools",
+    description:
+      "Cloud compute service for deploying, scaling, and managing virtual server infrastructure on AWS.",
+  },
+  {
+    imageUri: "/aws-kms.png",
+    name: "Amazon KMS",
+    category: "tools",
+    description:
+      "Managed encryption key service for securing data at rest and in transit across AWS services.",
+  },
+  {
+    imageUri: "/firebase.png",
+    name: "Firebase",
+    category: "tools",
+    description:
+      "Google's backend platform for real-time database, authentication, hosting, and serverless cloud functions.",
+  },
+  {
+    imageUri: "/claude.svg",
+    name: "Claude",
+    category: "tools",
+    description:
+      "Anthropic's AI model integrated to deliver intelligent, context-aware features within modern applications.",
+  },
 ];
 
 export const listProject: IProject[] = [

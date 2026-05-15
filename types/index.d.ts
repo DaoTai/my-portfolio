@@ -9,6 +9,7 @@ type ITech = {
   imageUri: string;
   name: string;
   category?: "frontend" | "backend" | "tools";
+  description?: string;
 };
 
 type IProject = {
