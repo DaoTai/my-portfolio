@@ -34,7 +34,7 @@ const config = {
           "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,0.35), transparent)",
         "spotlight-hero":
           "radial-gradient(ellipse 60% 70% at 50% 0%, rgba(139,92,246,0.25), transparent 70%)",
-        cyber: 'url("/bg-cyber.jpg")',
+        cyber: 'url("/bg-cyber.png")',
         light: 'url("/bg-light.jpg")',
       },
       colors: {

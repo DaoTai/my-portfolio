@@ -4,7 +4,7 @@ export const navigations: INavigation[] = [
   { name: "About me", href: "#about", icon: Rocket },
   { name: "Techstack", href: "#skills", icon: Component },
   { name: "Projects", href: "#projects", icon: Monitor },
-  { name: "Experiences", href: "#experiences", icon: RefreshCcw },
+  // { name: "Experiences", href: "#experiences", icon: RefreshCcw },
   { name: "Contact", href: "#contact", icon: FileText },
 ];
 

@@ -13,7 +13,7 @@ const Experiences = () => {
   const scaleY = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
   return (
-    <section id="experiences" className="scroll-mt-20">
+    <section id="experiences" className="scroll-mt-28">
       <h2 className="title-section-gradient">Work Experience</h2>
 
       <div ref={containerRef} className="relative mx-auto max-w-3xl">

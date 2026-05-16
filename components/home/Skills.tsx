@@ -555,7 +555,7 @@ const Skills = () => {
   const center = container / 2;
 
   return (
-    <section id="skills" className="scroll-mt-20">
+    <section id="skills" className="scroll-mt-28">
       {/* Heading */}
       <div className="mb-10 flex flex-col items-center justify-center">
         <h2 className="mb-3 text-center text-4xl font-bold md:text-5xl">
@@ -806,7 +806,11 @@ const Skills = () => {
                     key={`left-wing-${wingW}`}
                     initial={{ x: -wingW * 3, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 1.1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{
+                      duration: 1.1,
+                      delay: 0.4,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
                   >
                     <motion.div
                       style={{ transformOrigin: "right center" }}
@@ -834,7 +838,11 @@ const Skills = () => {
                     key={`right-wing-${wingW}`}
                     initial={{ x: wingW * 3, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 1.1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{
+                      duration: 1.1,
+                      delay: 0.5,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
                   >
                     <motion.div
                       style={{ transformOrigin: "left center" }}

@@ -60,7 +60,7 @@ const itemVariants = {
 
 const Resume = () => {
   return (
-    <section id="contact" className="relative scroll-mt-20 overflow-hidden">
+    <section id="contact" className="relative scroll-mt-28 overflow-hidden">
       <div className="relative">
         {/* Header */}
         <motion.div
@@ -94,7 +94,7 @@ const Resume = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="mb-10 flex flex-wrap items-center justify-center gap-8"
+            className="mx-auto mb-10 grid w-fit grid-cols-2 gap-8 md:grid-cols-4"
           >
             {contacts.map(({ href, label, value, icon: Icon, isSvg }, i) => (
               <motion.div key={label} variants={itemVariants}>

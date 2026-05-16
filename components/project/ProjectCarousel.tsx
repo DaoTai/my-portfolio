@@ -202,7 +202,7 @@ function ProjectModal({
 
         <div className="overflow-y-auto">
           <div className="grid gap-6 overflow-x-hidden p-6 lg:grid-cols-2">
-            <div className="space-y-6">
+            <div className="space-y-6 pr-8 md:pr-0">
               <p className="leading-relaxed text-foreground/80">
                 {project.summary}
               </p>

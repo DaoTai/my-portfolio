@@ -2,7 +2,15 @@
 import { Mail, ArrowDown, Hand, Sparkle, ArrowRight } from "lucide-react";
 import Github from "../icons/Github";
 import Linkedin from "../icons/Linkedin";
-import { motion, useInView, useScroll, useTransform, useMotionValue, animate, type Variants } from "motion/react";
+import {
+  motion,
+  useInView,
+  useScroll,
+  useTransform,
+  useMotionValue,
+  animate,
+  type Variants,
+} from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
@@ -19,13 +27,16 @@ function CountUp({ target, suffix = "" }: { target: number; suffix?: string }) {
 
   useEffect(() => {
     if (!isInView) return;
-    const controls = animate(motionValue, target, { duration: 1.8, ease: "easeOut" });
+    const controls = animate(motionValue, target, {
+      duration: 1.8,
+      ease: "easeOut",
+    });
     return controls.stop;
   }, [isInView, target, motionValue]);
 
   return (
     <span ref={ref}>
-      <motion.span >{rounded}</motion.span>
+      <motion.span>{rounded}</motion.span>
       {suffix}
     </span>
   );
@@ -52,7 +63,7 @@ const fadeLeftVariants: Variants = {
 function Orb({ className }: { className: string }) {
   return (
     <motion.div
-      className={`pointer-events-none absolute rounded-full blur-3xl opacity-20 ${className}`}
+      className={`pointer-events-none absolute rounded-full opacity-20 blur-3xl ${className}`}
       animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.25, 0.15] }}
       transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
     />
@@ -61,22 +72,29 @@ function Orb({ className }: { className: string }) {
 
 const About = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
   const avatarY = useTransform(scrollYProgress, [0, 1], [0, -40]);
 
   const socials = [
     { href: "mailto:daotai.work@gmail.com", label: "Email", icon: Mail },
     { href: "https://github.com/DaoTai", label: "GitHub", icon: Github },
-    { href: "https://www.linkedin.com/in/dao-tai-61757325a", label: "LinkedIn", icon: Linkedin },
+    {
+      href: "https://www.linkedin.com/in/dao-tai-61757325a",
+      label: "LinkedIn",
+      icon: Linkedin,
+    },
   ];
 
   return (
-    <section ref={sectionRef} id="about" className="relative scroll-mt-20">
+    <section ref={sectionRef} id="about" className="relative scroll-mt-28">
       {/* Background effects */}
       <div className="pointer-events-none absolute inset-0 bg-spotlight-hero opacity-60" />
-      <Orb className="size-96 bg-violet-500 -top-20 -left-20" />
-      <Orb className="size-72 bg-cyan-400 top-1/2 -right-16" />
-      <Orb className="size-48 bg-indigo-500 bottom-10 left-1/4" />
+      <Orb className="-left-20 -top-20 size-96 bg-violet-500" />
+      <Orb className="-right-16 top-1/2 size-72 bg-cyan-400" />
+      <Orb className="bottom-10 left-1/4 size-48 bg-indigo-500" />
 
       <div className="relative grid grid-cols-1 gap-12 md:grid-cols-2 md:items-center">
         {/* Left — Text */}
@@ -90,13 +108,18 @@ const About = () => {
           <div className="space-y-3">
             <motion.p
               variants={fadeUpVariants}
-              className="text-sm flex items-center gap-2 font-semibold uppercase tracking-widest text-violet-500 dark:text-violet-400"
+              className="flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-violet-500 dark:text-violet-400"
             >
               Hello world
               {/* Waving hand */}
               <motion.span
                 animate={{ rotate: [0, 20, -10, 20, -5, 15, 0] }}
-                transition={{ duration: 1.6, repeat: Infinity, repeatDelay: 2.5, ease: "easeInOut" }}
+                transition={{
+                  duration: 1.6,
+                  repeat: Infinity,
+                  repeatDelay: 2.5,
+                  ease: "easeInOut",
+                }}
                 style={{ display: "inline-block", transformOrigin: "70% 80%" }}
               >
                 <Hand size={22} />
@@ -106,7 +129,7 @@ const About = () => {
             <motion.div variants={fadeUpVariants}>
               <TypewriterText
                 text="I'm Kendrick"
-                className="font-display block text-5xl font-bold leading-tight text-gradient sm:text-6xl lg:text-7xl"
+                className="text-gradient block font-display text-5xl font-bold leading-tight sm:text-6xl lg:text-7xl"
               />
             </motion.div>
 
@@ -122,13 +145,17 @@ const About = () => {
           {/* Bio */}
           <motion.p
             variants={fadeLeftVariants}
-            className="relative text-xl leading-7 text-foreground/70 dark:text-foreground/75 pl-5 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:rounded-full before:bg-gradient"
+            className="relative pl-5 text-xl leading-7 text-foreground/70 before:absolute before:bottom-1 before:left-0 before:top-1 before:w-0.5 before:rounded-full before:bg-gradient dark:text-foreground/75"
           >
-          Full-stack Developer {" "}
-            <span className="font-semibold text-foreground/90">scalable web experiences</span>{" "}
+            Full-stack Developer{" "}
+            <span className="font-semibold text-foreground/90">
+              scalable web experiences
+            </span>{" "}
             with modern technologies, focused on{" "}
-            <span className="font-semibold text-foreground/90">performance</span>,{" "}
-            clean architecture, and intuitive user experiences.
+            <span className="font-semibold text-foreground/90">
+              performance
+            </span>
+            , clean architecture, and intuitive user experiences.
           </motion.p>
 
           {/* Stats */}
@@ -141,16 +168,16 @@ const About = () => {
                 key={i}
                 whileHover={{ scale: 1.07, y: -5 }}
                 transition={{ type: "spring", stiffness: 280, damping: 18 }}
-                className="group relative cursor-default overflow-hidden rounded-2xl border border-white/15 bg-white/5 dark:bg-white/5 p-4 text-center shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] backdrop-blur-md"
+                className="group relative cursor-default overflow-hidden rounded-2xl border border-white/15 bg-white/5 p-4 text-center shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] backdrop-blur-md dark:bg-white/5"
               >
                 {/* Glass shine */}
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
                 {/* Hover glow */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient opacity-0 group-hover:opacity-[0.08] transition-opacity duration-300" />
+                <div className="absolute inset-0 rounded-2xl bg-gradient opacity-0 transition-opacity duration-300 group-hover:opacity-[0.08]" />
                 {/* Bottom border glow */}
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-                <p className="font-display text-2xl font-bold text-gradient sm:text-4xl tabular-nums">
+                <p className="text-gradient font-display text-2xl font-bold tabular-nums sm:text-4xl">
                   <CountUp target={stat.value} suffix={stat.suffix} />
                 </p>
                 <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -161,21 +188,29 @@ const About = () => {
           </motion.div>
 
           {/* Socials */}
-          <motion.div variants={fadeUpVariants} className="flex flex-wrap items-center gap-3">
+          <motion.div
+            variants={fadeUpVariants}
+            className="flex flex-wrap items-center gap-3"
+          >
             {socials.map((item, i) => (
               <Tooltip key={item.label}>
                 <TooltipTrigger asChild>
                   <motion.div
                     initial={{ opacity: 0, scale: 0.4 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.8 + i * 0.12, type: "spring", stiffness: 260, damping: 18 }}
+                    transition={{
+                      delay: 0.8 + i * 0.12,
+                      type: "spring",
+                      stiffness: 260,
+                      damping: 18,
+                    }}
                     whileHover={{ scale: 1.2, y: -3, rotate: 8 }}
                     whileTap={{ scale: 0.92 }}
                   >
                     <Link
                       href={item.href}
                       target="_blank"
-                      className="flex size-11 items-center justify-center rounded-full bg-gradient text-white shadow-lg hover:shadow-violet-500/40 transition-shadow duration-300"
+                      className="flex size-11 items-center justify-center rounded-full bg-gradient text-white shadow-lg transition-shadow duration-300 hover:shadow-violet-500/40"
                     >
                       <item.icon size={20} />
                     </Link>
@@ -188,23 +223,34 @@ const About = () => {
             ))}
           </motion.div>
 
-          <motion.div variants={fadeUpVariants} className="flex flex-wrap items-center gap-3">
+          <motion.div
+            variants={fadeUpVariants}
+            className="flex flex-wrap items-center gap-3"
+          >
             <DownloadResumeButton className="border-violet-500/50 bg-gradient text-white hover:text-white" />
             <motion.button
-              onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() =>
+                document
+                  .getElementById("projects")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className="group relative backdrop-blur-md flex items-center gap-2 overflow-hidden rounded-full border border-violet-500/40 bg-transparent px-7 py-3.5 text-base font-semibold text-violet-500 dark:text-violet-400 transition-colors duration-300 hover:border-violet-500 hover:text-violet-600 dark:hover:text-violet-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
+              className="group relative flex items-center gap-2 overflow-hidden rounded-full border border-violet-500/40 bg-transparent px-7 py-3.5 text-base font-semibold text-violet-500 backdrop-blur-md transition-colors duration-300 hover:border-violet-500 hover:text-violet-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 dark:text-violet-400 dark:hover:text-violet-300"
             >
               {/* Subtle fill on hover */}
-              <span className="absolute inset-0 rounded-full bg-violet-500/0 transition-colors duration-300 group-hover:bg-violet-500/8" />
+              <span className="group-hover:bg-violet-500/8 absolute inset-0 rounded-full bg-violet-500/0 transition-colors duration-300" />
               <span className="relative">View My Work</span>
               <motion.span
                 animate={{ x: [0, 3, 0] }}
-                transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+                transition={{
+                  duration: 1.4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
                 className="relative"
               >
-               <ArrowRight size={20}/>
+                <ArrowRight size={20} />
               </motion.span>
             </motion.button>
           </motion.div>
@@ -224,8 +270,16 @@ const About = () => {
               <motion.div
                 key={i}
                 className="absolute inset-0 rounded-full bg-gradient opacity-20"
-                animate={{ scale: [scale, scale + 0.06, scale], opacity: [0.2, 0.08, 0.2] }}
-                transition={{ duration: 3 + i, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
+                animate={{
+                  scale: [scale, scale + 0.06, scale],
+                  opacity: [0.2, 0.08, 0.2],
+                }}
+                transition={{
+                  duration: 3 + i,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: i * 0.5,
+                }}
               />
             ))}
 
@@ -235,7 +289,7 @@ const About = () => {
               animate={{ rotate: 360 }}
               transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
             >
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 size-4 rounded-full bg-gradient shadow-lg shadow-violet-500/50" />
+              <div className="absolute -top-3 left-1/2 size-4 -translate-x-1/2 rounded-full bg-gradient shadow-lg shadow-violet-500/50" />
             </motion.div>
 
             {/* Counter-orbiting dot */}
@@ -244,7 +298,7 @@ const About = () => {
               animate={{ rotate: -360 }}
               transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
             >
-              <div className="absolute top-1/2 -right-3 -translate-y-1/2 size-3 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" />
+              <div className="absolute -right-3 top-1/2 size-3 -translate-y-1/2 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" />
             </motion.div>
 
             {/* Floating avatar */}
@@ -254,14 +308,14 @@ const About = () => {
               className="relative"
             >
               {/* Gradient ring */}
-              <div className="rounded-full p-[3px] bg-gradient shadow-2xl shadow-violet-500/30">
+              <div className="rounded-full bg-gradient p-[3px] shadow-2xl shadow-violet-500/30">
                 <Image
                   unoptimized
                   src="/avatar.png"
                   width={340}
                   height={340}
                   alt="avatar"
-                  className="size-64 object-top rounded-full border-4 border-background object-cover drop-shadow-2xl sm:size-72 lg:size-80"
+                  className="size-64 rounded-full border-4 border-background object-cover object-top drop-shadow-2xl sm:size-72 lg:size-80"
                 />
               </div>
 
@@ -269,13 +323,24 @@ const About = () => {
               <motion.div
                 initial={{ opacity: 0, scale: 0, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ delay: 1.1, type: "spring", stiffness: 220, damping: 16 }}
+                transition={{
+                  delay: 1.1,
+                  type: "spring",
+                  stiffness: 220,
+                  damping: 16,
+                }}
                 whileHover={{ scale: 1.05 }}
-                className="absolute -bottom-3 flex items-center gap-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient px-4 py-2 text-xs font-bold text-white shadow-lg shadow-violet-500/30 cursor-default"
+                className="absolute -bottom-3 left-1/2 flex -translate-x-1/2 cursor-default items-center gap-1 whitespace-nowrap rounded-full bg-gradient px-4 py-2 text-xs font-bold text-white shadow-lg shadow-violet-500/30"
               >
-                <Sparkle size={12} className="text-yellow-400 fill-yellow-500 animate-bounce" /> 
+                <Sparkle
+                  size={12}
+                  className="animate-bounce fill-yellow-500 text-yellow-400"
+                />
                 Fullstack Developer
-                 <Sparkle size={12} className="text-yellow-400 fill-yellow-500 animate-bounce" />
+                <Sparkle
+                  size={12}
+                  className="animate-bounce fill-yellow-500 text-yellow-400"
+                />
               </motion.div>
 
               {/* Status indicator */}
@@ -283,7 +348,7 @@ const About = () => {
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1.4, duration: 0.5 }}
-                className="absolute top-4 -right-2 flex items-center gap-1.5 rounded-full border border-white/10 bg-background/80 px-3 py-1.5 text-xs font-medium backdrop-blur-sm shadow-md"
+                className="absolute -right-2 top-4 flex items-center gap-1.5 rounded-full border border-white/10 bg-background/80 px-3 py-1.5 text-xs font-medium shadow-md backdrop-blur-sm"
               >
                 <motion.span
                   className="size-2 rounded-full bg-emerald-400"
@@ -296,7 +361,6 @@ const About = () => {
           </motion.div>
         </div>
       </div>
-
     </section>
   );
 };
