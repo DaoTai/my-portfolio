@@ -14,33 +14,6 @@ export interface WebVitalMetric {
   navigationType: string;
 }
 
-export function useWebVitals(onMetric?: (metric: WebVitalMetric) => void) {
-  useEffect(() => {
-    // Only load in production
-    if (process.env.NODE_ENV !== "production") return;
-
-    const handler = async () => {
-      // Dynamically import web-vitals only when needed
-      const { getCLS, getFID, getFCP, getLCP, getTTFB } =
-        await import("web-vitals");
-
-      getCLS(onMetric);
-      getFID(onMetric);
-      getFCP(onMetric);
-      getLCP(onMetric);
-      getTTFB(onMetric);
-    };
-
-    // Use requestIdleCallback if available
-    if ("requestIdleCallback" in window) {
-      requestIdleCallback(handler);
-    } else {
-      // Fallback for browsers that don't support requestIdleCallback
-      setTimeout(handler, 0);
-    }
-  }, [onMetric]);
-}
-
 /**
  * Send metrics to analytics service
  */
