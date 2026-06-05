@@ -1,8 +1,9 @@
-import { Component, FileText, Monitor, RefreshCcw, Rocket } from "lucide-react";
+import { Brain, Component, FileText, Monitor, Rocket } from "lucide-react";
 
 export const navigations: INavigation[] = [
   { name: "About me", href: "#about", icon: Rocket },
   { name: "Techstack", href: "#skills", icon: Component },
+  { name: "Expertise", href: "#expertise", icon: Brain },
   { name: "Projects", href: "#projects", icon: Monitor },
   // { name: "Experiences", href: "#experiences", icon: RefreshCcw },
   { name: "Contact", href: "#contact", icon: FileText },
@@ -210,6 +211,43 @@ export const techStack: ITech[] = [
 ];
 
 export const listProject: IProject[] = [
+  {
+    name: "Bullbit",
+    role: "Full-stack Developer",
+    summary:
+      "Bullbit is a cryptocurrency exchange platform that allows users to trade digital assets. It provides a secure and user-friendly interface for buying, selling, and managing cryptocurrencies, along with real-time market data and trading features. Spot trading, Futures, wallet management, and market data visualization are some of the key features of the platform.",
+    responsibilities: [
+      "Developed and maintained the frontend application using NextJS and ReactJS.",
+      "Built responsive and user-friendly interfaces for trading, account management, and market data visualization.",
+      "Integrated real-time market data and trading functionalities using WebSocket and RESTful APIs.",
+      "Implemented authentication systems, user profile management, and secure transaction workflows.",
+      "Collaborated closely with backend services to ensure seamless integration and optimal performance.",
+      "Maintained and scaled the back-end services with Microservices architecture",
+    ],
+    technicalHighlights: [
+      "Real-time market data integration",
+      "Secure authentication workflows with CSRF protection",
+      "Responsive trading interfaces",
+      "2FA implementation for enhanced security",
+      "State management with Zustand & TanStack Query",
+      "Microservices architecture for backend scalability",
+      "Trading views with advanced charting and order book visualization with TradingView",
+      "Animated UI interactions and performance optimizations with framer-motion",
+      "Docker-based deployment and environment configuration",
+    ],
+    previewImages: [
+      "/project-images/bullbit/1.png",
+      "/project-images/bullbit/2.png",
+      "/project-images/bullbit/3.png",
+      "/project-images/bullbit/4.png",
+      "/project-images/bullbit/5.png",
+      "/project-images/bullbit/6.png",
+      "/project-images/bullbit/7.png",
+      "/project-images/bullbit/8.png",
+      "/project-images/bullbit/9.png",
+    ],
+    logo: "/project-images/bullbit/logo.png",
+  },
   {
     name: "DreamFly",
     role: "Frontend Developer",

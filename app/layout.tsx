@@ -21,21 +21,31 @@ const grotesk = Space_Grotesk({
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://daotai.dev";
 const siteName = "Dao Tai Portfolio";
 const description =
-  "Full-stack web developer specializing in React, Next.js, and modern web technologies. Explore my projects and experience.";
+  "Full-stack JavaScript developer with 4+ years of experience building real-time systems, Web3 platforms, and modern web applications. Specializing in React, Next.js, Node.js, NestJS, and blockchain integrations across Solana, BNB Chain, and EVM ecosystems.";
 
 export const metadata: Metadata = {
   title: {
-    default: "Dao Tai | Full-Stack Web Developer",
+    default: "Dao Duc Tai | Full-Stack JavaScript Developer",
     template: "%s | Dao Tai",
   },
   description,
   keywords: [
+    "full-stack JavaScript developer",
     "web developer",
-    "full-stack developer",
-    "React",
-    "Next.js",
+    "React developer",
+    "Next.js developer",
+    "Node.js developer",
+    "NestJS developer",
     "TypeScript",
+    "Web3 developer",
+    "blockchain developer",
+    "Solana developer",
+    "real-time systems",
+    "WebSocket",
+    "performance optimization",
     "portfolio",
+    "frontend developer",
+    "backend developer",
   ],
   authors: [{ name: "Dao Duc Tai" }],
   creator: "Dao Duc Tai",
@@ -56,7 +66,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     siteName,
-    title: "Dao Tai | Full-Stack Web Developer",
+    title: "Dao Duc Tai | Full-Stack JavaScript Developer",
     description,
     images: [
       {
@@ -70,14 +80,14 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dao Tai | Full-Stack Web Developer",
+    title: "Dao Duc Tai | Full-Stack JavaScript Developer",
     description,
     images: [`${siteUrl}/og-image.jpg`],
     creator: "@yourtwitterhandle",
   },
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: "/avatar-logo.png",
+    apple: "/avatar-logo.png",
   },
   manifest: "/site.webmanifest",
   viewport: {
@@ -104,9 +114,31 @@ export default function RootLayout({
     "@type": "Person",
     name: "Dao Duc Tai",
     url: siteUrl,
-    jobTitle: "Full-Stack Web Developer",
+    jobTitle: "Full-Stack JavaScript Developer",
     description:
-      "Full-stack web developer specializing in React, Next.js, and modern web technologies",
+      "Full-stack JavaScript developer with 4+ years of experience building real-time systems, Web3 platforms, and production web applications using React, Next.js, Node.js, NestJS, and blockchain integrations across Solana, BNB Chain, and EVM ecosystems.",
+    knowsAbout: [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "Node.js",
+      "NestJS",
+      "Express.js",
+      "MongoDB",
+      "PostgreSQL",
+      "Redis",
+      "WebSocket",
+      "Socket.io",
+      "WebRTC",
+      "Docker",
+      "AWS",
+      "Solana",
+      "Web3",
+      "Blockchain",
+      "TanStack",
+      "Zustand",
+      "Redux",
+    ],
     sameAs: [
       "https://github.com/yourgithub",
       "https://linkedin.com/in/yourlinkedin",
@@ -138,6 +170,9 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+
+        {/* Favicon */}
+        <link rel="icon" href="/avatar-logo.png" type="image/png" />
 
         {/* Canonical URL */}
         <link rel="canonical" href={siteUrl} />

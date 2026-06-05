@@ -19,6 +19,9 @@ import {
   Sparkles,
   Pause,
   Play,
+  Layers,
+  Server,
+  Database,
 } from "lucide-react";
 
 type Category = "all" | "frontend" | "backend" | "tools";
@@ -337,6 +340,79 @@ const LotusWeaveRing = ({
     </div>
   );
 };
+
+const EXPERTISE_DOMAINS = [
+  {
+    title: "Frontend Engineering",
+    Icon: Layers,
+    years: 4,
+    accent: {
+      gradient: "from-cyan-500/10 to-transparent",
+      border: "border-cyan-500/25 hover:border-cyan-500/50",
+      text: "text-cyan-500",
+      badge: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
+    },
+    summary:
+      "Deep confidence in React internals and JavaScript fundamentals — building interfaces that are fast, maintainable, and visually refined.",
+    highlights: [
+      "React Performance & Optimization",
+      "Advanced JavaScript Patterns",
+      "Next.js SSR · SSG · ISR",
+      "TypeScript Type Engineering",
+      "Framer Motion & Animations",
+      "TanStack Query & Zustand",
+      "Complex UI Architecture",
+      "Responsive & Accessible UI",
+    ],
+  },
+  {
+    title: "Node.js & Backend",
+    Icon: Server,
+    years: 4,
+    featured: true,
+    accent: {
+      gradient: "from-violet-500/10 to-indigo-500/5",
+      border: "border-violet-500/40 hover:border-violet-500/70",
+      text: "text-violet-400",
+      badge: "bg-violet-500/15 text-violet-400 border-violet-500/25",
+    },
+    summary:
+      "NestJS is my primary backend framework — I know its architecture deeply and apply it to build robust, production-ready server systems.",
+    highlights: [
+      "NestJS — Primary Framework",
+      "Modular & DI Architecture",
+      "RESTful API Design",
+      "Real-time WebSocket Systems",
+      "Microservices & Event-driven",
+      "JWT Auth & Security Patterns",
+      "Redis Caching & Pub/Sub",
+      "RabbitMQ Message Queues",
+    ],
+  },
+  {
+    title: "Data & Infrastructure",
+    Icon: Database,
+    years: 3,
+    accent: {
+      gradient: "from-emerald-500/10 to-transparent",
+      border: "border-emerald-500/25 hover:border-emerald-500/50",
+      text: "text-emerald-500",
+      badge: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+    },
+    summary:
+      "Experienced in designing schemas, optimizing queries, and setting up cloud infrastructure that scales with the application.",
+    highlights: [
+      "PostgreSQL Schema Design",
+      "MongoDB Aggregations",
+      "Prisma ORM & Migrations",
+      "Redis Performance Caching",
+      "Docker Containerization",
+      "AWS S3 · EC2 · KMS",
+      "Real-time Data Pipelines",
+      "CI/CD & Deployment Flows",
+    ],
+  },
+];
 
 const Skills = () => {
   const [active, setActive] = useState<Category>("all");
@@ -1059,6 +1135,153 @@ const Skills = () => {
             )}
             {playing ? "Pause autoplay" : "Resume autoplay"}
           </button>
+        </div>
+      </div>
+
+      {/* ─── Expertise Profile ─────────────────────────────── */}
+      <div id="expertise" className="mt-20 scroll-mt-28 space-y-8">
+        {/* Section heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col items-center"
+        >
+          <h3 className="mb-2 text-center text-3xl font-bold md:text-4xl">
+            <span className="bg-[linear-gradient(90deg,#a78bfa,#8b5cf6)] bg-clip-text text-transparent">
+              My
+            </span>{" "}
+            <span className="text-foreground">Expertise</span>
+          </h3>
+          <p className="max-w-md text-center text-sm text-muted-foreground">
+            4 years of full-stack JavaScript development — specialized in
+            Node.js backends and modern React frontends
+          </p>
+        </motion.div>
+
+        {/* Node.js hero banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="relative overflow-hidden rounded-2xl border border-violet-500/30 bg-background/95 p-7 backdrop-blur-sm md:p-9"
+        >
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-violet-500/10 via-transparent to-indigo-500/5" />
+          <div className="pointer-events-none absolute -right-12 -top-12 size-64 rounded-full bg-violet-500/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-8 left-1/3 size-48 rounded-full bg-cyan-500/10 blur-2xl" />
+          <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
+            <div className="flex size-20 shrink-0 items-center justify-center rounded-2xl border border-violet-500/30 bg-violet-500/10">
+              <Image
+                unoptimized
+                src="/node-js.png"
+                alt="Node.js"
+                placeholder="blur"
+                blurDataURL={BLUR_URL}
+                width={48}
+                height={48}
+                className="size-12 object-contain"
+              />
+            </div>
+            <div className="flex-1 space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <h4 className="text-xl font-bold text-foreground">
+                  Node.js Full-Stack Developer
+                </h4>
+                <span className="rounded-full border border-violet-500/30 bg-violet-500/15 px-3 py-0.5 text-xs font-semibold text-violet-400">
+                  4 Years Experience
+                </span>
+                <span className="rounded-full border border-cyan-500/25 bg-cyan-500/10 px-3 py-0.5 text-xs font-medium text-cyan-500">
+                  Full-Stack
+                </span>
+              </div>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Specialized in building production-grade Node.js applications —
+                high-performance REST APIs, real-time WebSocket systems, and
+                event-driven microservices. Paired with deep React and Next.js
+                expertise on the frontend, I deliver complete, scalable
+                JavaScript&thinsp;/&thinsp;TypeScript solutions end-to-end.
+              </p>
+            </div>
+            <div className="flex shrink-0 gap-6 sm:flex-col sm:items-end sm:gap-4">
+              {[
+                { value: "4+", label: "Years" },
+                { value: "10+", label: "Projects" },
+                { value: "22+", label: "Technologies" },
+              ].map(({ value, label }) => (
+                <div
+                  key={label}
+                  className="flex flex-col items-center text-center sm:items-end sm:text-right"
+                >
+                  <span className="text-2xl font-extrabold text-foreground">
+                    {value}
+                  </span>
+                  <span className="text-xs text-muted-foreground">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Domain expertise cards */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {EXPERTISE_DOMAINS.map((domain, di) => {
+            const { Icon } = domain;
+            return (
+              <motion.div
+                key={domain.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: di * 0.1 + 0.2 }}
+                className={`group relative overflow-hidden rounded-2xl border bg-background/95 p-6 backdrop-blur-sm transition-all duration-300 ${domain.accent.border}`}
+              >
+                <div
+                  className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${domain.accent.gradient}`}
+                />
+                <div className="relative space-y-4">
+                  <div className="flex items-start justify-between">
+                    <div
+                      className={`flex size-11 items-center justify-center rounded-xl border transition-transform duration-300 group-hover:scale-110 ${domain.accent.badge}`}
+                    >
+                      <Icon className={`size-5 ${domain.accent.text}`} />
+                    </div>
+                    <span
+                      className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${domain.accent.badge}`}
+                    >
+                      {domain.years} yr{domain.years !== 1 ? "s" : ""}
+                    </span>
+                  </div>
+                  <div>
+                    <h4 className="mb-1.5 text-base font-bold text-foreground">
+                      {domain.title}
+                    </h4>
+                    <p className="text-xs leading-relaxed text-muted-foreground">
+                      {domain.summary}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {domain.highlights.map((highlight, hi) => (
+                      <motion.span
+                        key={highlight}
+                        initial={{ opacity: 0, y: 6 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{
+                          duration: 0.28,
+                          delay: di * 0.08 + hi * 0.045 + 0.2,
+                        }}
+                        className={`rounded-full border px-2.5 py-[5px] text-[11px] font-medium leading-none ${domain.accent.badge}`}
+                      >
+                        {highlight}
+                      </motion.span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 
