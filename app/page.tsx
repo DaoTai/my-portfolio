@@ -8,13 +8,13 @@ import Skills from "@/components/home/Skills";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata: Metadata = {
-  title: "Dao Tai | Full-Stack Web Developer",
+  title: "Dao Duc Tai | Full-Stack JavaScript Developer",
   description:
-    "Full-stack web developer specializing in React, Next.js, and modern web technologies. Explore my projects, experience, and skills.",
+    "Full-stack JavaScript developer with 4+ years of experience building real-time systems, Web3 platforms, and modern web applications. Specializing in React, Next.js, Node.js, NestJS, and blockchain integrations across Solana, BNB Chain, and EVM ecosystems.",
   openGraph: {
-    title: "Dao Tai | Full-Stack Web Developer",
+    title: "Dao Duc Tai | Full-Stack JavaScript Developer",
     description:
-      "Full-stack web developer specializing in React, Next.js, and modern web technologies.",
+      "Full-stack JavaScript developer with 4+ years of experience building real-time systems, Web3 platforms, and modern web applications. Specializing in React, Next.js, Node.js, NestJS, and blockchain integrations.",
     type: "website",
   },
 };
