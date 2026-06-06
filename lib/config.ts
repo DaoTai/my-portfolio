@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "Dao Tai",
   fullName: "Dao Duc Tai",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://daotai.dev",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://dao-tai.vercel.app",
   ogImage: "/og-image.jpg",
   avatar: "/avatar.jpg",
   description:
