@@ -27,6 +27,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: `${siteConfig.fullName} | ${siteConfig.jobTitle}`,
     template: `%s | ${siteConfig.name}`,
