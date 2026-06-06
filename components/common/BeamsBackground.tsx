@@ -70,6 +70,11 @@ export function BeamsBackground({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const BEAM_COUNT = window.innerWidth < 768 ? 10 : 16;
+    const FRAME_INTERVAL = 1000 / 24; // cap at 24fps
+    let lastFrameTime = 0;
+    let resizeTimer: ReturnType<typeof setTimeout>;
+
     const setupCanvas = () => {
       const dpr = window.devicePixelRatio || 1;
 
@@ -82,16 +87,27 @@ export function BeamsBackground({
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
 
-      beamsRef.current = Array.from({ length: 24 }, () =>
+      beamsRef.current = Array.from({ length: BEAM_COUNT }, () =>
         createBeam(window.innerWidth, window.innerHeight),
       );
     };
 
+    const debouncedSetup = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(setupCanvas, 300);
+    };
+
     setupCanvas();
 
-    window.addEventListener("resize", setupCanvas);
+    window.addEventListener("resize", debouncedSetup);
 
-    const animate = () => {
+    const animate = (timestamp: number) => {
+      animationRef.current = requestAnimationFrame(animate);
+
+      const elapsed = timestamp - lastFrameTime;
+      if (elapsed < FRAME_INTERVAL) return;
+      lastFrameTime = timestamp - (elapsed % FRAME_INTERVAL);
+
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
       ctx.filter = "blur(40px)";
@@ -133,14 +149,13 @@ export function BeamsBackground({
 
         ctx.restore();
       });
-
-      animationRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    animationRef.current = requestAnimationFrame(animate);
 
     return () => {
-      window.removeEventListener("resize", setupCanvas);
+      window.removeEventListener("resize", debouncedSetup);
+      clearTimeout(resizeTimer);
 
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -165,11 +180,11 @@ export function BeamsBackground({
         className="pointer-events-none fixed inset-0 -z-40 h-full w-full"
       />
 
-      {/* Overlay blur */}
+      {/* Overlay */}
       <div
         className={cn(
-          "pointer-events-none fixed inset-0 -z-30 backdrop-blur-[120px]",
-          isDark ? "bg-black/10" : "bg-white/20",
+          "pointer-events-none fixed inset-0 -z-30",
+          isDark ? "bg-black/25" : "bg-white/35",
         )}
       />
     </>

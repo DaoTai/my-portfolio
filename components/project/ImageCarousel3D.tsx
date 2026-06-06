@@ -134,7 +134,6 @@ export default function ImageCarousel3D({ images }: { images: string[] }) {
           onClick={() => setFsOpen(true)}
         >
           <Image
-            unoptimized
             src={images[0]}
             alt="preview"
             fill
@@ -228,7 +227,6 @@ export default function ImageCarousel3D({ images }: { images: string[] }) {
                   >
                     <div className="group relative h-[268px] bg-black/70">
                       <Image
-                        unoptimized
                         src={img}
                         alt={`preview ${i + 1}`}
                         fill

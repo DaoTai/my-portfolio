@@ -166,7 +166,6 @@ function ProjectModal({
           {project.logo ? (
             <div className="relative size-11 shrink-0 overflow-hidden shadow-md">
               <Image
-                unoptimized
                 src={project.logo}
                 alt={`${project.name} logo`}
                 fill
@@ -403,7 +402,6 @@ export default function ProjectCarousel() {
                       <div className="group relative h-[200px] w-full select-none overflow-hidden bg-black/70 sm:h-[215px]">
                         {p.previewImages[0] && (
                           <Image
-                            unoptimized
                             src={p.previewImages[0]}
                             alt={p.name}
                             fill
@@ -454,7 +452,6 @@ export default function ProjectCarousel() {
                           {p.logo ? (
                             <div className="relative size-12  overflow-hidden rounded-xl border border-white/25 bg-background/70 shadow-lg backdrop-blur-sm">
                               <Image
-                                unoptimized
                                 src={p.logo}
                                 alt={`${p.name} logo`}
                                 fill

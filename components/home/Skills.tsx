@@ -72,8 +72,9 @@ const computeDims = (w: number): RingDims => {
   return { radius, container, item, hub };
 };
 
+// Tiny gray square used as a blur placeholder before tech icons load
 const BLUR_URL =
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRm4zBvW3pMXoaLmy2JX2LsUWSPVqC7GsrKU8MrzgUMQ&s";
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FABJADveecVtRAAAAAElFTkSuQmCC";
 
 const SPRING = { type: "spring" as const, stiffness: 120, damping: 22 };
 
@@ -847,7 +848,6 @@ const Skills = () => {
                     title={tech.name}
                   >
                     <Image
-                      unoptimized
                       src={tech.imageUri}
                       alt={tech.name}
                       placeholder="blur"
@@ -968,7 +968,6 @@ const Skills = () => {
                   transition={{ duration: 0.22, ease: "easeOut" }}
                 >
                   <Image
-                    unoptimized
                     src={featuredItem.imageUri}
                     alt={featuredItem.name}
                     placeholder="blur"
@@ -1174,11 +1173,8 @@ const Skills = () => {
           <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
             <div className="flex size-20 shrink-0 items-center justify-center rounded-2xl border border-violet-500/30 bg-violet-500/10">
               <Image
-                unoptimized
                 src="/node-js.png"
                 alt="Node.js"
-                placeholder="blur"
-                blurDataURL={BLUR_URL}
                 width={48}
                 height={48}
                 className="size-12 object-contain"
@@ -1322,7 +1318,6 @@ const Skills = () => {
                     <div className="relative rounded-full bg-gradient p-[2.5px] shadow-lg">
                       <div className="flex size-24 items-center justify-center rounded-full bg-background">
                         <Image
-                          unoptimized
                           src={selectedTech.imageUri}
                           alt={selectedTech.name}
                           placeholder="blur"

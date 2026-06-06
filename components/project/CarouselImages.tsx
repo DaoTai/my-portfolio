@@ -28,7 +28,6 @@ const CarouselImages = ({ previewImages }: IProps) => {
             className="relative flex h-full items-center justify-center bg-black/80"
           >
             <Image
-              unoptimized
               alt="preview"
               src={image}
               width={800}

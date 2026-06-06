@@ -62,10 +62,8 @@ const fadeLeftVariants: Variants = {
 /* Floating background orb */
 function Orb({ className }: { className: string }) {
   return (
-    <motion.div
-      className={`pointer-events-none absolute rounded-full opacity-20 blur-3xl ${className}`}
-      animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.25, 0.15] }}
-      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+    <div
+      className={`pointer-events-none absolute rounded-full opacity-20 blur-3xl animate-pulse ${className}`}
     />
   );
 }
@@ -310,11 +308,12 @@ const About = () => {
               {/* Gradient ring */}
               <div className="rounded-full bg-gradient p-[3px] shadow-2xl shadow-violet-500/30">
                 <Image
-                  unoptimized
                   src="/avatar.png"
                   width={340}
                   height={340}
                   alt="avatar"
+                  priority
+                  sizes="(max-width: 640px) 256px, (max-width: 768px) 288px, 320px"
                   className="size-64 rounded-full border-4 border-background object-cover object-top drop-shadow-2xl sm:size-72 lg:size-80"
                 />
               </div>

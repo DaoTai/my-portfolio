@@ -25,7 +25,6 @@ const ExperienceCard = ({
           {/* Company logo */}
           <div className="shrink-0">
             <Image
-              unoptimized
               alt={companyName}
               src={comanyLogo}
               width={80}
