@@ -1110,7 +1110,7 @@ const Skills = () => {
             </button>
             <button
               onClick={() => setSelectedTech(featuredItem)}
-              className="flex items-center gap-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-sm font-medium text-violet-600 transition-all hover:bg-violet-500/20 dark:text-violet-300"
+              className="flex items-center gap-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 font-medium text-violet-600 transition-all hover:bg-violet-500/20 dark:text-violet-300"
             >
               <Sparkles className="size-3.5" />
               View Details
@@ -1147,13 +1147,13 @@ const Skills = () => {
           transition={{ duration: 0.5 }}
           className="flex flex-col items-center"
         >
-          <h3 className="mb-2 text-center text-3xl font-bold md:text-4xl">
+          <h3 className="mb-3 text-center text-4xl font-bold md:text-5xl">
             <span className="bg-[linear-gradient(90deg,#a78bfa,#8b5cf6)] bg-clip-text text-transparent">
               My
             </span>{" "}
             <span className="text-foreground">Expertise</span>
           </h3>
-          <p className="max-w-md text-center text-sm text-muted-foreground">
+          <p className="max-w-md text-center text-base text-muted-foreground">
             4 years of full-stack JavaScript development — specialized in
             Node.js backends and modern React frontends
           </p>
@@ -1192,7 +1192,7 @@ const Skills = () => {
                   Full-Stack
                 </span>
               </div>
-              <p className="text-sm leading-relaxed text-muted-foreground">
+              <p className="text-base leading-relaxed text-muted-foreground">
                 Specialized in building production-grade Node.js applications —
                 high-performance REST APIs, real-time WebSocket systems, and
                 event-driven microservices. Paired with deep React and Next.js
@@ -1253,7 +1253,7 @@ const Skills = () => {
                     <h4 className="mb-1.5 text-base font-bold text-foreground">
                       {domain.title}
                     </h4>
-                    <p className="text-xs leading-relaxed text-muted-foreground">
+                    <p className="text-sm leading-relaxed text-muted-foreground">
                       {domain.summary}
                     </p>
                   </div>
@@ -1347,7 +1347,7 @@ const Skills = () => {
                   )}
 
                 {selectedTech.description && (
-                  <p className="text-center text-sm leading-relaxed text-muted-foreground">
+                  <p className="text-center text-base leading-relaxed text-muted-foreground">
                     {selectedTech.description}
                   </p>
                 )}
