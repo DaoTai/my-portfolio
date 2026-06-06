@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
@@ -18,6 +18,13 @@ const grotesk = Space_Grotesk({
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#000000",
+};
 
 export const metadata: Metadata = {
   title: {
@@ -49,11 +56,11 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: [
       {
-        url: `${siteConfig.url}${siteConfig.ogImage}`,
+        url: `${siteConfig.url}/opengraph-image`,
         width: 1200,
         height: 630,
         alt: `${siteConfig.fullName} - ${siteConfig.jobTitle}`,
-        type: "image/jpeg",
+        type: "image/png",
       },
     ],
   },
@@ -61,18 +68,13 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${siteConfig.fullName} | ${siteConfig.jobTitle}`,
     description: siteConfig.description,
-    images: [`${siteConfig.url}${siteConfig.ogImage}`],
+    images: [`${siteConfig.url}/opengraph-image`],
   },
   icons: {
     icon: "/avatar-logo.png",
     apple: "/avatar-logo.png",
   },
   manifest: "/manifest.webmanifest",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-  },
   formatDetection: {
     email: false,
     telephone: false,
@@ -144,7 +146,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
-        <meta name="theme-color" content="#000000" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta
