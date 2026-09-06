@@ -72,8 +72,8 @@ export const metadata: Metadata = {
     images: [`${siteConfig.url}/opengraph-image`],
   },
   icons: {
-    icon: "/avatar-logo.png",
-    apple: "/avatar-logo.png",
+    icon: "/avatar-professional.png",
+    apple: "/avatar-professional.png",
   },
   manifest: "/manifest.webmanifest",
   formatDetection: {
@@ -164,7 +164,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
 
-        <link rel="icon" href="/avatar-logo.png" type="image/png" />
+        <link rel="icon" href="/avatar-professional.png" type="image/png" />
         <link rel="canonical" href={siteUrl} />
 
         <script

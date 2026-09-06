@@ -63,7 +63,7 @@ const fadeLeftVariants: Variants = {
 function Orb({ className }: { className: string }) {
   return (
     <div
-      className={`pointer-events-none absolute rounded-full opacity-20 blur-3xl animate-pulse ${className}`}
+      className={`pointer-events-none absolute animate-pulse rounded-full opacity-20 blur-3xl ${className}`}
     />
   );
 }
@@ -225,7 +225,7 @@ const About = () => {
             variants={fadeUpVariants}
             className="flex flex-wrap items-center gap-3"
           >
-            <DownloadResumeButton className="border-violet-500/50 bg-gradient text-white hover:text-white" />
+            {/* <DownloadResumeButton className="border-violet-500/50 bg-gradient text-white hover:text-white" /> */}
             <motion.button
               onClick={() =>
                 document
@@ -308,7 +308,7 @@ const About = () => {
               {/* Gradient ring */}
               <div className="rounded-full bg-gradient p-[3px] shadow-2xl shadow-violet-500/30">
                 <Image
-                  src="/avatar.png"
+                  src="/avatar-professional.png"
                   width={340}
                   height={340}
                   alt="avatar"

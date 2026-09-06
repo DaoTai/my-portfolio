@@ -68,21 +68,21 @@ export const techStack: ITech[] = [
   {
     imageUri: "/tanstack.png",
     name: "Tanstack Ecosystem",
-    category: "frontend",
+    category: "state",
     description:
       "Powerful headless toolkit covering data fetching (Query), tables (Table), and virtual scrolling (Virtual).",
   },
   {
     imageUri: "/redux.png",
     name: "Redux Ecosystem",
-    category: "frontend",
+    category: "state",
     description:
       "Predictable state container with Redux Toolkit for scalable, maintainable application state management.",
   },
   {
     imageUri: "/zustand.jpg",
     name: "Zustand",
-    category: "frontend",
+    category: "state",
     description:
       "Minimalist, high-performance global state library with a simple hook-based API for React.",
   },
@@ -110,21 +110,21 @@ export const techStack: ITech[] = [
   {
     imageUri: "/mongo-db.png",
     name: "MongoDB",
-    category: "backend",
+    category: "database",
     description:
       "NoSQL document database built for flexible schema design and high-volume read/write operations.",
   },
   {
     imageUri: "/postgresql.png",
     name: "PostgreSQL",
-    category: "backend",
+    category: "database",
     description:
       "Powerful open-source relational database with advanced SQL, JSONB support, and strong ACID compliance.",
   },
   {
     imageUri: "/redis.svg",
     name: "Redis",
-    category: "backend",
+    category: "database",
     description:
       "In-memory data store used for caching, session management, and real-time pub/sub messaging.",
   },
@@ -152,7 +152,7 @@ export const techStack: ITech[] = [
   {
     imageUri: "/docker.png",
     name: "Docker",
-    category: "tools",
+    category: "devops",
     description:
       "Container platform for packaging, shipping, and running apps consistently across any environment.",
   },
@@ -169,35 +169,35 @@ export const techStack: ITech[] = [
   {
     imageUri: "/ubuntu.png",
     name: "Ubuntu",
-    category: "tools",
+    category: "devops",
     description:
       "Linux distribution used for cloud server provisioning, deployment, and infrastructure management.",
   },
   {
     imageUri: "/aws-s3.png",
     name: "Amazon S3",
-    category: "tools",
+    category: "devops",
     description:
       "Scalable object storage for static files, media assets, and application data with high durability.",
   },
   {
     imageUri: "/aws-ec2.png",
     name: "Amazon EC2",
-    category: "tools",
+    category: "devops",
     description:
       "Cloud compute service for deploying, scaling, and managing virtual server infrastructure on AWS.",
   },
   {
     imageUri: "/aws-kms.png",
     name: "Amazon KMS",
-    category: "tools",
+    category: "devops",
     description:
       "Managed encryption key service for securing data at rest and in transit across AWS services.",
   },
   {
     imageUri: "/firebase.png",
     name: "Firebase",
-    category: "tools",
+    category: "devops",
     description:
       "Google's backend platform for real-time database, authentication, hosting, and serverless cloud functions.",
   },
@@ -211,6 +211,42 @@ export const techStack: ITech[] = [
 ];
 
 export const listProject: IProject[] = [
+  {
+    name: "NextVault",
+    role: "Frontend Developer",
+    summary:
+      "Tokenize. Fractionalize. Bid & Own. NextVault is a Web3 prestige-collecting platform where users bid on curated fractional allocations or claim sole custodianship of provenance-backed masterpieces and investment-grade real-world assets, spanning both user and admin applications.",
+    responsibilities: [
+      "Developed the user-facing and admin frontend applications for the tokenized asset marketplace using NextJS.",
+      "Built consignment creation flows allowing owners to submit real-world assets for tokenization and fractionalization.",
+      "Implemented auction and bidding interfaces supporting both fractional allocation bids and sole custodianship purchases.",
+      "Integrated Privy for embedded wallet creation, social/email login, and wallet-based authentication.",
+      "Built on-chain interaction flows via Privy for minting/buying NFTs to unlock bidding rights, placing bids in USDC on Base, and withdrawing funds.",
+      "Developed asset management dashboards covering owned allocations, consignment status, and transaction/bid history.",
+      "Implemented account features including linked email management and profile settings.",
+      "Collaborated on admin-side tooling for asset verification, auction oversight, and platform operations.",
+    ],
+    technicalHighlights: [
+      "Wallet and embedded-auth integration with Privy",
+      "On-chain bidding and payments in USDC on Base",
+      "Fractional ownership and consignment workflows",
+      "State management with Zustand & TanStack Query",
+      "Modern component architecture with shadcn/ui",
+      "Fluid UI animations with Motion",
+      "Real-world asset (RWA) tokenization platform",
+      "Separate user and admin application experiences",
+    ],
+    previewImages: [
+      "/project-images/next-vault/1.jpg",
+      "/project-images/next-vault/2.jpg",
+      "/project-images/next-vault/3.jpg",
+      "/project-images/next-vault/4.jpg",
+      "/project-images/next-vault/5.jpg",
+      "/project-images/next-vault/6.jpg",
+      "/project-images/next-vault/7.jpg",
+    ],
+    logo: "/project-images/next-vault/logo.png",
+  },
   {
     name: "Bullbit",
     role: "Full-stack Developer",

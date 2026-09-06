@@ -8,7 +8,13 @@ type INavigation = {
 type ITech = {
   imageUri: string;
   name: string;
-  category?: "frontend" | "backend" | "tools";
+  category?:
+    | "frontend"
+    | "state"
+    | "backend"
+    | "database"
+    | "devops"
+    | "tools";
   description?: string;
 };
 

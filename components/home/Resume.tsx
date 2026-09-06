@@ -27,13 +27,6 @@ const contacts = [
     icon: Linkedin,
     isSvg: true,
   },
-  {
-    href: "#",
-    label: "Location",
-    value: "Ha Noi City, Vietnam",
-    icon: MapPin,
-    isSvg: false,
-  },
 ];
 
 const containerVariants = {
@@ -127,7 +120,7 @@ const Resume = () => {
           </motion.div>
 
           {/* CTA Section */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -135,7 +128,6 @@ const Resume = () => {
             className="relative mb-12"
           >
             <div className="rounded-2xl border border-violet-500/30 bg-gradient-to-r from-violet-500/10 via-transparent to-indigo-500/10 p-8 backdrop-blur-xl">
-              {/* Animated border effect */}
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-violet-500 to-indigo-500 opacity-0 transition-opacity group-hover:opacity-10" />
 
               <div className="relative flex flex-col items-center gap-6">
@@ -157,7 +149,7 @@ const Resume = () => {
                 </motion.div>
               </div>
             </div>
-          </motion.div>
+          </motion.div> */}
         </div>
       </div>
     </section>
