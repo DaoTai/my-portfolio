@@ -23,7 +23,6 @@ const SIDES_MIN_WIDTH = 820;
 const NAV_BUTTON =
   "grid h-11 w-11 flex-none place-items-center rounded-full border border-pf-ink/[0.18] bg-pf-ink/[0.03] text-lg text-pf-text2 transition-[border-color,color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-pf-g2 hover:text-pf-text hover:shadow-[0_10px_30px_-10px_rgba(var(--glow3),0.8)]";
 
-/** Side cards lean back toward the center card, coverflow style. */
 const SIDE_TRANSFORM = {
   left: "origin-right [transform:rotateY(26deg)_translateZ(-70px)_scale(.94)] hover:[transform:rotateY(12deg)_translateZ(-30px)_scale(.97)]",
   right:
