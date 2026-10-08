@@ -1,21 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
+import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { BeamsBackground } from "@/components/common/BeamsBackground";
 import { siteConfig } from "@/lib/config";
 
-const jakarta = Plus_Jakarta_Sans({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-body",
-  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
-const grotesk = Space_Grotesk({
+const interTight = Inter_Tight({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -173,10 +170,9 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${jakarta.variable} ${grotesk.variable} bg-light bg-cover bg-center bg-repeat-y`}
+        className={`${inter.variable} ${interTight.variable}`}
       >
         <ThemeProvider>
-          <BeamsBackground intensity="strong" />
           {children}
         </ThemeProvider>
       </body>

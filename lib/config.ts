@@ -7,6 +7,7 @@ export const siteConfig = {
   description:
     "Full-stack JavaScript developer with 4+ years of experience building real-time systems, Web3 platforms, and modern web applications. Specializing in React, Next.js, Node.js, NestJS, and blockchain integrations across Solana, BNB Chain, and EVM ecosystems.",
   jobTitle: "Full-Stack JavaScript Developer",
+  email: "daotai.work@gmail.com",
   links: {
     github: "https://github.com/youngcrizzal",
     linkedin: "https://www.linkedin.com/in/dao-tai-61757325a/",

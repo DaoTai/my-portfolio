@@ -1,0 +1,722 @@
+/*
+ * Projects backdrop, "blueprint / build workspace". Everything sits behind the carousel at low
+ * contrast: a drafting grid, dimension lines + crosshairs that draw themselves in, CSS-3D
+ * wireframes (cube, torus, exploded browser windows) at different depths, a candlestick trace
+ * along the bottom and orbit rings around the carousel's centre line.
+ * Looping animations are transform / opacity only (compositor, no repaint); stroke-dashoffset is
+ * used just for the one-shot draw-in of the annotations. `.is-paused` (section off-screen) holds
+ * every animation, and since the draw-ins use fill-mode: both they wait at their first frame
+ * until the section scrolls in.
+ */
+
+#projects .pbg {
+  --pbg-ink: var(--glow);
+  --pbg-accent: var(--glow3);
+  --pbg-t1: var(--g3);
+  --pbg-t2: var(--g2);
+  --pbg-t3: var(--g1);
+  --pbg-area-a: 0.14;
+  --pbg-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 9%,
+    #000 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 9%,
+    #000 88%,
+    transparent 100%
+  );
+}
+
+html.light #projects .pbg {
+  --pbg-ink: var(--glow3);
+  --pbg-accent: 99, 102, 241;
+  --pbg-t1: #818cf8;
+  --pbg-t2: #6366f1;
+  --pbg-t3: #a1a1aa;
+  --pbg-area-a: 0.07;
+}
+
+.pbg.is-paused *,
+.pbg.is-paused *::before,
+.pbg.is-paused *::after {
+  animation-play-state: paused !important;
+}
+
+/* ---- grid + centre glow ---- */
+
+.pbg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(var(--pbg-ink), 0.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--pbg-ink), 0.075) 1px, transparent 1px),
+    linear-gradient(rgba(var(--pbg-ink), 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--pbg-ink), 0.035) 1px, transparent 1px);
+  background-size:
+    120px 120px,
+    120px 120px,
+    24px 24px,
+    24px 24px;
+  background-position: center 57%;
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 75% at 50% 50%,
+    #000 35%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 80% 75% at 50% 50%,
+    #000 35%,
+    transparent 100%
+  );
+}
+
+html.light .pbg-grid {
+  background-image:
+    linear-gradient(rgba(var(--pbg-ink), 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--pbg-ink), 0.08) 1px, transparent 1px),
+    linear-gradient(rgba(var(--pbg-ink), 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--pbg-ink), 0.035) 1px, transparent 1px);
+}
+
+.pbg-glow {
+  position: absolute;
+  left: 50%;
+  top: 57%;
+  width: min(1100px, 90%);
+  height: 70%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    closest-side,
+    rgba(var(--glow3), 0.16),
+    rgba(var(--glow2), 0.08) 55%,
+    transparent
+  );
+}
+
+html.light .pbg-glow {
+  background: radial-gradient(
+    closest-side,
+    rgba(var(--pbg-accent), 0.07),
+    transparent
+  );
+}
+
+/* ---- orbit rings around the carousel ---- */
+
+.pbg-orbits {
+  position: absolute;
+  left: 50%;
+  top: 57%;
+  width: 0;
+  height: 0;
+  perspective: 2400px;
+}
+
+.pbg-orbit,
+.pbg-orbit-sweep {
+  --size: 1000px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotateX(76deg);
+}
+
+.pbg-orbit--inner {
+  border: 1.5px solid rgba(var(--pbg-ink), 0.3);
+}
+
+.pbg-orbit--outer {
+  --size: 1380px;
+  border: 1px dashed rgba(var(--pbg-ink), 0.22);
+}
+
+/* A bright arc travelling around the inner ring. */
+.pbg-orbit-sweep {
+  --size: 1002px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 280deg,
+    rgba(var(--pbg-ink), 0.85) 350deg,
+    transparent 360deg
+  );
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2.5px),
+    #000 calc(100% - 2px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2.5px),
+    #000 calc(100% - 2px)
+  );
+  animation: pbg-orbit 18s linear infinite;
+}
+
+html.light .pbg-orbit-sweep {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 280deg,
+    rgba(var(--pbg-accent), 0.55) 350deg,
+    transparent 360deg
+  );
+}
+
+/* ---- blueprint annotations ---- */
+
+.pbg-blueprint {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.pbg-blueprint line,
+.pbg-blueprint circle {
+  fill: none;
+  stroke: rgba(var(--pbg-ink), 0.45);
+  stroke-width: 1;
+}
+
+/* pathLength="1" on the element, so a dash of 1 is the whole stroke. */
+.pbg-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: pbg-draw 1.6s var(--pbg-ease) var(--d, 0s) both;
+}
+
+.pbg-blueprint .pbg-draw--accent,
+.pbg-blueprint .pbg-fade--accent {
+  stroke: rgba(var(--pbg-accent), 0.7);
+}
+
+.pbg-fade,
+.pbg-label {
+  animation: pbg-fade 1.2s ease-out var(--d, 0s) both;
+}
+
+.pbg-blueprint .pbg-ext {
+  stroke: rgba(var(--pbg-ink), 0.25);
+  stroke-dasharray: 2 4;
+}
+
+.pbg-blueprint .pbg-axis {
+  stroke: rgba(var(--pbg-ink), 0.16);
+  stroke-dasharray: 22 6 3 6;
+}
+
+.pbg-blueprint .pbg-ruler {
+  stroke: rgba(var(--pbg-ink), 0.3);
+  stroke-width: 6;
+  stroke-dasharray: 1 11;
+}
+
+.pbg-blueprint .pbg-ruler--major {
+  stroke: rgba(var(--pbg-ink), 0.4);
+  stroke-width: 12;
+  stroke-dasharray: 1 59;
+}
+
+.pbg-label {
+  fill: rgba(var(--pbg-ink), 0.55);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  white-space: pre;
+}
+
+/* ---- chart along the bottom ---- */
+
+.pbg-chart {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4%;
+  height: 38%;
+  overflow: hidden;
+}
+
+.pbg-chart svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * The wipe: both boxes move by their own (equal) width in opposite directions with identical
+ * keyframes, so the content stays put while the clip edge sweeps across it. Draw 0–48%, hold,
+ * fade 86–100%, as the dash-drawn trace did.
+ */
+.pbg-reveal,
+.pbg-reveal-inner {
+  position: absolute;
+  inset: 0;
+}
+
+.pbg-reveal {
+  overflow: hidden;
+  animation: pbg-reveal 13s linear 0.4s infinite both;
+}
+
+.pbg-reveal-inner {
+  animation: pbg-reveal-inner 13s linear 0.4s infinite both;
+}
+
+/* Scan line riding the wipe's leading edge while it draws. */
+.pbg-reveal::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-right: 1px dashed rgba(var(--pbg-ink), 0.4);
+  opacity: 0;
+  animation: pbg-scan 13s linear 0.4s infinite both;
+}
+
+.pbg-candles {
+  opacity: 0.6;
+}
+
+.pbg-candle {
+  transform-box: fill-box;
+  animation: pbg-rise 0.9s var(--pbg-ease) calc(0.6s + var(--d, 0s)) both;
+}
+
+.pbg-candle line,
+.pbg-candle rect {
+  stroke: rgba(var(--pbg-ink), 0.45);
+  stroke-width: 1;
+  fill: rgba(var(--pbg-ink), 0.06);
+}
+
+.pbg-candle.is-up line,
+.pbg-candle.is-up rect {
+  stroke: var(--pbg-t1);
+  stroke-opacity: 0.6;
+  fill: var(--pbg-t1);
+  fill-opacity: 0.16;
+}
+
+.pbg-area {
+  fill: url(#pbg-area-grad);
+}
+
+.pbg-trace {
+  fill: none;
+  stroke: url(#pbg-trace-grad);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.85;
+}
+
+/* A wide, faint copy of the stroke stands in for a glow filter. */
+.pbg-trace--glow {
+  stroke-width: 7;
+  opacity: 0.14;
+}
+
+.pbg-last {
+  stroke: rgba(var(--pbg-accent), 0.4);
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+}
+
+/* ---- 3D wireframes ---- */
+
+.pbg-shape {
+  position: absolute;
+  perspective: 900px;
+  animation: pbg-drift var(--drift, 16s) ease-in-out infinite alternate;
+}
+
+.pbg-cube,
+.pbg-torus-tilt,
+.pbg-torus,
+.pbg-stack {
+  transform-style: preserve-3d;
+}
+
+.pbg-cube-pos {
+  --s: 110px;
+  --dx: 10px;
+  --dy: -18px;
+  left: 4%;
+  bottom: 4%;
+  opacity: 0.85;
+}
+
+/* Small, dim and slow: reads as far behind. */
+.pbg-cube-pos--far {
+  --s: 42px;
+  --dx: -8px;
+  --dy: 10px;
+  --drift: 11s;
+  --spin: 22s;
+  left: 41%;
+  top: 7%;
+  bottom: auto;
+  opacity: 0.45;
+}
+
+.pbg-cube {
+  --h: calc(var(--s) / 2);
+  position: relative;
+  width: var(--s);
+  height: var(--s);
+  animation: pbg-cube var(--spin, 30s) linear infinite;
+}
+
+.pbg-cube--inner {
+  --h: calc(var(--s) / 4);
+  position: absolute;
+  inset: 25%;
+  width: auto;
+  height: auto;
+  animation: pbg-tumble 19s linear infinite;
+}
+
+.pbg-face {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(var(--pbg-ink), 0.45);
+  background: rgba(var(--pbg-accent), 0.025);
+}
+
+.pbg-cube--inner .pbg-face {
+  border-color: rgba(var(--pbg-accent), 0.6);
+  background: none;
+}
+
+.pbg-face--front {
+  transform: translateZ(var(--h));
+}
+.pbg-face--back {
+  transform: rotateY(180deg) translateZ(var(--h));
+}
+.pbg-face--right {
+  transform: rotateY(90deg) translateZ(var(--h));
+}
+.pbg-face--left {
+  transform: rotateY(-90deg) translateZ(var(--h));
+}
+.pbg-face--top {
+  transform: rotateX(90deg) translateZ(var(--h));
+}
+.pbg-face--bottom {
+  transform: rotateX(-90deg) translateZ(var(--h));
+}
+
+/* Torus, partly off the top-right corner. */
+.pbg-torus-pos {
+  --R: 80px;
+  --r: 46px;
+  --dx: -14px;
+  --dy: 12px;
+  --drift: 20s;
+  right: -20px;
+  top: -30px;
+  width: 300px;
+  height: 300px;
+  opacity: 0.7;
+}
+
+.pbg-torus-tilt {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(-58deg) rotateZ(-16deg);
+}
+
+.pbg-torus {
+  position: absolute;
+  inset: 0;
+  animation: pbg-turn 36s linear infinite;
+}
+
+.pbg-torus-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--r) * 2);
+  height: calc(var(--r) * 2);
+  margin: calc(var(--r) * -1);
+  border-radius: 50%;
+  border: 1px solid rgba(var(--pbg-ink), 0.28);
+  transform: rotateY(var(--a)) translateX(var(--R));
+}
+
+.pbg-torus-ring:nth-child(odd) {
+  border-color: rgba(var(--pbg-accent), 0.5);
+}
+
+/* Exploded browser windows, bottom-right. */
+.pbg-stack-pos {
+  --dx: -10px;
+  --dy: -14px;
+  --drift: 18s;
+  right: 4%;
+  bottom: 2%;
+  width: 220px;
+  height: 140px;
+}
+
+.pbg-stack {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(58deg) rotateZ(-38deg);
+}
+
+.pbg-window {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  border: 1px solid rgba(var(--pbg-ink), 0.5);
+  background: rgba(var(--pbg-accent), 0.04);
+  opacity: calc(0.4 + var(--k) * 0.25);
+  transform: translateZ(calc(var(--k) * 30px));
+  animation: pbg-lift 7s ease-in-out infinite alternate;
+}
+
+.pbg-window-bar {
+  display: flex;
+  gap: 4px;
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(var(--pbg-ink), 0.3);
+}
+
+.pbg-window-bar i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--pbg-ink), 0.6);
+}
+
+.pbg-window-body {
+  position: relative;
+  flex: 1;
+}
+
+.pbg-skel {
+  position: absolute;
+  border-radius: 3px;
+  border: 1px solid rgba(var(--pbg-ink), 0.35);
+}
+
+.pbg-skel--side {
+  left: 8px;
+  top: 8px;
+  bottom: 8px;
+  width: 34px;
+}
+
+.pbg-skel--a {
+  left: 50px;
+  top: 8px;
+  width: 90px;
+  height: 7px;
+}
+
+.pbg-skel--b {
+  left: 50px;
+  top: 21px;
+  width: 60px;
+  height: 7px;
+}
+
+.pbg-window-spark {
+  position: absolute;
+  left: 50px;
+  right: 10px;
+  bottom: 8px;
+  height: 40px;
+}
+
+.pbg-window-spark polyline {
+  fill: none;
+  stroke: var(--pbg-t1);
+  stroke-opacity: 0.8;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+/* ---- small screens: keep grid, orbits, chart trace and corner marks ---- */
+
+@media (max-width: 767px) {
+  .pbg-hide-sm,
+  .pbg-candles,
+  .pbg-cube-pos,
+  .pbg-stack-pos,
+  .pbg-blueprint .pbg-label {
+    display: none;
+  }
+
+  .pbg-torus-pos {
+    right: -90px;
+    top: -60px;
+    scale: 0.7;
+  }
+
+  .pbg-orbit,
+  .pbg-orbit-sweep {
+    --size: 560px;
+  }
+
+  .pbg-orbit--outer {
+    --size: 780px;
+  }
+
+  .pbg-orbit-sweep {
+    --size: 562px;
+  }
+
+  .pbg-chart {
+    height: 28%;
+  }
+}
+
+/* ---- keyframes ---- */
+
+@keyframes pbg-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes pbg-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pbg-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* Draw left → right, hold, fade, restart: the scan line leads the pen. */
+@keyframes pbg-reveal {
+  0% {
+    translate: -100% 0;
+    opacity: 1;
+  }
+  48%,
+  86% {
+    translate: 0 0;
+    opacity: 1;
+  }
+  100% {
+    translate: 0 0;
+    opacity: 0;
+  }
+}
+
+@keyframes pbg-reveal-inner {
+  0% {
+    translate: 100% 0;
+  }
+  48%,
+  100% {
+    translate: 0 0;
+  }
+}
+
+@keyframes pbg-scan {
+  0% {
+    opacity: 0;
+  }
+  4%,
+  44% {
+    opacity: 1;
+  }
+  48%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes pbg-orbit {
+  to {
+    transform: translate(-50%, -50%) rotateX(76deg) rotateZ(360deg);
+  }
+}
+
+@keyframes pbg-drift {
+  to {
+    translate: var(--dx, 0) var(--dy, 0);
+  }
+}
+
+@keyframes pbg-cube {
+  from {
+    transform: rotateX(-24deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-24deg) rotateY(360deg);
+  }
+}
+
+@keyframes pbg-tumble {
+  from {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(360deg) rotateY(-360deg);
+  }
+}
+
+@keyframes pbg-turn {
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+@keyframes pbg-lift {
+  to {
+    transform: translateZ(calc(var(--k) * 46px));
+  }
+}
+
+/* ---- reduced motion: the finished drawing, standing still ---- */
+
+@media (prefers-reduced-motion: reduce) {
+  .pbg *,
+  .pbg *::before,
+  .pbg *::after {
+    animation: none !important;
+  }
+
+  .pbg-cube {
+    transform: rotateX(-24deg) rotateY(36deg);
+  }
+
+  .pbg-cube--inner {
+    transform: rotateX(30deg) rotateY(-20deg);
+  }
+
+  .pbg-torus {
+    transform: rotateY(10deg);
+  }
+
+  .pbg-orbit-sweep {
+    transform: translate(-50%, -50%) rotateX(76deg) rotateZ(200deg);
+  }
+
+  .pbg-reveal::after {
+    display: none;
+  }
+}

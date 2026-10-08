@@ -84,7 +84,13 @@
     @apply cursor-pointer rounded-full bg-gradient;
   }
 
+  html.light *::-webkit-scrollbar-thumb {
+    background-image: linear-gradient(180deg, #85868e, #d4d4d8);
+  }
+
   html {
+    /* The design was authored without a CSS reset; keep the browser's default line height */
+    line-height: normal;
     scroll-behavior: smooth;
     transition:
       background-color 0.4s ease,
@@ -92,8 +98,13 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    background: var(--bg);
+    color: var(--text2);
     font-family: var(--font-body), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transition:
+      background-color 0.3s,
+      color 0.3s;
   }
 
   h1,
@@ -174,9 +185,110 @@
     @apply border border-white/10 bg-background/60 backdrop-blur-md;
   }
 
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
   .glow-violet {
     box-shadow:
       0 0 0 1px rgba(139, 92, 246, 0.3),
       0 0 24px rgba(99, 102, 241, 0.15);
+  }
+}
+
+/*
+ * Portfolio design tokens (ported from Portfolio.dc.html).
+ * Dark is the default; next-themes puts `.light` on <html> for the light theme.
+ * RGB triplets (--ink, --base, --glow…) are comma-separated so they work in rgba(var(--x), a)
+ * and through the `pf-*` Tailwind colors with an opacity modifier.
+ * --accent-c is the design's `--accent` (renamed: shadcn already owns --accent).
+ */
+:root {
+  --bg: #05070d;
+  --bg2: #060910;
+  --bg3: #0a0e19;
+  --bg4: #0c1020;
+  --tilebg: #0e121e;
+  --text: #fff;
+  --text2: #e8eaf2;
+  --t3: #cfd3e2;
+  --t4: #aeb3c6;
+  --t5: #b4b9cb;
+  --t6: #9aa0b4;
+  --t7: #8a90a6;
+  --chip: #c8caff;
+  --link: #a9adff;
+  --tile: #b9bcff;
+  --accent-c: #9b9fff;
+  --g1: #c3b1ff;
+  --g2: #9fb0ff;
+  --g3: #6fdcff;
+  --ink: 255, 255, 255;
+  --base: 5, 7, 13;
+  --base2: 7, 10, 18;
+  --invhover: #dfe1ff;
+  --hero-img: url("/bg/hero-dark.png");
+  --glow: 160, 180, 255;
+  --glow2: 60, 70, 140;
+  --glow3: 110, 116, 255;
+  --pop-glow: 143, 147, 255;
+  --dot-glow: 125, 170, 255;
+  --icon-hover: rgba(103, 232, 249, 0.5);
+}
+
+html.light {
+  --bg: #fafafa;
+  --bg2: #f4f4f5;
+  --bg3: #ffffff;
+  --bg4: #e4e4e7;
+  --tilebg: #f4f4f5;
+  --text: #09090b;
+  --text2: #18181b;
+  --t3: #3f3f46;
+  --t4: #52525b;
+  --t5: #52525b;
+  --t6: #5d5d66;
+  --t7: #66666f;
+  --chip: #27272a;
+  --link: #18181b;
+  --tile: #3f3f46;
+  --accent-c: #3f3f46;
+  --g1: #5f6068;
+  --g2: #85868e;
+  --g3: #a8a9b0;
+  --ink: 9, 9, 11;
+  --base: 250, 250, 250;
+  --base2: 255, 255, 255;
+  --invhover: #27272a;
+  --hero-img: url("/bg/hero-light.png");
+  --glow: 161, 161, 170;
+  --glow2: 228, 228, 231;
+  --glow3: 82, 82, 91;
+  --pop-glow: 161, 161, 170;
+  --dot-glow: 161, 161, 170;
+  --icon-hover: rgba(24, 24, 27, 0.4);
+}
+
+@keyframes dcFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dcPop {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }

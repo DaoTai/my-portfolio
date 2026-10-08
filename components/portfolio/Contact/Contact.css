@@ -1,0 +1,492 @@
+/*
+ * Contact "signal" background. A radar dish lies in perspective near the bottom (rotateX), its
+ * beam sweeping and pinging contacts that stand up out of the plane; a wireframe globe turns at
+ * the right edge with packets riding arcs between points on it. Only transform / translate /
+ * rotate and opacity animate, on HTML boxes, so everything runs on the compositor and the SVG
+ * tracks paint once and never again while the scene runs. Each scene has its own perspective so the masked wrapper (which
+ * flattens) sits above the 3D contexts, not inside them.
+ */
+
+#contact {
+  --cb-line: rgba(var(--glow), 0.34);
+  --cb-line-soft: rgba(var(--glow), 0.17);
+  --cb-accent: var(--g3);
+  --cb-accent2: var(--g1);
+  --cb-beam: rgba(var(--glow3), 0.4);
+  --cb-edge: rgba(var(--glow), 0.75);
+  --cb-halo: rgba(var(--glow3), 0.2);
+}
+
+html.light #contact {
+  --cb-line: rgba(var(--glow3), 0.24);
+  --cb-line-soft: rgba(var(--glow3), 0.12);
+  --cb-accent: var(--g1);
+  --cb-accent2: var(--g2);
+  --cb-beam: rgba(var(--glow3), 0.13);
+  --cb-edge: rgba(var(--glow3), 0.42);
+  --cb-halo: rgba(var(--glow), 0.22);
+}
+
+.contact-bg {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 28%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 28%);
+}
+
+/* !important: each element's own `animation` shorthand would otherwise reset the play state. */
+.contact-bg--paused *,
+.contact-bg--paused *::before,
+.contact-bg--paused *::after {
+  animation-play-state: paused !important;
+}
+
+/* ---- radar dish ---- */
+
+.contact-radar {
+  position: absolute;
+  left: 34%;
+  top: 90%;
+  width: 960px;
+  height: 960px;
+  translate: -50% -50%;
+  perspective: 1100px;
+}
+
+.contact-dish {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(70deg);
+}
+
+.contact-dish > * {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+
+.contact-dish-glow {
+  width: 100%;
+  height: 100%;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--cb-halo) 0%,
+    rgba(var(--glow2), 0.08) 32%,
+    transparent 62%
+  );
+}
+
+.contact-ring {
+  width: var(--d);
+  height: var(--d);
+  translate: -50% -50%;
+  border-radius: 50%;
+  border: 1px solid var(--cb-line);
+}
+
+.contact-ring--outer {
+  border-style: dashed;
+  border-color: var(--cb-line-soft);
+}
+
+.contact-spoke {
+  width: 100%;
+  height: 1px;
+  translate: -50% -50%;
+  rotate: var(--a);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--cb-line-soft) 18%,
+    var(--cb-line) 50%,
+    var(--cb-line-soft) 82%,
+    transparent
+  );
+}
+
+.contact-links {
+  width: 100%;
+  height: 100%;
+  translate: -50% -50%;
+  overflow: visible;
+}
+
+.contact-link {
+  fill: none;
+  stroke: var(--cb-line);
+  stroke-width: 0.22;
+  stroke-dasharray: 0.8 1.4;
+}
+
+/*
+ * A clipping strip laid along one link (rotated about the dish centre). Its packet, 7% of the
+ * link long, starts hidden before the centre, slides out to the contact and on past the end,
+ * where the strip clips it. Pure translate, so it never repaints the dish.
+ */
+.contact-packet {
+  width: var(--len);
+  height: 4px;
+  margin-top: -2px;
+  overflow: hidden;
+  transform-origin: 0 50%;
+  rotate: var(--a);
+}
+
+.contact-packet::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: calc(var(--len) * 0.07);
+  height: 2.6px;
+  margin-top: -1.3px;
+  border-radius: 2px;
+  background: var(--cb-accent);
+  translate: -100% 0;
+  animation: contact-link 6.6s cubic-bezier(0.45, 0, 0.3, 1) var(--pd, 0s)
+    infinite;
+}
+
+/* Bright leading edge with a fading tail behind it (clockwise from the far edge). */
+.contact-sweep {
+  width: 100%;
+  height: 100%;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 284deg,
+    var(--cb-beam) 352deg,
+    var(--cb-edge) 359.4deg,
+    transparent 360deg
+  );
+  -webkit-mask-image: radial-gradient(circle, #000 30%, transparent 71%);
+  mask-image: radial-gradient(circle, #000 30%, transparent 71%);
+  transform: rotate(40deg);
+  animation: contact-sweep 9s linear infinite;
+}
+
+.contact-pulse {
+  width: 100%;
+  height: 100%;
+  translate: -50% -50%;
+  border-radius: 50%;
+  border: 2px solid var(--cb-accent);
+  opacity: 0.22;
+  transform: scale(var(--ps, 0.5));
+  animation: contact-pulse 6s cubic-bezier(0.2, 0.6, 0.35, 1) var(--pd, 0s)
+    infinite;
+}
+
+/* Ripple on the plane where the beam crosses a contact. */
+.contact-blip {
+  width: 38px;
+  height: 38px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  border: 1px solid var(--cb-accent);
+  opacity: 0.28;
+  animation: contact-blip 9s ease-out var(--pd, 0s) infinite;
+}
+
+/* A mast standing up out of the dish (rotated about its foot), with a light on top. */
+.contact-pin {
+  width: 1px;
+  height: var(--h, 40px);
+  translate: -50% -100%;
+  transform-origin: 50% 100%;
+  transform: rotateX(-90deg);
+  background: linear-gradient(to top, transparent, var(--cb-accent));
+  opacity: 0.5;
+  animation: contact-ping 9s ease-out var(--pd, 0s) infinite;
+}
+
+.contact-pin::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--cb-accent2);
+  box-shadow:
+    0 0 8px var(--cb-accent),
+    0 0 18px rgba(var(--glow3), 0.6);
+}
+
+.contact-pin--mast {
+  --h: 92px;
+  width: 1.5px;
+  animation-duration: 2s;
+  animation-delay: 0s;
+}
+
+.contact-pin--mast::after {
+  width: 7px;
+  height: 7px;
+  background: var(--cb-accent);
+}
+
+.contact-beacon {
+  width: 14px;
+  height: 14px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--cb-accent);
+  box-shadow:
+    0 0 0 5px rgba(var(--glow3), 0.18),
+    0 0 26px var(--cb-accent);
+}
+
+/* ---- wireframe globe ---- */
+
+.contact-globe {
+  position: absolute;
+  right: -170px;
+  top: 50%;
+  width: 400px;
+  height: 400px;
+  translate: 0 -50%;
+  perspective: 1200px;
+}
+
+.contact-globe-halo {
+  position: absolute;
+  inset: -30%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--cb-halo) 0%,
+    rgba(var(--glow2), 0.1) 36%,
+    transparent 66%
+  );
+}
+
+/* The sphere's silhouette is always a circle facing the viewer, so it lives outside the spin. */
+.contact-globe-rim {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--cb-line);
+  box-shadow:
+    inset 0 0 50px rgba(var(--glow3), 0.16),
+    0 0 40px rgba(var(--glow3), 0.12);
+}
+
+.contact-globe-tilt,
+.contact-globe-spin {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.contact-globe-tilt {
+  transform: rotateZ(-20deg) rotateX(-16deg);
+}
+
+.contact-globe-spin {
+  transform: rotateY(-40deg);
+  animation: contact-spin 60s linear infinite;
+}
+
+.contact-globe-spin > * {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+
+.contact-meridian {
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  border: 1px solid var(--cb-line-soft);
+  transform: translate(-50%, -50%) rotateY(var(--a));
+}
+
+/* Flattened into the horizontal plane, then lifted to its latitude. */
+.contact-latitude {
+  width: var(--d);
+  height: var(--d);
+  border-radius: 50%;
+  border: 1px solid var(--cb-line-soft);
+  transform: translate(-50%, -50%) translateY(var(--y)) rotateX(90deg);
+}
+
+.contact-latitude--equator {
+  border-color: var(--cb-line);
+}
+
+/* A great-circle plane (3 × radius square) holding one arc. */
+.contact-arc {
+  width: 600px;
+  height: 600px;
+  overflow: visible;
+  transform: translate(-50%, -50%) rotateY(var(--ry)) rotateX(var(--rx));
+}
+
+.contact-arc-track {
+  fill: none;
+  stroke: var(--cb-line);
+  stroke-width: 0.6;
+  stroke-dasharray: 1.6 2.8;
+}
+
+/*
+ * A zero-size pivot at the arc's centre, rotated from one end of the arc to the other; the packet
+ * sits on the rim (--r out), head first along the tangent. Rotation and fade both run on the
+ * compositor. The eased trip and the linear fade are separate animations so the easing spans
+ * the whole trip.
+ */
+.contact-arc-packet {
+  position: absolute;
+  width: 0;
+  height: 0;
+  rotate: var(--a0);
+  animation: contact-arc 5.2s cubic-bezier(0.45, 0, 0.3, 1) var(--pd, 0s)
+    infinite;
+}
+
+.contact-arc-packet::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--r) - 1.4px);
+  top: -34px;
+  width: 2.8px;
+  height: 34px;
+  border-radius: 2px;
+  background: linear-gradient(transparent, var(--cb-accent));
+  opacity: 0;
+  animation: contact-arc-fade 5.2s linear var(--pd, 0s) infinite;
+}
+
+.contact-arc-node {
+  fill: var(--cb-accent2);
+}
+
+/* ---- small screens: one arc, no links or ripples, everything scaled down ---- */
+
+@media (max-width: 767px) {
+  .contact-radar {
+    left: 50%;
+    top: 95%;
+    scale: 0.6;
+  }
+
+  .contact-globe {
+    right: -190px;
+    top: 10%;
+    translate: 0 0;
+    scale: 0.6;
+    opacity: 0.75;
+  }
+
+  .contact-links,
+  .contact-packet,
+  .contact-blip,
+  .contact-arc--extra {
+    display: none;
+  }
+}
+
+/* ---- keyframes ---- */
+
+@keyframes contact-sweep {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes contact-pulse {
+  0% {
+    transform: scale(0.04);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes contact-blip {
+  0% {
+    transform: scale(0.2);
+    opacity: 0.9;
+  }
+  32%,
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes contact-ping {
+  0% {
+    opacity: 1;
+  }
+  45%,
+  100% {
+    opacity: 0.32;
+  }
+}
+
+@keyframes contact-link {
+  0% {
+    translate: -100% 0;
+  }
+  55%,
+  100% {
+    translate: var(--len) 0;
+  }
+}
+
+/* The head crosses the arc by ~55% of the cycle; the tail is faded out by 62%. */
+@keyframes contact-arc {
+  0% {
+    rotate: var(--a0);
+  }
+  55%,
+  100% {
+    rotate: var(--a1);
+  }
+}
+
+@keyframes contact-arc-fade {
+  0% {
+    opacity: 0;
+  }
+  5%,
+  50% {
+    opacity: 1;
+  }
+  62%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes contact-spin {
+  from {
+    transform: rotateY(-40deg);
+  }
+  to {
+    transform: rotateY(320deg);
+  }
+}
+
+/* Static composition: sweep parked, pulses frozen at staggered radii, packets mid-flight. */
+@media (prefers-reduced-motion: reduce) {
+  .contact-bg *,
+  .contact-bg *::before,
+  .contact-bg *::after {
+    animation: none !important;
+  }
+}

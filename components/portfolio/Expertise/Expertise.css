@@ -1,0 +1,599 @@
+/*
+ * Expertise backdrop: constellation (SVG), isometric layer stack and wireframe globe (CSS 3D).
+ * Only transform / translate / rotate / opacity animate, all on HTML or <svg> boxes, so every
+ * animation runs on the compositor and nothing repaints. The whole layer pauses off-screen
+ * (.exp-bg--paused) and is static under prefers-reduced-motion.
+ */
+
+#about {
+  --exp-line: var(--glow);
+  --exp-accent: var(--glow3);
+}
+
+/* Soft grey lines with a muted indigo accent on the light theme. */
+html.light #about {
+  --exp-line: var(--glow3);
+  --exp-accent: 99, 102, 170;
+}
+
+.exp-bg {
+  /* The constellation sizes itself from this box (cqw / cqh). */
+  container-type: size;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 72px,
+    #000 calc(100% - 96px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 72px,
+    #000 calc(100% - 96px),
+    transparent 100%
+  );
+}
+
+.exp-bg--paused *,
+.exp-bg--paused *::after {
+  animation-play-state: paused !important;
+}
+
+/* ---- constellation ---- */
+
+/*
+ * Covers the section like preserveAspectRatio="xMidYMid slice": --k is px per drawing unit, the
+ * larger of the two fits. The SVG and its HTML overlays both use it, so they stay aligned.
+ */
+.exp-net {
+  --k: calc(max(100cqw, 100cqh * var(--nw) / var(--nh)) / var(--nw));
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--nw) * var(--k));
+  height: calc(var(--nh) * var(--k));
+  translate: -50% -50%;
+}
+
+.exp-net > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.exp-edge {
+  stroke: rgb(var(--exp-line));
+  stroke-opacity: 0.3;
+  stroke-width: 1;
+}
+
+.exp-edge--dash {
+  stroke-dasharray: 3 7;
+  stroke-opacity: 0.22;
+}
+
+/*
+ * A short bar whose head sits on the edge's start node (rotated about it), slid to the end node
+ * with translate. The head crosses the edge in the first half of the cycle, then rests.
+ */
+.exp-pulse {
+  position: absolute;
+  left: calc(var(--x) * var(--k));
+  top: calc(var(--y) * var(--k));
+  width: calc(var(--len) * var(--k));
+  height: 1.6px;
+  margin: -0.8px 0 0 calc(var(--len) * var(--k) * -1);
+  border-radius: 1px;
+  background: linear-gradient(90deg, transparent, var(--g3));
+  transform-origin: 100% 50%;
+  rotate: var(--ang);
+  opacity: 0;
+  animation: exp-pulse var(--pd, 5s) linear var(--pdl, 0s) infinite;
+}
+
+html.light #about .exp-pulse {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--exp-accent), 0.7)
+  );
+}
+
+.exp-node {
+  fill: rgb(var(--exp-line));
+  fill-opacity: 0.75;
+}
+
+.exp-halo {
+  fill: rgb(var(--exp-accent));
+  fill-opacity: 0.16;
+}
+
+/* Same 7-unit halo as the SVG ones, as HTML so its opacity runs on the compositor. */
+.exp-twinkle {
+  position: absolute;
+  left: calc(var(--x) * var(--k));
+  top: calc(var(--y) * var(--k));
+  width: calc(14 * var(--k));
+  height: calc(14 * var(--k));
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: rgba(var(--exp-accent), 0.16);
+  animation: exp-twinkle 4.8s ease-in-out var(--tdl, 0s) infinite;
+}
+
+@media (max-width: 767px) {
+  .exp-edge {
+    stroke-opacity: 0.2;
+  }
+  .exp-edge--dash {
+    stroke-opacity: 0.14;
+  }
+}
+
+/* ---- isometric layer stack ---- */
+
+.exp-stack-wrap {
+  position: absolute;
+  top: -40px;
+  right: -96px;
+  width: 320px;
+  height: 320px;
+  perspective: 1100px;
+  scale: 0.62;
+  opacity: 0.55;
+}
+
+@media (min-width: 768px) {
+  .exp-stack-wrap {
+    top: -16px;
+    right: -40px;
+    scale: 0.82;
+    opacity: 1;
+  }
+}
+
+/* Two-column header: sit in the gap between the intro copy and the profile card. */
+@media (min-width: 1200px) {
+  .exp-stack-wrap {
+    top: -20px;
+    right: auto;
+    left: calc(50% - 210px);
+    scale: 1;
+  }
+}
+
+.exp-stack-float,
+.exp-stack {
+  transform-style: preserve-3d;
+}
+
+.exp-stack-float {
+  position: absolute;
+  inset: 0;
+  animation: exp-bob 9s ease-in-out infinite;
+}
+
+/* Planes sit at z = 0 / 56 / 112; the stack is pulled back by half so it stays centred. */
+.exp-stack {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 180px;
+  height: 180px;
+  margin: -90px 0 0 -90px;
+  transform: rotateX(60deg) rotateZ(-45deg) translateZ(-56px);
+  animation: exp-turn 22s ease-in-out infinite alternate;
+}
+
+.exp-stack-glow {
+  position: absolute;
+  inset: -45%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(var(--exp-accent), 0.32),
+    rgba(var(--exp-accent), 0.08) 55%,
+    transparent
+  );
+  translate: 0 0 -30px;
+  animation: exp-breathe 7s ease-in-out infinite;
+}
+
+.exp-plane {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(var(--exp-line), 0.42);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--exp-accent), 0.2),
+    rgba(var(--exp-line), 0.04) 70%
+  );
+  box-shadow:
+    inset 0 0 28px rgba(var(--exp-accent), 0.14),
+    0 0 36px -12px rgba(var(--exp-accent), 0.5);
+  translate: 0 0 var(--z, 0px);
+  animation: exp-plane-float 7s ease-in-out var(--fd, 0s) infinite;
+}
+
+.exp-plane--fe {
+  border-color: rgba(var(--exp-line), 0.6);
+}
+
+/* Light sweep across the top layer. */
+.exp-plane--fe::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--exp-line), 0.22),
+    transparent
+  );
+  translate: -120% 0;
+  animation: exp-scan 6.5s ease-in-out 1s infinite;
+}
+
+html.light #about .exp-plane {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.75),
+    rgba(var(--exp-accent), 0.06) 70%
+  );
+  border-color: rgba(var(--exp-line), 0.32);
+  box-shadow:
+    inset 0 0 24px rgba(var(--exp-accent), 0.06),
+    0 10px 30px -14px rgba(var(--exp-line), 0.35);
+}
+
+html.light #about .exp-plane--fe {
+  border-color: rgba(var(--exp-line), 0.45);
+}
+
+.exp-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: rgb(var(--exp-line));
+  stroke-opacity: 0.55;
+  stroke-width: 1;
+}
+
+.exp-fill {
+  fill: rgb(var(--exp-line));
+  fill-opacity: 0.12;
+}
+
+.exp-fill-strong {
+  fill: rgb(var(--exp-line));
+  fill-opacity: 0.35;
+  stroke: none;
+}
+
+.exp-dashed {
+  stroke-dasharray: 3 5;
+  stroke-opacity: 0.4;
+}
+
+.exp-hex {
+  fill: rgb(var(--exp-accent));
+  fill-opacity: 0.08;
+}
+
+.exp-hex-live {
+  stroke: var(--g3);
+  stroke-opacity: 0.85;
+  animation: exp-blink 3.2s ease-in-out infinite;
+}
+
+html.light #about .exp-hex-live {
+  stroke: rgb(var(--exp-accent));
+}
+
+.exp-label {
+  fill: rgb(var(--exp-line));
+  fill-opacity: 0.6;
+  stroke: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+}
+
+/* Corner rails between the layers: rotated up out of the base plane along +Z. */
+.exp-pillar {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 1px;
+  height: 112px;
+  transform-origin: 50% 0;
+  transform: rotateX(90deg);
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--exp-line), 0.45),
+    rgba(var(--exp-line), 0.12) 50%,
+    rgba(var(--exp-line), 0.45)
+  );
+}
+
+/* Data packets travelling between the layers. */
+.exp-packet {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--g3);
+  box-shadow: 0 0 10px var(--g3);
+  opacity: 0;
+  animation: exp-packet 5.2s ease-in-out var(--pkd, 0s) infinite;
+}
+
+.exp-packet--down {
+  background: var(--g1);
+  box-shadow: 0 0 10px var(--g1);
+  animation-direction: reverse;
+}
+
+html.light #about .exp-packet {
+  background: rgb(var(--exp-accent));
+  box-shadow: 0 0 6px rgba(var(--exp-accent), 0.6);
+}
+
+/* ---- wireframe globe ---- */
+
+.exp-globe-wrap {
+  position: absolute;
+  right: max(-150px, calc(50% - 780px));
+  bottom: -150px;
+  display: none;
+  width: 360px;
+  height: 360px;
+  perspective: 1200px;
+}
+
+@media (min-width: 768px) {
+  .exp-globe-wrap {
+    display: block;
+  }
+}
+
+.exp-globe-core {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 40% 38%,
+    rgba(var(--exp-accent), 0.16),
+    rgba(var(--exp-accent), 0.04) 55%,
+    transparent 70%
+  );
+}
+
+.exp-globe,
+.exp-globe-spin,
+.exp-globe-orbit,
+.exp-globe-orbit-spin {
+  transform-style: preserve-3d;
+}
+
+.exp-globe {
+  --R: 150px;
+  position: absolute;
+  inset: 0;
+  transform: rotateX(-16deg) rotateZ(18deg);
+}
+
+.exp-globe-spin {
+  position: absolute;
+  inset: 0;
+  animation: exp-globe-spin 60s linear infinite;
+}
+
+.exp-globe-ring,
+.exp-globe-lat,
+.exp-globe-node,
+.exp-globe-orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+}
+
+.exp-globe-ring {
+  width: calc(var(--R) * 2);
+  height: calc(var(--R) * 2);
+  border: 1px solid rgba(var(--exp-line), 0.26);
+  transform: translate(-50%, -50%) rotateY(var(--a));
+}
+
+.exp-globe-lat {
+  width: calc(var(--R) * 2 * var(--d));
+  height: calc(var(--R) * 2 * var(--d));
+  border: 1px solid rgba(var(--exp-line), 0.18);
+  transform: translate(-50%, -50%) translateY(calc(var(--R) * var(--y)))
+    rotateX(90deg);
+}
+
+.exp-globe-lat--eq {
+  border-color: rgba(var(--exp-line), 0.38);
+}
+
+.exp-globe-node {
+  width: 5px;
+  height: 5px;
+  background: rgb(var(--exp-line));
+  box-shadow: 0 0 8px rgba(var(--exp-accent), 0.8);
+  transform: translate(-50%, -50%) rotateY(var(--lon)) rotateX(var(--lat))
+    translateZ(var(--R));
+}
+
+.exp-globe-orbit {
+  width: calc(var(--R) * 2.5);
+  height: calc(var(--R) * 2.5);
+  border: 1px dashed rgba(var(--exp-line), 0.2);
+  transform: translate(-50%, -50%) rotateX(74deg) rotateY(-12deg);
+}
+
+.exp-globe-orbit-spin {
+  position: absolute;
+  inset: 0;
+  animation: exp-orbit 16s linear infinite;
+}
+
+.exp-globe-sat {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: var(--g3);
+  box-shadow: 0 0 12px var(--g3);
+}
+
+html.light #about .exp-globe-sat {
+  background: rgb(var(--exp-accent));
+  box-shadow: 0 0 8px rgba(var(--exp-accent), 0.5);
+}
+
+/* ---- keyframes ---- */
+
+@keyframes exp-pulse {
+  0% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  5%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    translate: calc(var(--dx) * var(--k)) calc(var(--dy) * var(--k));
+    opacity: 0;
+  }
+}
+
+@keyframes exp-twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes exp-bob {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -10px;
+  }
+}
+
+@keyframes exp-turn {
+  from {
+    transform: rotateX(60deg) rotateZ(-58deg) translateZ(-56px);
+  }
+  to {
+    transform: rotateX(60deg) rotateZ(-32deg) translateZ(-56px);
+  }
+}
+
+@keyframes exp-plane-float {
+  0%,
+  100% {
+    translate: 0 0 var(--z, 0px);
+  }
+  50% {
+    translate: 0 0 calc(var(--z, 0px) + 7px);
+  }
+}
+
+@keyframes exp-breathe {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes exp-scan {
+  0%,
+  15% {
+    translate: -120% 0;
+  }
+  65%,
+  100% {
+    translate: 260% 0;
+  }
+}
+
+@keyframes exp-blink {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes exp-packet {
+  0% {
+    translate: 0 0 0;
+    opacity: 0;
+  }
+  15%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    translate: 0 0 112px;
+    opacity: 0;
+  }
+}
+
+@keyframes exp-globe-spin {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+@keyframes exp-orbit {
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exp-bg *,
+  .exp-bg *::after {
+    animation: none !important;
+  }
+
+  .exp-packet {
+    display: none;
+  }
+}

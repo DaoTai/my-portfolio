@@ -1,0 +1,502 @@
+/*
+ * Hero 3D scene. The stage (rotated by the cursor) is the 3D rendering context; every element
+ * between it and a translateZ'd child keeps preserve-3d. Elements in .hero-core are placed on
+ * the core's center point and pushed forward/back in Z for parallax depth.
+ */
+
+.hero-visual {
+  container-type: inline-size;
+}
+
+.hero-stage,
+.hero-core,
+.hero-orbit,
+.hero-orbit-spin {
+  transform-style: preserve-3d;
+}
+
+.hero-core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+
+.hero-core > * {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+@container (min-width: 540px) {
+  .hero-core {
+    left: 42%;
+  }
+}
+
+@container (max-width: 470px) {
+  .hero-core {
+    scale: 0.74;
+  }
+}
+
+/* ---- glow + rings ---- */
+
+.hero-halo {
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(var(--glow3), 0.28) 0%,
+    rgba(var(--glow2), 0.16) 38%,
+    transparent 68%
+  );
+  transform: translate(-50%, -50%) translateZ(-140px);
+  animation: hero-breathe 6s ease-in-out infinite;
+}
+
+.hero-ring {
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--glow), 0.38);
+  box-shadow:
+    0 0 80px rgba(var(--glow3), 0.25),
+    inset 0 0 60px rgba(var(--glow3), 0.12);
+  transform: translate(-50%, -50%) translateZ(-30px);
+}
+
+/* A bright arc that keeps travelling around the ring. */
+.hero-ring-sweep {
+  width: 422px;
+  height: 422px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 250deg,
+    rgba(var(--glow), 0.95) 330deg,
+    transparent 360deg
+  );
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 1.5px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 1.5px)
+  );
+  filter: drop-shadow(0 0 6px rgba(var(--glow), 0.9));
+  transform: translate(-50%, -50%) translateZ(-29px) rotate(0deg);
+  animation: hero-sweep 7s linear infinite;
+}
+
+/* ---- tilted orbits with travelling dots ---- */
+
+.hero-orbit {
+  --size: 640px;
+  --tz: -24deg;
+  --tx: 64deg;
+  --dur: 14s;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  border: 1px solid rgba(var(--glow), 0.32);
+  transform: translate(-50%, -50%) rotateZ(var(--tz)) rotateX(var(--tx));
+}
+
+.hero-orbit--b {
+  --size: 560px;
+  --tz: 32deg;
+  --tx: 74deg;
+  --dur: 10s;
+  border-color: rgba(var(--glow), 0.2);
+}
+
+.hero-orbit-spin {
+  position: absolute;
+  inset: 0;
+  animation: hero-spin var(--dur) linear infinite;
+}
+
+.hero-orbit--b .hero-orbit-spin,
+.hero-orbit--b .hero-orbit-dot {
+  animation-direction: reverse;
+}
+
+/* Counter-rotates every parent transform so the dot always faces the viewer. */
+.hero-orbit-dot {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--g1);
+  box-shadow:
+    0 0 14px var(--g1),
+    0 0 30px rgba(var(--glow3), 0.6);
+  transform: translate(-50%, -50%) rotateZ(0deg) rotateX(calc(-1 * var(--tx)))
+    rotateZ(calc(-1 * var(--tz)));
+  animation: hero-billboard var(--dur) linear infinite;
+}
+
+.hero-orbit--b .hero-orbit-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--g3);
+  box-shadow:
+    0 0 14px var(--g3),
+    0 0 28px rgba(111, 220, 255, 0.5);
+}
+
+/* ---- avatar + floating chips ---- */
+
+.hero-avatar {
+  width: 340px;
+  height: 340px;
+  transform: translate(-50%, -50%) translateZ(40px);
+}
+
+/* Slate ring around the #080a0b frame, then a soft glow underneath. */
+.hero-avatar-float {
+  --avatar-shadow: #252c39;
+  width: 100%;
+  height: 100%;
+  box-shadow:
+    0 0 0 2px var(--avatar-shadow),
+    0 0 46px 8px var(--avatar-shadow),
+    0 30px 80px -20px rgba(var(--glow3), 0.55);
+  animation: hero-float 7s ease-in-out infinite;
+}
+
+html.light .hero-avatar-float {
+  --avatar-shadow: #d3d8e1;
+}
+
+/* Chips get the same moving white → cyan → purple border as the CTA. */
+.hero-chip {
+  box-shadow:
+    0 0 26px -8px rgba(103, 232, 249, 0.45),
+    0 14px 40px -12px rgba(var(--glow3), 0.7);
+}
+
+.hero-chip--available {
+  transform: translate(36px, -196px) translateZ(110px);
+}
+
+.hero-chip--role {
+  transform: translate(-6px, 118px) translateZ(130px);
+}
+
+/* Centered under the avatar on phones so it doesn't run off the right edge. */
+@container (max-width: 470px) {
+  .hero-chip--role {
+    transform: translate(-50%, 118px) translateZ(130px);
+  }
+}
+
+.hero-card {
+  position: absolute;
+  right: 0;
+  top: 30%;
+  display: none;
+  transform: translateZ(80px);
+  animation: hero-float 8s ease-in-out -3s infinite;
+}
+
+@container (min-width: 540px) {
+  .hero-card {
+    display: flex;
+  }
+}
+
+/* ---- background ---- */
+
+.hero-star {
+  position: absolute;
+  border-radius: 50%;
+  background: rgb(var(--glow));
+  box-shadow: 0 0 8px rgba(var(--glow), 0.9);
+  animation: hero-twinkle var(--tw, 4s) ease-in-out var(--td, 0s) infinite;
+}
+
+html.light .hero-star {
+  opacity: 0.5;
+}
+
+.hero-shine {
+  background-image: linear-gradient(
+    100deg,
+    var(--g1) 0%,
+    var(--g2) 25%,
+    var(--g3) 50%,
+    var(--g2) 75%,
+    var(--g1) 100%
+  );
+  background-size: 200% 100%;
+  animation: hero-shine 8s linear infinite;
+}
+
+.hero-wave {
+  display: inline-block;
+  font-size: 1.6rem;
+  transform-origin: 70% 70%;
+  animation: hero-wave 4.6s ease-in-out 1.2s infinite;
+}
+
+/* A 2.4s wave (0 → 6° → -2° → 0), then a 2.2s rest. */
+@keyframes hero-wave {
+  0%,
+  52.17%,
+  100% {
+    rotate: 0deg;
+  }
+  18.26% {
+    rotate: 6deg;
+  }
+  36.52% {
+    rotate: -2deg;
+  }
+}
+
+/* Hero scrolled away: hold every loop instead of repainting what nobody sees. */
+.hero--paused *,
+.hero--paused *::before,
+.hero--paused *::after {
+  animation-play-state: paused !important;
+}
+
+/* ---- moving white → cyan → purple accents (stats, icons, CTA border) ---- */
+
+#top {
+  --flow-1: var(--text);
+  --flow-2: #67e8f9;
+  --flow-3: #a78bfa;
+  --flow-gradient: linear-gradient(
+    90deg,
+    var(--flow-1) 0%,
+    var(--flow-2) 33%,
+    var(--flow-3) 66%,
+    var(--flow-1) 100%
+  );
+}
+
+html.light #top {
+  --flow-1: #52535b;
+  --flow-2: #85868e;
+  --flow-3: #b4b5bc;
+}
+
+html.light .hero-shine {
+  background-image: linear-gradient(
+    100deg,
+    #5f6068 0%,
+    #8e8f97 30%,
+    #cfd0d6 50%,
+    #8e8f97 70%,
+    #5f6068 100%
+  );
+  filter: drop-shadow(0 1px 1px rgba(9, 9, 11, 0.18))
+    drop-shadow(0 0 24px rgba(255, 255, 255, 0.7));
+}
+
+html.light .hero-chip,
+html.light .hero-flow-border {
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    0 12px 32px -12px rgba(15, 23, 42, 0.2);
+}
+
+html.light .hero-orbit-dot,
+html.light .hero-orbit--b .hero-orbit-dot {
+  background: radial-gradient(circle at 35% 30%, #ffffff, #e5e4e2 60%, #a1a1aa);
+  box-shadow:
+    0 0 0 1px rgba(82, 82, 91, 0.25),
+    0 0 12px rgba(255, 255, 255, 0.9);
+}
+
+/*
+ * NumberFlow draws its digits as absolutely positioned columns inside a shadow root, which
+ * background-clip: text can't reach. Instead the digits are painted plain white (black in
+ * light mode) and a moving gradient layer is blended over them: darken keeps min(white, gradient)
+ * = gradient on the digits and min(bg, gradient) = bg around them, since the hero is darker than
+ * every stop; lighten is the mirror image on the light theme.
+ * No ancestor between this and the hero section may create an isolated group (filter, opacity
+ * < 1, isolation), or the blend would show as a box.
+ * The 120px tile is about one number wide, so each shows white, cyan and purple at once.
+ */
+.hero-flow-num {
+  position: relative;
+  display: inline-block;
+  color: #fff;
+}
+
+.hero-flow-num::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--flow-gradient) 0 0 / 120px 100% repeat-x;
+  mix-blend-mode: darken;
+  pointer-events: none;
+  animation: hero-flow-num 3.5s linear infinite;
+}
+
+html.light .hero-flow-num {
+  color: #000;
+}
+
+html.light .hero-flow-num::after {
+  mix-blend-mode: lighten;
+}
+
+.hero-flow-border {
+  position: relative;
+  box-shadow: 0 0 26px -8px rgba(103, 232, 249, 0.45);
+}
+
+.hero-flow-border::before,
+.hero-chip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: var(--flow-gradient) 0 0 / 300% 100% repeat-x;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: hero-flow 4s linear infinite;
+}
+
+/* Arrow drifts right and fades back, like it's pointing you onward. */
+.hero-nudge {
+  animation: hero-nudge 1.8s ease-in-out infinite;
+}
+
+@keyframes hero-nudge {
+  0%,
+  100% {
+    translate: 0 0;
+    opacity: 0.6;
+  }
+  50% {
+    translate: 8px 0;
+    opacity: 1;
+  }
+}
+
+.hero-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 3px;
+  vertical-align: -0.15em;
+  background: var(--flow-2);
+  box-shadow: 0 0 8px var(--flow-2);
+  animation: hero-caret 1s steps(1) infinite;
+}
+
+@keyframes hero-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes hero-flow-num {
+  to {
+    background-position: 120px 0;
+  }
+}
+
+/* A 300% tile slid by 150% moves exactly one tile, so the loop is seamless. */
+@keyframes hero-flow {
+  to {
+    background-position: 150% 0;
+  }
+}
+
+@keyframes hero-spin {
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
+@keyframes hero-billboard {
+  from {
+    transform: translate(-50%, -50%) rotateZ(0deg) rotateX(calc(-1 * var(--tx)))
+      rotateZ(calc(-1 * var(--tz)));
+  }
+  to {
+    transform: translate(-50%, -50%) rotateZ(-360deg)
+      rotateX(calc(-1 * var(--tx))) rotateZ(calc(-1 * var(--tz)));
+  }
+}
+
+@keyframes hero-sweep {
+  to {
+    transform: translate(-50%, -50%) translateZ(-29px) rotate(360deg);
+  }
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -12px;
+  }
+}
+
+@keyframes hero-breathe {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+    scale: 0.6;
+  }
+  50% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes hero-shine {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-wave,
+  .hero-halo,
+  .hero-ring-sweep,
+  .hero-orbit-spin,
+  .hero-orbit-dot,
+  .hero-avatar-float,
+  .hero-card,
+  .hero-star,
+  .hero-shine,
+  .hero-flow-num::after,
+  .hero-flow-border::before,
+  .hero-chip::before,
+  .hero-caret,
+  .hero-nudge {
+    animation: none;
+  }
+}
