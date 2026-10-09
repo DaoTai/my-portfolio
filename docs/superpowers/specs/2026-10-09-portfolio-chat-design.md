@@ -23,7 +23,7 @@ Success looks like:
 | Primary goal | Recruiter Q&A |
 | UI placement | Floating "Ask about me" button, bottom-right, opens a chat panel |
 | Model tier | Free OpenRouter models only |
-| Default model | `google/gemma-4-31b-it:free`, fallback `openrouter/free` |
+| Default model | `google/gemma-4-31b-it:free`, fallbacks `google/gemma-4-26b-a4b-it:free`, `nvidia/nemotron-3-super-120b-a12b:free` |
 | Knowledge strategy | Full context in the system instructions (no tools, no RAG) |
 | Extra facts | Open to freelance / contract work |
 | History | In memory for the visit only; lost on reload |
@@ -61,7 +61,9 @@ Already installed.
 | `OPENROUTER_MODEL` | no | `google/gemma-4-31b-it:free` | Primary model slug. |
 
 Both are documented in `.env.example` (without values). Fallback list is
-`[OPENROUTER_MODEL, "openrouter/free"]` via `providerOptions.openrouter.models`.
+`[OPENROUTER_MODEL, "google/gemma-4-26b-a4b-it:free", "nvidia/nemotron-3-super-120b-a12b:free"]`
+via `providerOptions.openrouter.models`. `openrouter/free` is not used: its pool includes a
+content-safety classifier that replies with a label instead of an answer.
 
 ## Units
 

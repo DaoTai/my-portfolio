@@ -7,8 +7,12 @@ import { parseChatRequest } from "@/lib/chat/validate";
 export const maxDuration = 30;
 
 const DEFAULT_MODEL = "google/gemma-4-31b-it:free";
-// If the primary free model is rate-limited or down, OpenRouter routes to any available free one.
-const FALLBACK_MODEL = "openrouter/free";
+// If the primary free model is rate-limited or down, OpenRouter tries these in order.
+// Not "openrouter/free": its pool includes a content-safety classifier.
+const FALLBACK_MODELS = [
+  "google/gemma-4-26b-a4b-it:free",
+  "nvidia/nemotron-3-super-120b-a12b:free",
+];
 
 const allow = createRateLimiter({ limit: 10, windowMs: 60_000 });
 
@@ -38,7 +42,7 @@ export const POST = async (req: Request) => {
     maxOutputTokens: 600,
     temperature: 0.3,
     providerOptions: {
-      openrouter: { models: Array.from(new Set([model, FALLBACK_MODEL])) },
+      openrouter: { models: Array.from(new Set([model, ...FALLBACK_MODELS])) },
     },
   });
 
