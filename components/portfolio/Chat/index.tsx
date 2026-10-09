@@ -35,7 +35,7 @@ const ChatLauncher = () => {
         onPointerEnter={loadPanel}
         onFocus={loadPanel}
         aria-expanded={open}
-        aria-controls={mounted ? "chat-panel" : undefined}
+        aria-controls={open ? "chat-panel" : undefined}
         aria-label={open ? "Close chat" : "Ask about me"}
         className="chat-launcher fixed bottom-5 right-5 z-40 flex h-12 items-center gap-2 rounded-full bg-pf-base2/90 px-4 text-sm font-semibold text-pf-text backdrop-blur transition-transform duration-300 hover:-translate-y-0.5 sm:bottom-6 sm:right-6"
       >

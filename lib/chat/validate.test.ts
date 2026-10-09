@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { MAX_ASSISTANT_CHARS, MAX_MESSAGES, MAX_USER_CHARS } from "./limits.ts";
+import {
+  MAX_ASSISTANT_CHARS,
+  MAX_MESSAGES,
+  MAX_REQUEST_MESSAGES,
+  MAX_USER_CHARS,
+} from "./limits.ts";
 import { parseChatRequest } from "./validate.ts";
 
 const user = (id: string, text: string) => ({
@@ -49,13 +54,15 @@ test("drops assistant messages that have no text", () => {
   const result = parseChatRequest({
     messages: [
       user("u1", "Hi"),
-      assistant("a1", [{ type: "step-start" }]),
+      assistant("a1", [{ type: "text", text: "Hello" }]),
       user("u2", "Hello?"),
+      assistant("a2", [{ type: "step-start" }]),
+      user("u3", "Anyone?"),
     ],
   });
   assert.deepEqual(
     result?.map((m) => m.id),
-    ["u1", "u2"],
+    ["u1", "a1", "u3"],
   );
 });
 
@@ -72,13 +79,53 @@ test("caps long assistant text", () => {
   assert.equal(part?.type === "text" && part.text.length, MAX_ASSISTANT_CHARS);
 });
 
-test("accepts exactly the limits", () => {
-  const messages = Array.from({ length: MAX_MESSAGES }, (_, i) =>
-    i % 2 === 1
+test("accepts a full window of max-length user text", () => {
+  // Odd length so the conversation ends on a user turn.
+  const messages = Array.from({ length: MAX_MESSAGES - 1 }, (_, i) =>
+    i % 2 === 0
       ? user(`u${i}`, "y".repeat(MAX_USER_CHARS))
       : assistant(`a${i}`, [{ type: "text", text: "ok" }]),
   );
-  assert.equal(parseChatRequest({ messages })?.length, MAX_MESSAGES);
+  assert.equal(parseChatRequest({ messages })?.length, MAX_MESSAGES - 1);
+});
+
+// Alternating conversation: user at even indices, assistant at odd.
+const alternating = (length: number) =>
+  Array.from({ length }, (_, i) =>
+    i % 2 === 0
+      ? user(`u${i}`, `q${i}`)
+      : assistant(`a${i}`, [{ type: "text", text: `r${i}` }]),
+  );
+
+test("keeps only the last window of a long conversation, starting at a user turn", () => {
+  const result = parseChatRequest({ messages: alternating(21) });
+  assert.ok(result);
+  assert.ok(result.length <= MAX_MESSAGES);
+  assert.equal(result[0].role, "user");
+  const lastPart = result[result.length - 1].parts[0];
+  assert.equal(lastPart.type === "text" && lastPart.text, "q20");
+});
+
+test("accepts the largest request and rejects one more", () => {
+  const ok = parseChatRequest({ messages: alternating(MAX_REQUEST_MESSAGES - 1) });
+  assert.ok(ok && ok.length <= MAX_MESSAGES && ok[0].role === "user");
+  assert.ok(parseChatRequest({ messages: alternating(MAX_REQUEST_MESSAGES + 1) }) === null);
+});
+
+test("collapses adjacent user messages to the later one", () => {
+  const result = parseChatRequest({
+    messages: [user("u1", "a"), user("u2", "b")],
+  });
+  assert.deepEqual(result, [
+    { id: "u2", role: "user", parts: [{ type: "text", text: "b" }] },
+  ]);
+});
+
+test("collapses user turns separated by a dropped empty assistant message", () => {
+  const result = parseChatRequest({
+    messages: [user("u1", "a"), assistant("a1", []), user("u2", "b")],
+  });
+  assert.deepEqual(result?.map((m) => m.id), ["u2"]);
 });
 
 const rejected: [string, unknown][] = [
@@ -88,8 +135,10 @@ const rejected: [string, unknown][] = [
   [
     "too many messages",
     {
-      messages: Array.from({ length: MAX_MESSAGES + 1 }, (_, i) =>
-        user(`u${i}`, "hi"),
+      messages: Array.from({ length: MAX_REQUEST_MESSAGES + 1 }, (_, i) =>
+        i % 2 === 0
+          ? user(`u${i}`, "hi")
+          : assistant(`a${i}`, [{ type: "text", text: "ok" }]),
       ),
     },
   ],

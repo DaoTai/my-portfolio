@@ -19,12 +19,25 @@ const allow = createRateLimiter({ limit: 10, windowMs: 60_000 });
 const jsonError = (error: string, status: number) =>
   Response.json({ error }, { status });
 
+// Browsers always send Origin on cross-site POSTs; a mismatch means another site is using our quota.
+const isForeignOrigin = (req: Request) => {
+  const origin = req.headers.get("origin");
+  if (!origin) return false;
+  try {
+    return new URL(origin).host !== req.headers.get("host");
+  } catch {
+    return true;
+  }
+};
+
 export const POST = async (req: Request) => {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
     console.error("[chat] OPENROUTER_API_KEY is not set");
     return jsonError("Chat is not configured.", 500);
   }
+
+  if (isForeignOrigin(req)) return jsonError("Forbidden.", 403);
 
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   if (!allow(ip)) return jsonError("Too many messages. Try again in a minute.", 429);

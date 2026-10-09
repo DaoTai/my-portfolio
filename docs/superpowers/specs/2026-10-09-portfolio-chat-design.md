@@ -87,8 +87,11 @@ content-safety classifier that replies with a label instead of an answer.
 - `POST` only. `export const maxDuration = 30`.
 - Rate limit (`lib/chat/rate-limit.ts`): in-memory fixed window, 10 requests per IP per minute (IP from
   `x-forwarded-for`). Per serverless instance, so best-effort; acceptable because the model is
-  free and OpenRouter enforces its own limits. Returns `429` with a JSON `{ error }`.
-- Validation (zod, `lib/chat/validate.ts`, unit-tested): body `{ messages: UIMessage[] }`; at most 20 messages; only the text parts of
+  free and OpenRouter enforces its own limits. Returns `429` with a JSON `{ error }`. Before the limit,
+  a same-origin check rejects requests whose `Origin` host differs from `Host` with `403`. All
+  visitors also share one daily quota for `:free` models per OpenRouter account.
+- Validation (zod, `lib/chat/validate.ts`, unit-tested): body `{ messages: UIMessage[] }`; up to 100 messages accepted, but only the last 20 (starting at a user turn, consecutive user turns
+  collapsed) are sent to the model; only the text parts of
   user messages are checked, each ≤500 chars. Invalid → `400`.
 - Missing `OPENROUTER_API_KEY` → `500` with a generic message (logged server-side).
 - Calls `streamText({ model, instructions: CHAT_INSTRUCTIONS, messages: await convertToModelMessages(messages), maxOutputTokens: 600, temperature: 0.3, providerOptions: { openrouter: { models } } })`

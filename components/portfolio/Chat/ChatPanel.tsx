@@ -60,6 +60,28 @@ const TypingDots = () => (
 const actionClass =
   "inline-flex items-center gap-1.5 rounded-full border border-pf-ink/15 px-3 py-1.5 text-[13px] font-medium text-pf-text transition-colors hover:border-pf-g3";
 
+const BusyNotice = ({ onRetry }: { onRetry: () => void }) => (
+  <div
+    role="alert"
+    className="rounded-2xl border border-pf-ink/10 bg-pf-bg3 p-3.5 text-[13px] leading-relaxed text-pf-t4"
+  >
+    The assistant is busy right now. You can email Tai at {siteConfig.email}.
+    <div className="mt-2.5 flex gap-2">
+      <button type="button" onClick={onRetry} className={actionClass}>
+        <RotateCcw aria-hidden="true" size={14} /> Retry
+      </button>
+      <a
+        href={gmailComposeUrl({ subject: "Hello from your portfolio" })}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={actionClass}
+      >
+        <Mail aria-hidden="true" size={14} /> Email
+      </a>
+    </div>
+  </div>
+);
+
 type ChatPanelProps = { open: boolean; onClose: () => void };
 
 const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
@@ -68,12 +90,24 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  // Whether the list sits at the bottom, so streaming text doesn't yank a reader scrolled up.
+  const pinnedRef = useRef(true);
+  const stoppedRef = useRef(false);
 
   const busy = status === "submitted" || status === "streaming";
   const last = messages[messages.length - 1];
   // Reasoning models stream nothing visible at first, so keep the dots up until text arrives.
   const thinking =
     busy && (!last || last.role === "user" || textOf(last) === "");
+  // A finished turn with no visible reply (and no Stop press) is treated like an error.
+  const emptyReply =
+    status === "ready" &&
+    !error &&
+    !stoppedRef.current &&
+    !!last &&
+    (last.role === "user" || textOf(last) === "") &&
+    messages.some((message) => message.role === "user");
+  const showBusy = !!error || emptyReply;
 
   useEffect(() => {
     if (!open) return;
@@ -85,15 +119,38 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
-  // Keep the newest text in view while the answer streams in.
+  // Keep the newest text in view while the answer streams in, unless the reader scrolled up.
   useEffect(() => {
     const list = listRef.current;
-    if (list) list.scrollTop = list.scrollHeight;
-  }, [messages, status, open]);
+    if (!list) return;
+    if (pinnedRef.current || last?.role === "user") {
+      list.scrollTop = list.scrollHeight;
+      pinnedRef.current = true;
+    }
+  }, [messages, status, open, last?.role]);
+
+  const onListScroll = () => {
+    const list = listRef.current;
+    if (list) {
+      pinnedRef.current =
+        list.scrollHeight - list.scrollTop - list.clientHeight < 80;
+    }
+  };
+
+  const retry = () => {
+    stoppedRef.current = false;
+    void regenerate();
+  };
+
+  const stopAnswer = () => {
+    stoppedRef.current = true;
+    void stop();
+  };
 
   const send = (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || busy) return;
+    stoppedRef.current = false;
     void sendMessage({ text: trimmed });
     setInput("");
   };
@@ -137,6 +194,7 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
 
           <div
             ref={listRef}
+            onScroll={onListScroll}
             aria-live="polite"
             aria-busy={busy}
             className="flex flex-1 flex-col gap-3 overflow-y-auto overscroll-contain px-5 py-4"
@@ -171,34 +229,7 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
 
             {thinking && <TypingDots />}
 
-            {error && (
-              <div
-                role="alert"
-                className="rounded-2xl border border-pf-ink/10 bg-pf-bg3 p-3.5 text-[13px] leading-relaxed text-pf-t4"
-              >
-                The assistant is busy right now. You can email Tai at{" "}
-                {siteConfig.email}.
-                <div className="mt-2.5 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => void regenerate()}
-                    className={actionClass}
-                  >
-                    <RotateCcw aria-hidden="true" size={14} /> Retry
-                  </button>
-                  <a
-                    href={gmailComposeUrl({
-                      subject: "Hello from your portfolio",
-                    })}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={actionClass}
-                  >
-                    <Mail aria-hidden="true" size={14} /> Email
-                  </a>
-                </div>
-              </div>
-            )}
+            {showBusy && <BusyNotice onRetry={retry} />}
           </div>
 
           <form
@@ -219,7 +250,7 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
               {busy ? (
                 <button
                   type="button"
-                  onClick={() => void stop()}
+                  onClick={stopAnswer}
                   aria-label="Stop answer"
                   className="grid size-9 shrink-0 place-items-center rounded-full bg-pf-text text-pf-bg"
                 >
