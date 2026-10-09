@@ -25,6 +25,8 @@ export const siteConfig = {
   jobTitle: "Software Engineering",
   email: "daotai.work@gmail.com",
   resume: "/resume.pdf",
+  /** Shown by the chat assistant; can also be surfaced on the page. */
+  availability: "Open to freelance and contract projects.",
   links: {
     github: "https://github.com/youngcrizzal",
     linkedin: "https://www.linkedin.com/in/dao-tai-61757325a/",

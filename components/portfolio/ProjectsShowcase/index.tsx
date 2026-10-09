@@ -4,6 +4,7 @@ import { memo, useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
+import type { PanInfo } from "motion/react";
 
 import { AnimatedNumber, TWO_DIGITS } from "@/components/common/AnimatedNumber";
 import { EASE_OUT, Reveal } from "@/components/common/Reveal";
@@ -22,9 +23,12 @@ type ProjectsShowcaseProps = {
 
 const AUTOPLAY_MS = 5000;
 const SIDES_MIN_WIDTH = 820;
+// A swipe counts once the drag distance plus a share of the release velocity passes this.
+const SWIPE_THRESHOLD = 60;
+const SWIPE_VELOCITY_WEIGHT = 0.2;
 
 const NAV_BUTTON =
-  "grid h-11 w-11 flex-none place-items-center rounded-full border border-pf-ink/[0.18] bg-pf-ink/[0.03] text-lg text-pf-text2 transition-[border-color,color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-pf-g2 hover:text-pf-text hover:shadow-[0_10px_30px_-10px_rgba(var(--glow3),0.8)]";
+  "grid h-11 w-11 flex-none select-none place-items-center rounded-full border border-pf-ink/[0.18] bg-pf-ink/[0.03] text-lg text-pf-text2 transition-[border-color,color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-pf-g2 hover:text-pf-text hover:shadow-[0_10px_30px_-10px_rgba(var(--glow3),0.8)]";
 
 const SIDE_TRANSFORM = {
   left: "origin-right [transform:rotateY(26deg)_translateZ(-70px)_scale(.94)] hover:[transform:rotateY(12deg)_translateZ(-30px)_scale(.97)]",
@@ -72,6 +76,8 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
   const [narrow, setNarrow] = useState(false);
   const [modalIndex, setModalIndex] = useState<number | null>(null);
   const carRef = useRef<HTMLDivElement>(null);
+  // Set while the current card is being dragged, so the release doesn't also open the modal.
+  const dragged = useRef(false);
 
   const n = PROJECTS.length;
   const cur = PROJECTS[i];
@@ -91,7 +97,14 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
     setDir(k >= i ? 1 : -1);
     setI(k);
   };
-  const openCur = () => setModalIndex(i);
+  const openCur = () => {
+    if (!dragged.current) setModalIndex(i);
+  };
+  const onDragEnd = (_: unknown, { offset, velocity }: PanInfo) => {
+    const swipe = offset.x + velocity.x * SWIPE_VELOCITY_WEIGHT;
+    if (swipe < -SWIPE_THRESHOLD) goNext();
+    else if (swipe > SWIPE_THRESHOLD) goPrev();
+  };
   const closeModal = useCallback(() => setModalIndex(null), []);
 
   // Hide the side cards when the carousel is narrower than 820px.
@@ -151,7 +164,19 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
             )}
             <motion.div
               key={cur.name}
-              className="flex min-w-0 flex-[1.35_1_0]"
+              className="flex min-w-0 flex-[1.35_1_0] cursor-grab touch-pan-y select-none active:cursor-grabbing"
+              drag={reduce ? false : "x"}
+              dragDirectionLock
+              dragSnapToOrigin
+              dragElastic={0.5}
+              dragConstraints={{ left: 0, right: 0 }}
+              onPointerDownCapture={() => {
+                dragged.current = false;
+              }}
+              onDragStart={() => {
+                dragged.current = true;
+              }}
+              onDragEnd={onDragEnd}
               initial={
                 reduce ? false : { opacity: 0, rotateY: dir * -32, x: dir * 70 }
               }
@@ -172,6 +197,7 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
                     src={cur.images[0]}
                     alt={cur.name}
                     fill
+                    draggable={false}
                     sizes="(max-width: 900px) 100vw, 520px"
                     className="object-cover object-top transition-transform duration-700 hover:scale-[1.04]"
                   />
@@ -215,7 +241,7 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
           </div>
         </Reveal>
 
-        <div className="flex items-center justify-center gap-5">
+        <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:justify-center sm:gap-5">
           <button
             type="button"
             onClick={goPrev}
@@ -224,23 +250,28 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
           >
             ‹
           </button>
-          <div className="flex items-center gap-2">
-            {PROJECTS.map((p, k) => (
-              <button
-                key={p.name}
-                type="button"
-                onClick={() => goTo(k)}
-                aria-label={p.name}
-                className={`h-2 rounded-[4px] border-none p-0 [transition:width_.25s] ${
-                  k === i ? "w-7 bg-pf-g2" : "w-2 bg-pf-ink/[0.18]"
-                }`}
-              />
-            ))}
+          <div className="flex min-w-0 flex-col items-center gap-2.5 sm:flex-row sm:gap-5">
+            <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+              {PROJECTS.map((p, k) => (
+                <button
+                  key={p.name}
+                  type="button"
+                  onClick={() => goTo(k)}
+                  aria-label={p.name}
+                  aria-current={k === i ? "true" : undefined}
+                  className={`h-1.5 rounded-[4px] border-none p-0 [transition:width_.25s,background-color_.25s] sm:h-2 ${
+                    k === i
+                      ? "w-5 bg-pf-g2 sm:w-7"
+                      : "w-1.5 bg-pf-ink/[0.18] sm:w-2"
+                  }`}
+                />
+              ))}
+            </div>
+            <span className="text-center font-display text-[13px] text-pf-t7 sm:min-w-[52px]">
+              <AnimatedNumber value={i + 1} format={TWO_DIGITS} /> /{" "}
+              <AnimatedNumber value={n} format={TWO_DIGITS} />
+            </span>
           </div>
-          <span className="min-w-[52px] text-center font-display text-[13px] text-pf-t7">
-            <AnimatedNumber value={i + 1} format={TWO_DIGITS} /> /{" "}
-            <AnimatedNumber value={n} format={TWO_DIGITS} />
-          </span>
           <button
             type="button"
             onClick={goNext}

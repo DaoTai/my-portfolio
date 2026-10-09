@@ -1,5 +1,6 @@
 import { type Metadata } from "next";
 import Contact from "@/components/portfolio/Contact";
+import ChatLauncher from "@/components/portfolio/Chat";
 import Expertise from "@/components/portfolio/Expertise";
 import Hero from "@/components/portfolio/Hero";
 import ProjectsShowcase from "@/components/portfolio/ProjectsShowcase";
@@ -26,6 +27,7 @@ export default function Home() {
         <ProjectsShowcase />
         <Contact />
       </main>
+      <ChatLauncher />
     </div>
   );
 }
