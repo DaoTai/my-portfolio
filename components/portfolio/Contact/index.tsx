@@ -99,7 +99,7 @@ const Contact = () => {
           <Logo />
           <span>Kendrick</span>
           <span>·</span>
-          <span>Full-Stack Developer</span>
+          <span>Software Engineering</span>
         </div>
         <span>
           © <AnimatedNumber value={2026} format={{ useGrouping: false }} />

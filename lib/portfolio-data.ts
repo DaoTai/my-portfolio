@@ -11,7 +11,7 @@ export type TechGroup = {
 export type Project = {
   name: string;
   role: string;
-  logo: string;
+  logo?: string;
   images: string[];
   tags: string[];
   blurb: string;
@@ -51,19 +51,31 @@ export const TECH_GROUPS: TechGroup[] = [
     items: [
       {
         name: "Next.js",
-        img: "/next-js.png",
+        img: "/next-js.webp",
       },
       {
         name: "React",
-        img: "/react-js.png",
+        img: "/react-js.webp",
       },
       {
         name: "Tailwind",
-        img: "/tailwind-css.png",
+        img: "/tailwind-css.webp",
       },
       {
         name: "shadcn/ui",
-        img: "/shadcn-ui.png",
+        img: "/shadcn-ui.webp",
+      },
+      {
+        name: "Mantine UI",
+        img: "/mantine.webp",
+      },
+      {
+        name: "Ant Design",
+        img: "/ant-design.svg",
+      },
+      {
+        name: "Material UI",
+        img: "/mui.webp",
       },
     ],
   },
@@ -74,23 +86,23 @@ export const TECH_GROUPS: TechGroup[] = [
     items: [
       {
         name: "Node.js",
-        img: "/node-js.png",
+        img: "/node-js.webp",
       },
       {
         name: "NestJS",
-        img: "/nest-js.png",
+        img: "/nest-js.webp",
       },
       {
         name: "Express",
-        img: "/express-js.png",
+        img: "/express-js.webp",
       },
       {
         name: "Prisma",
-        img: "/prisma.png",
+        img: "/prisma.webp",
       },
       {
         name: "Socket.io",
-        img: "/socket.png",
+        img: "/socket.webp",
       },
       {
         name: "RabbitMQ",
@@ -105,11 +117,11 @@ export const TECH_GROUPS: TechGroup[] = [
     items: [
       {
         name: "PostgreSQL",
-        img: "/postgresql.png",
+        img: "/postgresql.webp",
       },
       {
         name: "MongoDB",
-        img: "/mongo-db.png",
+        img: "/mongo-db.webp",
       },
       {
         name: "Redis",
@@ -124,15 +136,15 @@ export const TECH_GROUPS: TechGroup[] = [
     items: [
       {
         name: "TanStack",
-        img: "/tanstack.png",
+        img: "/tanstack.webp",
       },
       {
         name: "Redux",
-        img: "/redux.png",
+        img: "/redux.webp",
       },
       {
         name: "Zustand",
-        img: "/zustand.jpg",
+        img: "/zustand.webp",
       },
     ],
   },
@@ -143,23 +155,27 @@ export const TECH_GROUPS: TechGroup[] = [
     items: [
       {
         name: "Docker",
-        img: "/docker.png",
+        img: "/docker.webp",
       },
       {
         name: "Ubuntu",
-        img: "/ubuntu.png",
+        img: "/ubuntu.webp",
       },
       {
         name: "AWS S3",
-        img: "/aws-s3.png",
+        img: "/aws-s3.webp",
       },
       {
         name: "AWS EC2",
-        img: "/aws-ec2.png",
+        img: "/aws-ec2.webp",
       },
       {
         name: "Firebase",
-        img: "/firebase.png",
+        img: "/firebase.webp",
+      },
+      {
+        name: "Amazon KMS",
+        img: "/aws-kms.webp",
       },
     ],
   },
@@ -170,11 +186,11 @@ export const TECH_GROUPS: TechGroup[] = [
     items: [
       {
         name: "Git",
-        img: "/git.png",
+        img: "/git.webp",
       },
       {
         name: "WebRTC",
-        img: "/web-rtc.png",
+        img: "/web-rtc.webp",
       },
       {
         name: "Claude",
@@ -193,6 +209,12 @@ export const TECH_DESCRIPTIONS: Record<string, string> = {
     "Utility-first CSS framework for building custom, responsive UIs with speed and design consistency.",
   "shadcn/ui":
     "Accessible, composable component library built on Radix UI primitives and styled with Tailwind CSS.",
+  "Mantine UI":
+    "Full-featured React component library with built-in hooks, accessibility, and comprehensive theming support.",
+  "Ant Design":
+    "Enterprise-grade React UI system with a rich component set and a comprehensive design language.",
+  "Material UI":
+    "Google Material Design–based React component library for building polished, consistent web interfaces.",
   "Node.js":
     "JavaScript runtime built on V8 for scalable, non-blocking server-side and network applications.",
   NestJS:
@@ -227,6 +249,8 @@ export const TECH_DESCRIPTIONS: Record<string, string> = {
     "Cloud compute service for deploying, scaling, and managing virtual server infrastructure on AWS.",
   Firebase:
     "Google's backend platform for real-time database, authentication, hosting, and serverless cloud functions.",
+  "Amazon KMS":
+    "Managed encryption key service for securing data at rest and in transit across AWS services.",
   Git: "Distributed version control for branching, code review, and collaborative development workflows.",
   WebRTC:
     "Browser-native API for real-time peer-to-peer audio, video, and data streaming without plugins.",
@@ -238,12 +262,15 @@ export const PROJECTS: Project[] = [
   {
     name: "NextVault",
     role: "Frontend Developer",
-    logo: "/project-images/next-vault/logo.png",
+    logo: "/project-images/next-vault/logo.webp",
     images: [
-      "/project-images/next-vault/1.jpg",
-      "/project-images/next-vault/2.jpg",
-      "/project-images/next-vault/3.jpg",
-      "/project-images/next-vault/4.jpg",
+      "/project-images/next-vault/1.webp",
+      "/project-images/next-vault/2.webp",
+      "/project-images/next-vault/3.webp",
+      "/project-images/next-vault/4.webp",
+      "/project-images/next-vault/5.webp",
+      "/project-images/next-vault/6.webp",
+      "/project-images/next-vault/7.webp",
     ],
     tags: ["Next.js", "Privy", "Base / USDC"],
     blurb:
@@ -273,13 +300,18 @@ export const PROJECTS: Project[] = [
   },
   {
     name: "Bullbit",
-    role: "Full-stack Developer",
-    logo: "/project-images/bullbit/logo.png",
+    role: "Software Engineering",
+    logo: "/project-images/bullbit/logo.webp",
     images: [
-      "/project-images/bullbit/1.png",
-      "/project-images/bullbit/2.png",
-      "/project-images/bullbit/3.png",
-      "/project-images/bullbit/4.png",
+      "/project-images/bullbit/1.webp",
+      "/project-images/bullbit/2.webp",
+      "/project-images/bullbit/3.webp",
+      "/project-images/bullbit/4.webp",
+      "/project-images/bullbit/5.webp",
+      "/project-images/bullbit/6.webp",
+      "/project-images/bullbit/7.webp",
+      "/project-images/bullbit/8.webp",
+      "/project-images/bullbit/9.webp",
     ],
     tags: ["Next.js", "WebSocket", "Microservices"],
     blurb:
@@ -311,9 +343,10 @@ export const PROJECTS: Project[] = [
     role: "Frontend Developer",
     logo: "/project-images/interra/logo.svg",
     images: [
-      "/project-images/interra/1.jpg",
-      "/project-images/interra/2.jpg",
-      "/project-images/interra/3.png",
+      "/project-images/interra/full.webp",
+      "/project-images/interra/1.webp",
+      "/project-images/interra/2.webp",
+      "/project-images/interra/3.webp",
     ],
     tags: ["React", "TanStack", "Solana / EVM"],
     blurb:
@@ -347,10 +380,15 @@ export const PROJECTS: Project[] = [
     role: "Frontend Developer",
     logo: "/project-images/dream-fly/logo.svg",
     images: [
-      "/project-images/dream-fly/1.png",
-      "/project-images/dream-fly/3.png",
-      "/project-images/dream-fly/4.png",
-      "/project-images/dream-fly/5.png",
+      "/project-images/dream-fly/1.webp",
+      "/project-images/dream-fly/2.webp",
+      "/project-images/dream-fly/3.webp",
+      "/project-images/dream-fly/4.webp",
+      "/project-images/dream-fly/5.webp",
+      "/project-images/dream-fly/6.webp",
+      "/project-images/dream-fly/7.webp",
+      "/project-images/dream-fly/8.webp",
+      "/project-images/dream-fly/9.webp",
     ],
     tags: ["Next.js", "SEO", "Admin CMS"],
     blurb:
@@ -382,12 +420,16 @@ export const PROJECTS: Project[] = [
   {
     name: "HoofDAO",
     role: "Frontend Developer",
-    logo: "/project-images/hoofdao/logo.png",
+    logo: "/project-images/hoofdao/logo.webp",
     images: [
-      "/project-images/hoofdao/8.png",
-      "/project-images/hoofdao/7.png",
-      "/project-images/hoofdao/1.png",
-      "/project-images/hoofdao/2.png",
+      "/project-images/hoofdao/8.webp",
+      "/project-images/hoofdao/7.webp",
+      "/project-images/hoofdao/1.webp",
+      "/project-images/hoofdao/2.webp",
+      "/project-images/hoofdao/full.webp",
+      "/project-images/hoofdao/4.webp",
+      "/project-images/hoofdao/5.webp",
+      "/project-images/hoofdao/6.webp",
     ],
     tags: ["React", "viem", "NestJS"],
     blurb:
@@ -420,8 +462,8 @@ export const PROJECTS: Project[] = [
   {
     name: "Seagate",
     role: "Frontend Developer",
-    logo: "/project-images/seagate/logo.png",
-    images: ["/project-images/seagate/1.jpg"],
+    logo: "/project-images/seagate/logo.webp",
+    images: ["/project-images/seagate/1.webp"],
     tags: ["Next.js", "Zustand", "Web3"],
     blurb:
       "Investment platform for launching Initial Package Offerings for DePIN projects.",
@@ -440,6 +482,238 @@ export const PROJECTS: Project[] = [
       "Authentication and security integrations",
       "State management with Zustand",
       "Optimized user experience with NextJS",
+    ],
+  },
+  {
+    name: "Regent Reserve",
+    role: "Frontend Developer",
+    logo: "/project-images/regent-reserve/logo.webp",
+    images: [
+      "/project-images/regent-reserve/7.webp",
+      "/project-images/regent-reserve/8.webp",
+      "/project-images/regent-reserve/9.webp",
+      "/project-images/regent-reserve/1.webp",
+      "/project-images/regent-reserve/2.webp",
+      "/project-images/regent-reserve/3.webp",
+      "/project-images/regent-reserve/4.webp",
+      "/project-images/regent-reserve/5.webp",
+      "/project-images/regent-reserve/6.webp",
+    ],
+    tags: ["Next.js", "React 19", "Booking APIs"],
+    blurb:
+      "Premium booking platform for hotel and flight reservations with membership and voucher systems.",
+    summary:
+      "A premium booking platform ecosystem including customer-facing landing pages and CMS systems for hotel and flight reservations, membership management, vouchers, and account operations.",
+    responsibilities: [
+      "Developed and maintained both booking platform interfaces and admin CMS systems using NextJS.",
+      "Built complex flight search and booking interfaces integrated with third-party provider APIs.",
+      "Handled large-scale and highly dynamic flight data with complex business logic processing to ensure accurate pricing, schedules, and booking information.",
+      "Optimized rendering performance for heavy datasets and real-time UI updates using React 19 features such as useTransition and memoization strategies.",
+      "Implemented smooth and responsive user experiences for booking flows, filtering systems, and account management.",
+      "Integrated membership systems, voucher workflows, and account-related functionalities.",
+      "Collaborated closely with backend and third-party service providers to ensure reliable booking operations.",
+    ],
+    highlights: [
+      "Complex flight booking workflows",
+      "Large-scale data processing",
+      "High-performance rendering optimization",
+      "React 19 performance strategies",
+      "Third-party API integration",
+      "Modern booking dashboard UI",
+      "Responsive and smooth UX",
+      "State management with Zustand & TanStack Query",
+    ],
+  },
+  {
+    name: "Ponz",
+    role: "Frontend Developer",
+    logo: "/project-images/ponz/logo.svg",
+    images: [
+      "/project-images/ponz/1.webp",
+      "/project-images/ponz/2.webp",
+      "/project-images/ponz/4.webp",
+      "/project-images/ponz/5.webp",
+      "/project-images/ponz/6.webp",
+      "/project-images/ponz/7.webp",
+      "/project-images/ponz/8.webp",
+    ],
+    tags: ["React", "WebSocket", "Solana"],
+    blurb:
+      "Real-time Web3 social trading platform on Solana for creating and trading custom tokens.",
+    summary:
+      "A real-time Web3 social trading platform on Solana where users can create custom tokens, interact with communities, and trade assets with integrated reward mechanisms.",
+    responsibilities: [
+      "Developed and maintained the core frontend application using ReactJS.",
+      "Built responsive and interactive UI experiences for token creation, trading, and community engagement.",
+      "Integrated real-time features including chat systems, live updates, and token activity feeds using WebSocket.",
+      "Implemented token-related backend features including profile management, token interactions, and social functionalities.",
+      "Integrated TradingView charts for real-time market visualization.",
+      "Collaborated on Web3 workflows and Solana-based transaction interactions.",
+    ],
+    highlights: [
+      "Real-time communication with WebSocket",
+      "Interactive trading dashboard",
+      "Social features including chat and stickers",
+      "Solana ecosystem integration",
+      "Cloud asset storage with AWS S3",
+    ],
+  },
+  {
+    name: "Node Farm",
+    role: "Backend Developer",
+    images: [
+      "/project-images/node-farm/4.webp",
+      "/project-images/node-farm/3.webp",
+      "/project-images/node-farm/2.webp",
+      "/project-images/node-farm/1.webp",
+    ],
+    tags: ["TON", "Telegram Mini App", "Redis"],
+    blurb:
+      "Decentralized reward platform on Telegram Mini Apps with NFT staking and TON-based rewards.",
+    summary:
+      "A decentralized reward platform integrated with Telegram Mini Apps, allowing users to purchase NFT-based assets, stake into reward pools, and earn TON-based daily rewards.",
+    responsibilities: [
+      "Designed and developed the entire backend architecture.",
+      "Implemented Telegram Mini App authentication integrated with TON wallet verification.",
+      "Built secure authentication and session handling systems.",
+      "Developed TON blockchain transaction scanning and wallet monitoring services.",
+      "Implemented staking pool systems and automated reward distribution logic.",
+      "Handled item purchasing, extension, and reward management workflows.",
+      "Optimized backend performance using Redis caching and real-time socket communication.",
+      "Integrated Telegram Bot services for notifications and platform interactions.",
+    ],
+    highlights: [
+      "TON blockchain integration",
+      "Real-time transaction scanning",
+      "Event-driven backend workflows",
+      "Redis caching strategies",
+      "Secure wallet authentication",
+      "Telegram Mini App ecosystem",
+    ],
+  },
+  {
+    name: "DFantasy",
+    role: "Backend Developer",
+    logo: "/project-images/dfantasy/logo.svg",
+    images: [
+      "/project-images/dfantasy/2.webp",
+      "/project-images/dfantasy/1.webp",
+      "/project-images/dfantasy/3.webp",
+    ],
+    tags: ["Node.js", "Redis", "Cron Jobs"],
+    blurb:
+      "Fantasy football platform across Web, Mobile and Telegram with real-time game sync.",
+    summary:
+      "A fantasy football platform inspired by Fantasy Premier League, supporting Web, Mobile, and Telegram Mini App experiences with real-time game synchronization.",
+    responsibilities: [
+      "Developed backend services and APIs for gameplay systems and user interactions.",
+      "Implemented automated synchronization systems for Fantasy Premier League data using scheduled cron jobs.",
+      "Built scalable backend logic for player statistics, team management, and ranking systems.",
+      "Integrated Redis caching for performance optimization.",
+      "Developed Telegram Mini App and bot-related backend integrations.",
+    ],
+    highlights: [
+      "Cronjob-based data synchronization",
+      "Realtime game data processing",
+      "Redis performance optimization",
+      "Telegram ecosystem integration",
+      "Scalable backend APIs",
+    ],
+  },
+  {
+    name: "EST Edu",
+    role: "Software Engineering",
+    images: [
+      "/project-images/est-edu/full.webp",
+      "/project-images/est-edu/est-edu-1.webp",
+      "/project-images/est-edu/est-edu-2.webp",
+      "/project-images/est-edu/est-edu-8.webp",
+      "/project-images/est-edu/est-edu-3.webp",
+      "/project-images/est-edu/est-edu-4.webp",
+      "/project-images/est-edu/est-edu-5.webp",
+      "/project-images/est-edu/est-edu-6.webp",
+      "/project-images/est-edu/est-edu-7.webp",
+      "/project-images/est-edu/est-edu-9.webp",
+    ],
+    tags: ["Socket.io", "WebRTC", "AI"],
+    blurb:
+      "Interactive e-learning platform with live video sessions and AI-powered career prediction.",
+    summary:
+      "An interactive e-learning platform that combines structured programming courses, real-time communication, video calls, and AI-powered career prediction systems.",
+    responsibilities: [
+      "Designed and developed both frontend and backend systems.",
+      "Built course management, lesson management, and user authentication systems.",
+      "Implemented real-time chat and communication features using Socket.io.",
+      "Integrated WebRTC video calling for live learning sessions.",
+      "Developed AI-powered career prediction functionality using machine learning services.",
+      "Built dashboards, notifications, and interactive analytics systems.",
+      "Designed MongoDB database structures and backend APIs.",
+    ],
+    highlights: [
+      "Realtime communication systems",
+      "WebRTC video integration",
+      "AI-powered recommendation system",
+      "Full-stack architecture",
+      "Interactive analytics dashboard",
+      "Scalable education platform",
+    ],
+  },
+  {
+    name: "Van Thanh Clinic",
+    role: "Backend Developer",
+    images: [
+      "/project-images/pk-bs-thanh-1.webp",
+      "/project-images/pk-bs-thanh-2.webp",
+      "/project-images/pk-bs-thanh-3.webp",
+      "/project-images/admin-pk-bs-thanh-1.webp",
+      "/project-images/admin-pk-bs-thanh-2.webp",
+    ],
+    tags: ["NestJS", "MongoDB", "Swagger"],
+    blurb:
+      "Medical clinic platform with a public landing page and an internal CRM for content management.",
+    summary:
+      "A medical clinic platform including a public landing page and an internal CRM system for managing articles, banners, and medical content.",
+    responsibilities: [
+      "Designed and developed backend APIs for both landing page and admin CRM systems.",
+      "Built content management features for articles, banners, and doctor information.",
+      "Implemented authentication, validation, and CRUD management workflows.",
+      "Designed MongoDB database schemas and integrated API documentation using Swagger.",
+    ],
+    highlights: [
+      "RESTful API architecture",
+      "Content management system (CMS)",
+      "MongoDB database design",
+      "Authentication and validation workflows",
+      "Swagger API documentation",
+    ],
+  },
+  {
+    name: "Bwai Tech",
+    role: "Software Engineering",
+    images: [
+      "/project-images/bwai-tech-1.webp",
+      "/project-images/bwai-tech-2.webp",
+      "/project-images/bwai-tech-admin-1.webp",
+      "/project-images/bwai-tech-admin-2.webp",
+      "/project-images/bwai-tech-admin-3.webp",
+    ],
+    tags: ["Admin CMS", "REST API", "Responsive UI"],
+    blurb:
+      "Corporate website and admin system for managing products, careers and media content.",
+    summary:
+      "A corporate website and admin management system for managing company products, careers, classes, and media content.",
+    responsibilities: [
+      "Developed frontend landing pages and backend management systems.",
+      "Built admin dashboard features for managing products, careers, classes, and videos.",
+      "Implemented CRUD operations, form validation, and content management workflows.",
+      "Collaborated on responsive UI development and API integrations.",
+    ],
+    highlights: [
+      "Admin dashboard system",
+      "Responsive corporate website",
+      "Content management workflows",
+      "Form validation and API integration",
+      "Full-stack web development",
     ],
   },
 ];

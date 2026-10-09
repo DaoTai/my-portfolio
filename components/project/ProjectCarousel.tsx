@@ -43,7 +43,7 @@ const ROLE_STYLES: Record<string, RoleStyle> = {
     section: "text-emerald-400",
     ring: "ring-emerald-400/30",
   },
-  "Full-stack Developer": {
+  "Software Engineering": {
     badge: "bg-violet-500/15 text-violet-400 border-violet-500/40",
     border: "border-violet-500/20",
     activeBorder: "border-violet-400/70",

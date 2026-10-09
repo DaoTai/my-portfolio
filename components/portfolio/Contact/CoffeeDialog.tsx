@@ -165,7 +165,7 @@ export const CoffeeDialog = ({ onClose }: CoffeeDialogProps) => {
               className="relative mx-auto w-full max-w-[280px] overflow-hidden rounded-[18px] bg-white p-2 shadow-[0_24px_60px_-24px_rgba(var(--glow3),0.7)]"
             >
               <Image
-                src="/author/qr-bank.png"
+                src="/author/qr-bank.webp"
                 alt={`${BANK} VietQR code for Dao Duc Tai, account ${ACCOUNT_DISPLAY}`}
                 width={929}
                 height={1280}

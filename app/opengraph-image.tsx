@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { siteConfig } from "@/lib/config";
+import { siteConfig, siteHost } from "@/lib/config";
 
 export const runtime = "edge";
 export const alt = `${siteConfig.fullName} - ${siteConfig.jobTitle}`;
@@ -127,7 +127,7 @@ export default function Image() {
               letterSpacing: "1px",
             }}
           >
-            daotai.dev
+            {siteHost}
           </div>
         </div>
       </div>

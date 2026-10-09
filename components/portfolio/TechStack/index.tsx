@@ -1,11 +1,12 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { memo, useCallback, useState, type CSSProperties } from "react";
 import { CategoryIcon, categoryRgb } from "@/components/common/CategoryIcon";
 import { Reveal } from "@/components/common/Reveal";
 import { TiltCard } from "@/components/common/TiltCard";
-import TechModal, { type TechDetail } from "@/components/portfolio/TechModal";
+import type { TechDetail } from "@/components/portfolio/TechModal";
 import {
   TECH_DESCRIPTIONS,
   TECH_GROUPS,
@@ -13,6 +14,9 @@ import {
   type TechGroup,
 } from "@/lib/portfolio-data";
 import { TechStackBackground } from "./TechStackBackground";
+
+// Only fetched once a tech tile is opened.
+const TechModal = dynamic(() => import("@/components/portfolio/TechModal"));
 
 type TechGroupCardProps = {
   group: TechGroup;

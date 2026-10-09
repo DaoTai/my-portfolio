@@ -53,7 +53,7 @@ export const HeroVisual = ({
           <div className="hero-avatar">
             <div className="hero-avatar-float relative overflow-hidden rounded-full border-[6px] border-[#080a0b] bg-[#0d1424]">
               <Image
-                src="/avatar-professional.png"
+                src="/avatar-professional.webp"
                 alt="Dao Tai"
                 fill
                 priority
@@ -72,7 +72,7 @@ export const HeroVisual = ({
 
           <div className="hero-chip hero-chip--role flex items-center gap-3 whitespace-nowrap rounded-full bg-pf-base/[0.92] px-[22px] py-3.5 text-[15px] font-semibold text-pf-text">
             <span className="font-[monospace] text-pf-link">&lt;/&gt;</span>
-            Full-stack Developer
+            Software Engineering
             <span className="text-pf-link">
               {" "}
               <MoveRight

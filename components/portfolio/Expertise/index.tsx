@@ -4,6 +4,7 @@ import { AnimatedNumber } from "@/components/common/AnimatedNumber";
 import { CategoryIcon } from "@/components/common/CategoryIcon";
 import { Reveal } from "@/components/common/Reveal";
 import { TiltCard } from "@/components/common/TiltCard";
+import { TypewriterText } from "@/components/common/TypeWriter";
 import { ExpertiseBackground } from "./ExpertiseBackground";
 import "./Expertise.css";
 
@@ -80,7 +81,7 @@ const Expertise = () => {
           <Reveal delay={0.1}>
             <TiltCard
               max={5}
-              className="grid grid-cols-[minmax(0,1fr)_auto] gap-7 rounded-2xl border border-[rgba(160,170,255,0.25)] p-[26px] shadow-[0_30px_70px_-30px_rgba(var(--glow3),0.55)]"
+              className="grid grid-cols-1 gap-7 rounded-2xl border border-[rgba(160,170,255,0.25)] p-[26px] shadow-[0_30px_70px_-30px_rgba(var(--glow3),0.55)] sm:grid-cols-[minmax(0,1fr)_auto]"
               style={{
                 background:
                   "radial-gradient(circle at 110% -20%, rgba(160,180,255,0.28) 0%, rgba(60,70,140,0.18) 30%, transparent 55%), var(--bg3)",
@@ -90,7 +91,7 @@ const Expertise = () => {
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="grid size-[34px] place-items-center rounded-[10px] border border-pf-ink/[0.08] bg-pf-tilebg">
                     <Image
-                      src="/node-js.png"
+                      src="/node-js.webp"
                       alt=""
                       width={22}
                       height={22}
@@ -98,7 +99,7 @@ const Expertise = () => {
                     />
                   </span>
                   <span className="font-display text-base font-semibold text-pf-text">
-                    Full-Stack JavaScript Developer
+                    Software Engineering
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -106,13 +107,13 @@ const Expertise = () => {
                   <ExpertiseChip>Full-Stack</ExpertiseChip>
                 </div>
                 <p className="m-0 text-sm leading-[1.65] text-pf-t4 [text-wrap:pretty]">
-                  Building scalable web platforms, real-time systems, admin
-                  dashboards and Web3 applications for international projects,
-                  from modern UI and API integration to blockchain features and
-                  production-ready architecture.
+                  <TypewriterText
+                    text="Building scalable web platforms, real-time systems, admin dashboards and Web3 applications for international projects, from modern UI and API integration to blockchain features and production-ready architecture."
+                    delayPerChar={0.01}
+                  />
                 </p>
               </div>
-              <div className="flex flex-col justify-between gap-3 border-l border-pf-ink/[0.08] pl-6 text-center [transform:translateZ(36px)]">
+              <div className="flex flex-row justify-between gap-3 border-t border-pf-ink/[0.08] pt-5 text-center [transform:translateZ(36px)] sm:flex-col sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
                 {STATS.map((s, i) => (
                   <div key={s.label}>
                     <div className="font-display text-[22px] font-semibold text-pf-text">

@@ -1,17 +1,20 @@
 "use client";
 
 import { memo, useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
 
 import { AnimatedNumber, TWO_DIGITS } from "@/components/common/AnimatedNumber";
 import { EASE_OUT, Reveal } from "@/components/common/Reveal";
 import { TiltCard } from "@/components/common/TiltCard";
-import ProjectModal from "@/components/portfolio/ProjectModal";
 import { PROJECTS } from "@/lib/portfolio-data";
 import type { Project } from "@/lib/portfolio-data";
 import { ProjectsBackground } from "./ProjectsBackground";
 import "./ProjectsShowcase.css";
+
+// Only fetched once a project is opened, keeping the modal and lightbox out of the first load.
+const ProjectModal = dynamic(() => import("@/components/portfolio/ProjectModal"));
 
 type ProjectsShowcaseProps = {
   autoplay?: boolean;

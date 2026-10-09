@@ -231,7 +231,7 @@
   --base: 5, 7, 13;
   --base2: 7, 10, 18;
   --invhover: #dfe1ff;
-  --hero-img: url("/bg/hero-dark.png");
+  --hero-img: url("/bg/hero-dark.webp");
   --glow: 160, 180, 255;
   --glow2: 60, 70, 140;
   --glow3: 110, 116, 255;
@@ -264,7 +264,7 @@ html.light {
   --base: 250, 250, 250;
   --base2: 255, 255, 255;
   --invhover: #27272a;
-  --hero-img: url("/bg/hero-light.png");
+  --hero-img: url("/bg/hero-light.webp");
   --glow: 161, 161, 170;
   --glow2: 228, 228, 231;
   --glow3: 82, 82, 91;

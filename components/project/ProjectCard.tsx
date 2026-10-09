@@ -25,7 +25,7 @@ const roleStyleMap: Record<string, RoleStyle> = {
     dot: "bg-emerald-400",
     section: "text-emerald-400",
   },
-  "Full-stack Developer": {
+  "Software Engineering": {
     badge: "bg-violet-500/15 text-violet-400 border-violet-500/40",
     border: "border-violet-500/25",
     glow: "hover:shadow-[0_8px_48px_rgba(139,92,246,0.18)]",
@@ -43,7 +43,14 @@ const fallbackStyle: RoleStyle = {
 };
 
 const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
-  const { name, role, summary, responsibilities, technicalHighlights, previewImages } = data;
+  const {
+    name,
+    role,
+    summary,
+    responsibilities,
+    technicalHighlights,
+    previewImages,
+  } = data;
   const s = roleStyleMap[role] ?? fallbackStyle;
 
   return (
@@ -64,7 +71,9 @@ const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
         </motion.span>
 
         <div className="flex flex-1 flex-wrap items-center gap-3">
-          <h3 className="text-2xl font-bold tracking-tight sm:text-3xl">{name}</h3>
+          <h3 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            {name}
+          </h3>
 
           {/* Role badge — the main highlight */}
           <span
@@ -85,7 +94,9 @@ const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
 
           {/* Responsibilities */}
           <div>
-            <h4 className={`mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest ${s.section}`}>
+            <h4
+              className={`mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest ${s.section}`}
+            >
               <CheckCircle2 size={13} />
               My Responsibilities
             </h4>
@@ -99,7 +110,9 @@ const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
                   transition={{ delay: i * 0.045, duration: 0.35 }}
                   className="flex items-start gap-2.5 text-sm text-foreground/75"
                 >
-                  <span className={`mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full ${s.dot}`} />
+                  <span
+                    className={`mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full ${s.dot}`}
+                  />
                   {item}
                 </motion.li>
               ))}
@@ -108,7 +121,9 @@ const ProjectCard = ({ index, data }: { index: number; data: IProject }) => {
 
           {/* Technical Highlights */}
           <div>
-            <h4 className={`mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest ${s.section}`}>
+            <h4
+              className={`mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest ${s.section}`}
+            >
               <Zap size={13} />
               Technical Highlights
             </h4>

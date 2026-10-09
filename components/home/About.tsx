@@ -145,7 +145,7 @@ const About = () => {
             variants={fadeLeftVariants}
             className="relative pl-5 text-xl leading-7 text-foreground/70 before:absolute before:bottom-1 before:left-0 before:top-1 before:w-0.5 before:rounded-full before:bg-gradient dark:text-foreground/75"
           >
-            Full-stack Developer{" "}
+            Software Engineering{" "}
             <span className="font-semibold text-foreground/90">
               scalable web experiences
             </span>{" "}
@@ -308,7 +308,7 @@ const About = () => {
               {/* Gradient ring */}
               <div className="rounded-full bg-gradient p-[3px] shadow-2xl shadow-violet-500/30">
                 <Image
-                  src="/avatar-professional.png"
+                  src="/avatar-professional.webp"
                   width={340}
                   height={340}
                   alt="avatar"

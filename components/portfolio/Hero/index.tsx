@@ -225,7 +225,7 @@ const Hero = ({ showAvailable = true }: { showAvailable?: boolean }) => {
               {...rise(3)}
               className="m-0 font-display text-[clamp(20px,2vw,26px)] font-medium tracking-[-0.005em] text-pf-text"
             >
-              Full-Stack JavaScript Developer
+              Software Engineering
             </motion.p>
           </div>
 
@@ -233,7 +233,7 @@ const Hero = ({ showAvailable = true }: { showAvailable?: boolean }) => {
             {...rise(4)}
             className="m-0 max-w-[520px] text-pretty border-l-2 border-pf-g2 pl-4 text-base leading-[1.65] text-pf-t4"
           >
-            Full-stack JavaScript developer with 4+ years of experience building{" "}
+            Software Engineering with 4+ years of experience building{" "}
             <span className="text-pf-text">real-time systems</span>,{" "}
             <span className="text-pf-text">Web3 platforms</span>, and modern web
             applications with React, Next.js, Node.js and NestJS.

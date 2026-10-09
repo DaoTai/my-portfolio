@@ -1,42 +1,43 @@
 import type { MetadataRoute } from "next";
+import { siteConfig } from "@/lib/config";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Dao Tai - Full-Stack Web Developer",
-    short_name: "Dao Tai",
-    description:
-      "Full-stack web developer specializing in React, Next.js, and modern web technologies",
+    name: `${siteConfig.fullName} - ${siteConfig.jobTitle}`,
+    short_name: siteConfig.name,
+    description: siteConfig.shortDescription,
+    id: "/",
     start_url: "/",
     scope: "/",
+    lang: siteConfig.language,
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#000000",
+    background_color: siteConfig.themeColor,
+    theme_color: siteConfig.themeColor,
     icons: [
       {
         src: "/favicon.ico",
-        sizes: "any",
+        sizes: "16x16 32x32 48x48",
         type: "image/x-icon",
       },
       {
-        src: "/apple-touch-icon.png",
-        sizes: "180x180",
+        src: "/icon-192.png",
+        sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/apple-touch-icon.png",
-        sizes: "180x180",
+        src: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon-maskable-512.png",
+        sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
       },
     ],
-    categories: ["business", "productivity"],
-    screenshots: [
-      {
-        src: "/og-image.jpg",
-        sizes: "1200x630",
-        type: "image/jpeg",
-      },
-    ],
+    categories: ["portfolio", "developer", "technology"],
   };
 }

@@ -6,15 +6,12 @@ import ProjectsShowcase from "@/components/portfolio/ProjectsShowcase";
 import SiteHeader from "@/components/portfolio/SiteHeader";
 import TechStack from "@/components/portfolio/TechStack";
 
+// Title, description, Open Graph and Twitter come from app/layout.tsx.
+// Only page-specific values belong here: a page-level openGraph object would
+// shallow-replace the layout's (dropping siteName/locale/images).
 export const metadata: Metadata = {
-  title: "Dao Duc Tai | Full-Stack JavaScript Developer",
-  description:
-    "Full-stack JavaScript developer with 4+ years of experience building real-time systems, Web3 platforms, and modern web applications. Specializing in React, Next.js, Node.js, NestJS, and blockchain integrations across Solana, BNB Chain, and EVM ecosystems.",
-  openGraph: {
-    title: "Dao Duc Tai | Full-Stack JavaScript Developer",
-    description:
-      "Full-stack JavaScript developer with 4+ years of experience building real-time systems, Web3 platforms, and modern web applications. Specializing in React, Next.js, Node.js, NestJS, and blockchain integrations.",
-    type: "website",
+  alternates: {
+    canonical: "/",
   },
 };
 

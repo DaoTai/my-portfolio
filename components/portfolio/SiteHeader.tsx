@@ -30,20 +30,6 @@ const PROGRESS_STYLE = {
   boxShadow: "0 0 10px rgba(143,147,255,0.8)",
 };
 
-const readScroll = () => {
-  const se = document.scrollingElement || document.documentElement;
-  const max = se.scrollHeight - window.innerHeight;
-  const progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-  const line = window.innerHeight * 0.35;
-  let active = NAV[0].id;
-  for (const n of NAV) {
-    const el = document.getElementById(n.id);
-    if (el && el.getBoundingClientRect().top <= line) active = n.id;
-  }
-  if (max > 0 && window.scrollY >= max - 2) active = NAV[NAV.length - 1].id;
-  return { progress, active };
-};
-
 const iconButtonClass =
   "relative grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-pf-ink/10 bg-pf-ink/[0.04] text-pf-t3 [transition:color_.2s,background_.2s,border-color_.2s] hover:border-pf-ink/20 hover:bg-pf-ink/[0.08] hover:text-pf-text";
 
@@ -135,30 +121,69 @@ export default function SiteHeader() {
   const progressRef = useRef(0);
   const { resolvedTheme, setTheme } = useTheme();
 
+  // Nothing here reads layout on scroll (which would force a reflow every frame): the page
+  // height is cached from a ResizeObserver, and the active section comes from an
+  // IntersectionObserver watching a thin band 35% down the viewport.
   useEffect(() => {
+    const se = document.scrollingElement || document.documentElement;
+    let docHeight = 0; // set by the ResizeObserver, which also fires on observe()
+    let sectionActive = NAV[0].id;
+    const crossing = new Set<string>();
     let raf = 0;
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        const next = readScroll();
-        if (Math.abs(next.progress - progressRef.current) > 0.001) {
-          progressRef.current = next.progress;
-          setProgress(next.progress);
-        }
-        setActive(next.active);
-      });
+
+    const update = () => {
+      raf = 0;
+      const max = docHeight - window.innerHeight;
+      const progress =
+        max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      if (Math.abs(progress - progressRef.current) > 0.001) {
+        progressRef.current = progress;
+        setProgress(progress);
+      }
+      setActive(
+        max > 0 && window.scrollY >= max - 2
+          ? NAV[NAV.length - 1].id
+          : sectionActive,
+      );
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(update);
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    onScroll();
-    const timer = window.setTimeout(onScroll, 300);
+    const sections = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) crossing.add(e.target.id);
+          else crossing.delete(e.target.id);
+        }
+        // Between sections nothing crosses the band; keep the last one.
+        sectionActive =
+          [...NAV].reverse().find((n) => crossing.has(n.id))?.id ??
+          sectionActive;
+        schedule();
+      },
+      { rootMargin: "-35% 0px -64% 0px" },
+    );
+    for (const n of NAV) {
+      const el = document.getElementById(n.id);
+      if (el) sections.observe(el);
+    }
+
+    // Callbacks run after layout, so reading scrollHeight here is free.
+    const resize = new ResizeObserver(() => {
+      docHeight = se.scrollHeight;
+      schedule();
+    });
+    resize.observe(document.body);
+
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      window.clearTimeout(timer);
+      sections.disconnect();
+      resize.disconnect();
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
       cancelAnimationFrame(raf);
     };
   }, []);

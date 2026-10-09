@@ -344,7 +344,7 @@ const Skills = () => {
           <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
             <div className="flex size-20 shrink-0 items-center justify-center rounded-2xl border border-violet-500/30 bg-violet-500/10">
               <Image
-                src="/node-js.png"
+                src="/node-js.webp"
                 alt="Node.js"
                 width={48}
                 height={48}
@@ -354,7 +354,7 @@ const Skills = () => {
             <div className="flex-1 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <h4 className="text-xl font-bold text-foreground">
-                  Node.js Full-Stack Developer
+                  Node.js Software Engineering
                 </h4>
                 <span className="rounded-full border border-violet-500/30 bg-violet-500/15 px-3 py-0.5 text-xs font-semibold text-violet-400">
                   4 Years Experience

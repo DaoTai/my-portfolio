@@ -9,7 +9,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "optimize:images": "python3 scripts/optimize_images.py"
   },
   "dependencies": {
     "@number-flow/react": "^0.6.2",

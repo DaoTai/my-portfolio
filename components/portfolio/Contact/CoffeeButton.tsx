@@ -1,10 +1,14 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useRef, useState } from "react";
 import { Coffee } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
-import { CoffeeDialog } from "./CoffeeDialog";
+// Only fetched once the dialog is opened; AnimatePresence still sees its exit animation.
+const CoffeeDialog = dynamic(() =>
+  import("./CoffeeDialog").then((m) => m.CoffeeDialog),
+);
 
 export const CoffeeButton = () => {
   const [open, setOpen] = useState(false);
