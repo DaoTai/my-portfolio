@@ -2,16 +2,19 @@
 
 import { useChat } from "@ai-sdk/react";
 import { isTextUIPart, type UIMessage } from "ai";
-import { ArrowUp, Mail, RotateCcw, Square, X } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { memo, useEffect, useRef, useState } from "react";
-import type { FormEvent } from "react";
-import { pickPreviews } from "@/lib/chat/link-previews";
+import { ArrowUp, Square, X } from "lucide-react";
+import {
+  AnimatePresence,
+  motion,
+  useDragControls,
+  useReducedMotion,
+} from "motion/react";
+import type { PanInfo } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { FormEvent, PointerEvent } from "react";
 import { MAX_USER_CHARS } from "@/lib/chat/limits";
-import { linkify } from "@/lib/chat/linkify";
-import { siteConfig } from "@/lib/config";
-import { gmailComposeUrl } from "@/lib/contact";
-import { LinkPreview, PREVIEW_TARGETS } from "./LinkPreview";
+import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
+import { Bubble, BusyNotice, TypingDots } from "./ChatMessages";
 
 const STARTERS = [
   "What has Tai built in Web3?",
@@ -20,105 +23,25 @@ const STARTERS = [
   "How can I contact Tai?",
 ];
 
+// Below Tailwind's `sm`, the panel is a full-screen sheet instead of a corner panel.
+const MOBILE_QUERY = "(max-width: 639.98px)";
+
+// How far / how fast a downward drag has to go before the sheet dismisses.
+const DISMISS_DISTANCE = 120;
+const DISMISS_VELOCITY = 500;
+
 const textOf = (message: UIMessage) =>
   message.parts
     .filter(isTextUIPart)
     .map((part) => part.text)
     .join("");
 
-// Memoized: the whole list re-renders on every streamed token, but only the last message changes.
-const Bubble = memo(
-  ({ role, text }: { role: UIMessage["role"]; text: string }) => {
-    const segments = linkify(text);
-    const previews =
-      role === "assistant" ? pickPreviews(segments, PREVIEW_TARGETS) : [];
-
-    return (
-      <div
-        className={
-          role === "user"
-            ? "flex max-w-[85%] flex-col gap-2 self-end"
-            : "flex max-w-[90%] flex-col gap-2 self-start"
-        }
-      >
-        <div
-          className={
-            role === "user"
-              ? "whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-pf-text px-3.5 py-2.5 text-sm leading-relaxed text-pf-bg"
-              : "whitespace-pre-wrap break-words rounded-2xl rounded-bl-md border border-pf-ink/[0.08] bg-pf-bg3 px-3.5 py-2.5 text-sm leading-relaxed text-pf-text2"
-          }
-        >
-          {segments.map((segment, i) =>
-            segment.type === "link" ? (
-              <a
-                key={i}
-                href={segment.href}
-                {...(segment.href.startsWith("mailto:")
-                  ? {}
-                  : { target: "_blank", rel: "noopener noreferrer" })}
-                className="underline underline-offset-2 transition-opacity hover:opacity-75"
-              >
-                {segment.text}
-              </a>
-            ) : (
-              segment.text
-            ),
-          )}
-        </div>
-        {previews.map((preview) => (
-          <LinkPreview key={preview.kind} preview={preview} />
-        ))}
-      </div>
-    );
-  },
-);
-Bubble.displayName = "Bubble";
-
-const TypingDots = () => (
-  <div
-    role="status"
-    aria-label="Assistant is typing"
-    className="flex gap-1 self-start rounded-2xl rounded-bl-md border border-pf-ink/[0.08] bg-pf-bg3 px-3.5 py-3.5"
-  >
-    {[0, 150, 300].map((delay) => (
-      <span
-        key={delay}
-        className="size-1.5 animate-bounce rounded-full bg-pf-t6 motion-reduce:animate-none"
-        style={{ animationDelay: `${delay}ms` }}
-      />
-    ))}
-  </div>
-);
-
-const actionClass =
-  "inline-flex items-center gap-1.5 rounded-full border border-pf-ink/15 px-3 py-1.5 text-[13px] font-medium text-pf-text transition-colors hover:border-pf-g3";
-
-const BusyNotice = ({ onRetry }: { onRetry: () => void }) => (
-  <div
-    role="alert"
-    className="rounded-2xl border border-pf-ink/10 bg-pf-bg3 p-3.5 text-[13px] leading-relaxed text-pf-t4"
-  >
-    The assistant is busy right now. You can email Tai at {siteConfig.email}.
-    <div className="mt-2.5 flex gap-2">
-      <button type="button" onClick={onRetry} className={actionClass}>
-        <RotateCcw aria-hidden="true" size={14} /> Retry
-      </button>
-      <a
-        href={gmailComposeUrl({ subject: "Hello from your portfolio" })}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={actionClass}
-      >
-        <Mail aria-hidden="true" size={14} /> Email
-      </a>
-    </div>
-  </div>
-);
-
 type ChatPanelProps = { open: boolean; onClose: () => void };
 
 const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
   const reduce = useReducedMotion();
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+  const dragControls = useDragControls();
   const { messages, sendMessage, status, error, stop, regenerate } = useChat();
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -126,6 +49,7 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
   // Whether the list sits at the bottom, so streaming text doesn't yank a reader scrolled up.
   const pinnedRef = useRef(true);
   const stoppedRef = useRef(false);
+  const scrollRafRef = useRef(0);
 
   const busy = status === "submitted" || status === "streaming";
   const last = messages[messages.length - 1];
@@ -152,6 +76,16 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
+  // The mobile sheet covers the viewport, so the page behind it must not scroll.
+  useEffect(() => {
+    if (!open || !isMobile) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [open, isMobile]);
+
   // Keep the newest text in view while the answer streams in, unless the reader scrolled up.
   useEffect(() => {
     const list = listRef.current;
@@ -162,13 +96,20 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
     }
   }, [messages, status, open, last?.role]);
 
-  const onListScroll = () => {
-    const list = listRef.current;
-    if (list) {
-      pinnedRef.current =
-        list.scrollHeight - list.scrollTop - list.clientHeight < 80;
-    }
-  };
+  useEffect(() => () => cancelAnimationFrame(scrollRafRef.current), []);
+
+  // Reading scrollHeight/clientHeight forces layout, so coalesce it to one read per frame.
+  const onListScroll = useCallback(() => {
+    if (scrollRafRef.current) return;
+    scrollRafRef.current = requestAnimationFrame(() => {
+      scrollRafRef.current = 0;
+      const list = listRef.current;
+      if (list) {
+        pinnedRef.current =
+          list.scrollHeight - list.scrollTop - list.clientHeight < 80;
+      }
+    });
+  }, []);
 
   const retry = () => {
     stoppedRef.current = false;
@@ -193,20 +134,59 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
     send(input);
   };
 
+  // Drag starts from the handle only; starting it on the panel would fight the list's scroll.
+  const startDrag = (e: PointerEvent) => dragControls.start(e);
+
+  const onDragEnd = (_: unknown, info: PanInfo) => {
+    if (info.offset.y > DISMISS_DISTANCE || info.velocity.y > DISMISS_VELOCITY) {
+      onClose();
+    }
+  };
+
+  const sheet = isMobile
+    ? {
+        initial: { y: "100%" },
+        animate: { y: 0 },
+        exit: { y: "100%" },
+        transition: { type: "spring" as const, stiffness: 400, damping: 38 },
+      }
+    : {
+        initial: { opacity: 0, y: 24, scale: 0.96 },
+        animate: { opacity: 1, y: 0, scale: 1 },
+        exit: { opacity: 0, y: 16, scale: 0.97 },
+        transition: { type: "spring" as const, stiffness: 320, damping: 28 },
+      };
+
   return (
     <AnimatePresence>
       {open && (
         <motion.div
           id="chat-panel"
           role="dialog"
+          aria-modal={isMobile ? true : undefined}
           aria-label="Ask about Tai"
-          initial={reduce ? false : { opacity: 0, y: 24, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="fixed inset-x-4 bottom-20 z-40 flex h-[min(560px,calc(100dvh-11rem))] origin-bottom-right flex-col overflow-hidden rounded-3xl border border-pf-ink/10 bg-pf-bg2 shadow-[0_24px_80px_-20px_rgba(var(--glow3),0.45)] sm:inset-x-auto sm:bottom-[88px] sm:right-6 sm:w-[380px]"
+          initial={reduce ? false : sheet.initial}
+          animate={reduce ? { opacity: 1, y: 0, scale: 1 } : sheet.animate}
+          exit={reduce ? { opacity: 0 } : sheet.exit}
+          transition={reduce ? { duration: 0.15 } : sheet.transition}
+          drag={isMobile && !reduce ? "y" : false}
+          dragControls={dragControls}
+          dragListener={false}
+          dragConstraints={{ top: 0, bottom: 0 }}
+          dragElastic={{ top: 0, bottom: 0.5, left: 0, right: 0 }}
+          onDragEnd={onDragEnd}
+          className="chat-panel fixed inset-0 z-50 flex h-[100dvh] flex-col overflow-hidden border-pf-ink/10 bg-pf-bg2 sm:inset-auto sm:bottom-[88px] sm:right-6 sm:h-[min(560px,calc(100dvh-11rem))] sm:w-[380px] sm:origin-bottom-right sm:rounded-3xl sm:border sm:shadow-[0_24px_80px_-20px_rgba(var(--glow3),0.45)]"
         >
-          <div className="flex items-center justify-between border-b border-pf-ink/10 px-5 py-4">
+          {/* Grab handle: the sheet's drag region, and the only one — mobile only. */}
+          <div
+            onPointerDown={startDrag}
+            aria-hidden="true"
+            className="chat-handle grid shrink-0 place-items-center pb-1 pt-[max(0.625rem,env(safe-area-inset-top))] sm:hidden"
+          >
+            <span className="h-1 w-10 rounded-full bg-pf-ink/20" />
+          </div>
+
+          <div className="flex shrink-0 items-center justify-between border-b border-pf-ink/10 px-5 py-4 sm:pt-4">
             <div>
               <p className="m-0 font-display text-base font-semibold text-pf-text">
                 Ask about Tai
@@ -219,7 +199,7 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
               type="button"
               onClick={onClose}
               aria-label="Close chat"
-              className="grid size-9 place-items-center rounded-full text-pf-t6 transition-colors hover:bg-pf-ink/10 hover:text-pf-text"
+              className="grid size-9 place-items-center rounded-full text-pf-t6 transition-colors hover:bg-pf-ink/10 hover:text-pf-text active:scale-95"
             >
               <X aria-hidden="true" size={18} />
             </button>
@@ -230,7 +210,7 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
             onScroll={onListScroll}
             aria-live="polite"
             aria-busy={busy}
-            className="flex flex-1 flex-col gap-3 overflow-y-auto overscroll-contain px-5 py-4"
+            className="chat-list flex flex-1 touch-pan-y flex-col gap-3 overflow-y-auto overscroll-contain px-5 py-4"
           >
             <Bubble
               role="assistant"
@@ -244,7 +224,7 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
                     key={question}
                     type="button"
                     onClick={() => send(question)}
-                    className="rounded-full border border-pf-ink/15 px-3 py-1.5 text-left text-[13px] text-pf-t3 transition-colors hover:border-pf-g3 hover:text-pf-text"
+                    className="chat-chip rounded-full border border-pf-ink/15 px-3 py-1.5 text-left text-[13px] text-pf-t3 transition-colors hover:border-pf-g3 hover:text-pf-text active:scale-95"
                   >
                     {question}
                   </button>
@@ -266,9 +246,9 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
 
           <form
             onSubmit={onSubmit}
-            className="border-t border-pf-ink/10 px-4 pb-3 pt-3"
+            className="shrink-0 border-t border-pf-ink/10 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 sm:pb-3"
           >
-            <div className="flex items-center gap-2 rounded-full border border-pf-ink/15 bg-pf-base/40 py-1.5 pl-4 pr-1.5 focus-within:border-pf-g3">
+            <div className="flex items-center gap-2 rounded-full border border-pf-ink/15 bg-pf-base/40 py-1.5 pl-4 pr-1.5 transition-colors focus-within:border-pf-g3">
               {/* 16px on mobile so iOS Safari doesn't zoom in on focus. */}
               <input
                 ref={inputRef}
@@ -284,7 +264,7 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
                   type="button"
                   onClick={stopAnswer}
                   aria-label="Stop answer"
-                  className="grid size-9 shrink-0 place-items-center rounded-full bg-pf-text text-pf-bg"
+                  className="grid size-9 shrink-0 place-items-center rounded-full bg-pf-text text-pf-bg transition-transform active:scale-90"
                 >
                   <Square aria-hidden="true" size={13} fill="currentColor" />
                 </button>
@@ -293,7 +273,7 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
                   type="submit"
                   disabled={!input.trim()}
                   aria-label="Send question"
-                  className="grid size-9 shrink-0 place-items-center rounded-full bg-pf-text text-pf-bg transition-opacity disabled:opacity-40"
+                  className="grid size-9 shrink-0 place-items-center rounded-full bg-pf-text text-pf-bg transition-[opacity,transform] active:scale-90 disabled:opacity-40 disabled:active:scale-100"
                 >
                   <ArrowUp aria-hidden="true" size={16} />
                 </button>
