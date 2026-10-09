@@ -1,2 +1,11 @@
 allowBuilds:
   unrs-resolver: false
+
+# Security patches for vulnerable transitive dependencies (Dependabot).
+overrides:
+  postcss: ^8.5.23
+  source-map-js: ^1.2.2
+  brace-expansion@<1.1.21: ^1.1.21
+  brace-expansion@>=2.0.0 <2.1.7: ^2.1.7
+  minimatch@>=9.0.0 <9.0.7: ^9.0.7
+  glob@>=10.2.0 <10.5.0: ^10.5.0

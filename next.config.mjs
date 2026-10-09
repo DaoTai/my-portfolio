@@ -10,7 +10,6 @@ const nextConfig = {
   // Compression
   compress: true,
   // Optimization
-  swcMinify: true,
   productionBrowserSourceMaps: false,
   // Headers for performance
   headers: async () => {

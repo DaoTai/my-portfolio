@@ -65,7 +65,7 @@ const RECEIPT: Variants = {
 export const CoffeeDialog = ({ onClose }: CoffeeDialogProps) => {
   const reduce = useReducedMotion();
   const closeRef = useRef<HTMLButtonElement>(null);
-  const copyTimer = useRef<number>();
+  const copyTimer = useRef<number | undefined>(undefined);
   const [copied, setCopied] = useState(false);
 
   // Lock body scroll while open.
