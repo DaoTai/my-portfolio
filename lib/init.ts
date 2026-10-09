@@ -635,11 +635,11 @@ export const listExperience: IExperience[] = [
   {
     companyName: "Twendee",
     comanyLogo: "/experience/twendee.webp",
-    positionWork: "Junior Software Engineering",
+    positionWork: "Junior Software Engineer",
     startTime: "June 2024",
     endTime: "Present",
     summary:
-      "Working as a Software Engineering building scalable web platforms, real-time systems, admin dashboards, and Web3 applications for international projects. Contributing across frontend and backend development, including modern UI implementation, API integration, blockchain-related features, realtime communication systems, performance optimization, and production-ready application architecture.",
+      "Working as a software engineer building scalable web platforms, real-time systems, admin dashboards, and Web3 applications for international projects. Contributing across frontend and backend development, including modern UI implementation, API integration, blockchain-related features, realtime communication systems, performance optimization, and production-ready application architecture.",
   },
   {
     companyName: "BWAI TECH",
@@ -653,11 +653,11 @@ export const listExperience: IExperience[] = [
   {
     companyName: "Freelance",
     comanyLogo: "/experience/free.avif",
-    positionWork: "Software Engineering",
+    positionWork: "Freelance Software Engineer",
     startTime: "September 2023",
     endTime: "January 2024",
     summary:
-      "Worked as a freelance Software Engineering delivering landing pages, CMS platforms, and custom business systems for clients. Handled both frontend and backend development, including API integration, database design, authentication systems, and responsive UI implementation while working directly with client requirements and project deployment workflows.",
+      "Worked as a freelance software engineer delivering landing pages, CMS platforms, and custom business systems for clients. Handled both frontend and backend development, including API integration, database design, authentication systems, and responsive UI implementation while working directly with client requirements and project deployment workflows.",
   },
   {
     companyName: "USOL VIETNAM",

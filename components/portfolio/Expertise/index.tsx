@@ -18,7 +18,7 @@ const AREAS = [
   {
     code: "FE",
     title: "Frontend Engineering",
-    desc: "Production Next.js and React apps: trading terminals, booking flows and admin CMSs tuned for large, fast-changing datasets.",
+    desc: "Next.js and React apps built for heavy, fast-changing data: trading terminals, flight booking and admin CMSs kept smooth with virtualization, memoization and React 19 transitions.",
     chips: [
       "React / Next.js",
       "TypeScript",
@@ -30,13 +30,13 @@ const AREAS = [
   {
     code: "BE",
     title: "Node.js & Backend",
-    desc: "NestJS and Express services with REST APIs, WebSockets, message queues and microservices behind them.",
+    desc: "NestJS and Express services: REST APIs, WebSocket gateways, RabbitMQ queues, Redis caching and cron-driven data sync, containerized with Docker.",
     chips: ["NestJS", "Express", "Prisma", "Socket.io", "RabbitMQ", "Redis"],
   },
   {
     code: "W3",
     title: "Web3 & Real-time",
-    desc: "Wallet auth, on-chain bidding and multi-chain trading, plus live socket streams for markets, chat and video.",
+    desc: "Wallet auth, on-chain bidding and multi-chain trading across Solana, EVM and TON, plus live socket streams for markets, chat and video calls.",
     chips: ["Solana", "BNB / EVM", "TON", "viem / Privy", "WebRTC"],
   },
 ];
@@ -73,9 +73,9 @@ const Expertise = () => {
               </span>
             </h2>
             <p className="m-0 max-w-[440px] text-[15px] leading-[1.65] text-pf-t6 [text-wrap:pretty]">
-              4+ years of full-stack JavaScript development, specialized in
-              Node.js backends, modern React frontends and Web3 integrations
-              across Solana, BNB Chain and EVM.
+              4+ years of full-stack TypeScript and JavaScript work across 13
+              projects: performance-tuned React frontends, Node.js and NestJS
+              backends, and Web3 integrations on Solana, BNB Chain, EVM and TON.
             </p>
           </Reveal>
           <Reveal delay={0.1}>
@@ -99,7 +99,7 @@ const Expertise = () => {
                     />
                   </span>
                   <span className="font-display text-base font-semibold text-pf-text">
-                    Software Engineering
+                    Software Engineer
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -108,7 +108,7 @@ const Expertise = () => {
                 </div>
                 <p className="m-0 text-sm leading-[1.65] text-pf-t4 [text-wrap:pretty]">
                   <TypewriterText
-                    text="Building scalable web platforms, real-time systems, admin dashboards and Web3 applications for international projects, from modern UI and API integration to blockchain features and production-ready architecture."
+                    text="Building trading platforms, real-time systems, admin CMSs and Web3 products for international clients, owning features from UI and API integration through on-chain flows to Docker-based deployment."
                     delayPerChar={0.01}
                   />
                 </p>

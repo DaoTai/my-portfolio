@@ -17,12 +17,12 @@ export const siteConfig = {
   themeColor: "#05070d",
   /** Square-ish portrait used as the Person image in structured data. */
   avatar: "/avatar-professional.webp",
-  title: "Dao Duc Tai | Software Engineering",
+  title: "Dao Duc Tai | Full-Stack Software Engineer",
   description:
-    "Software Engineering with 4+ years of experience building real-time systems, Web3 platforms, and modern web applications. Specializing in React, Next.js, Node.js, NestJS, and blockchain integrations across Solana, BNB Chain, and EVM ecosystems.",
+    "Full-stack software engineer with 4+ years of experience shipping real-time trading platforms, Web3 products, booking engines and admin CMSs for international clients. Owns features end to end with React, Next.js, Node.js and NestJS, from performance-tuned UIs and REST/WebSocket APIs to wallet and on-chain integrations on Solana, BNB Chain, EVM and TON.",
   shortDescription:
-    "Software Engineering building real-time systems, Web3 platforms, and modern web apps with React, Next.js, Node.js and NestJS.",
-  jobTitle: "Software Engineering",
+    "Full-stack software engineer shipping real-time trading platforms, Web3 products and production web apps with React, Next.js, Node.js and NestJS.",
+  jobTitle: "Full-Stack Software Engineer",
   email: "daotai.work@gmail.com",
   resume: "/resume.pdf",
   /** Shown by the chat assistant; can also be surfaced on the page. */
@@ -34,7 +34,9 @@ export const siteConfig = {
   keywords: [
     "Dao Duc Tai",
     "Dao Tai",
-    "Software Engineering",
+    "Software Engineer",
+    "Full-Stack Software Engineer",
+    "full-stack developer",
     "web developer",
     "React developer",
     "Next.js developer",

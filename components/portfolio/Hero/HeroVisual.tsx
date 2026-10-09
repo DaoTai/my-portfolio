@@ -72,7 +72,7 @@ export const HeroVisual = ({
 
           <div className="hero-chip hero-chip--role flex items-center gap-3 whitespace-nowrap rounded-full bg-pf-base/[0.92] px-[22px] py-3.5 text-[15px] font-semibold text-pf-text">
             <span className="font-[monospace] text-pf-link">&lt;/&gt;</span>
-            Software Engineering
+            Software Engineer
             <span className="text-pf-link">
               {" "}
               <MoveRight

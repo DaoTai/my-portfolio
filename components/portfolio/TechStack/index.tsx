@@ -101,8 +101,8 @@ const TechStack = () => {
             </h2>
           </div>
           <p className="m-0 max-w-[440px] text-[15px] leading-[1.65] text-pf-t6">
-            Technologies and tools I use to ship real-time systems, Web3
-            platforms and production web apps.
+            The stack I’ve used in production to ship trading terminals, Web3
+            platforms, booking engines and full-stack web apps.
           </p>
         </Reveal>
 
