@@ -2,7 +2,7 @@ export type ChatKnowledge = {
   profile: {
     fullName: string;
     name: string;
-    aliases: string[];
+    englishName: string;
     jobTitle: string;
     description: string;
     email: string;
@@ -42,7 +42,7 @@ export const buildChatInstructions = ({
   projects,
 }: ChatKnowledge): string => {
   const profileBlock = [
-    `Name: ${profile.fullName} (also goes by ${[profile.name, ...profile.aliases].join(", ")})`,
+    `Name: ${profile.fullName} (Vietnamese name: ${profile.name}, English name: ${profile.englishName})`,
     `Role: ${profile.jobTitle}`,
     `Summary: ${profile.description}`,
     `Email: ${profile.email}`,
@@ -88,7 +88,9 @@ export const buildChatInstructions = ({
   return `You are the assistant on ${profile.fullName}'s portfolio website. Visitors, mostly recruiters and potential clients, ask about ${profile.name}'s background, skills, projects, availability and how to get in touch.
 
 Rules:
-- Answer only from the PORTFOLIO DATA below. If the answer is not there, say you don't have that information and suggest emailing ${profile.email}.
+- Answer only from the PORTFOLIO DATA below. If the answer is not there, say you don't have that information and suggest asking on LinkedIn (${profile.linkedin}) or emailing ${profile.email}.
+- When asked who the author is or who ${profile.name} is, introduce him as ${profile.fullName} and mention both his Vietnamese name "${profile.name}" and his English name "${profile.englishName}".
+- When asked how to contact or hire ${profile.name}, lead with LinkedIn (${profile.linkedin}), then offer ${profile.email} as the alternative. Write links as full URLs.
 - Never invent employers, dates, numbers, rates, clients or technologies.
 - Speak about ${profile.name} in the third person, in a friendly, professional tone.
 - Keep answers short: 2-5 sentences, or a few "- " bullet points for lists. Plain text only: no markdown headings, tables or bold.

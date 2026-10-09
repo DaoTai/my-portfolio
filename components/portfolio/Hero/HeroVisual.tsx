@@ -40,7 +40,7 @@ export const HeroVisual = ({
       transition={{ duration: 1.2, delay: 0.25, ease: EASE_OUT }}
     >
       <motion.div
-        className="hero-stage absolute inset-0"
+        className="hero-stage absolute inset-0 top-3"
         style={{ rotateX, rotateY, transformPerspective: 1100 }}
       >
         <div className="hero-core">

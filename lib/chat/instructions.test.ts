@@ -6,7 +6,7 @@ const knowledge: ChatKnowledge = {
   profile: {
     fullName: "Dao Duc Tai",
     name: "Dao Tai",
-    aliases: ["Kendrick"],
+    englishName: "Kendrick",
     jobTitle: "Software Engineering",
     description: "Builds real-time systems.",
     email: "me@example.com",
@@ -50,7 +50,10 @@ test("puts the rules before the data", () => {
 
 test("grounds answers and names the fallback contact", () => {
   assert.match(prompt, /Answer only from the PORTFOLIO DATA/);
-  assert.match(prompt, /suggest emailing me@example\.com/);
+  assert.match(
+    prompt,
+    /suggest asking on LinkedIn \(https:\/\/linkedin\.com\/in\/example\) or emailing me@example\.com/,
+  );
 });
 
 test("includes every profile fact", () => {
@@ -80,4 +83,22 @@ test("includes experience, tech and projects", () => {
   ]) {
     assert.ok(prompt.includes(fact), `missing ${fact}`);
   }
+});
+
+test("points contact questions to LinkedIn first, email second", () => {
+  assert.match(
+    prompt,
+    /how to contact or hire Dao Tai, lead with LinkedIn \(https:\/\/linkedin\.com\/in\/example\), then offer me@example\.com/,
+  );
+});
+
+test("introduces the author with the Vietnamese and English names", () => {
+  assert.match(
+    prompt,
+    /Name: Dao Duc Tai \(Vietnamese name: Dao Tai, English name: Kendrick\)/,
+  );
+  assert.match(
+    prompt,
+    /When asked who the author is or who Dao Tai is, introduce him as Dao Duc Tai and mention both his Vietnamese name "Dao Tai" and his English name "Kendrick"\./,
+  );
 });

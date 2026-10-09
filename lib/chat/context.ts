@@ -9,7 +9,7 @@ export const CHAT_INSTRUCTIONS = buildChatInstructions({
   profile: {
     fullName: siteConfig.fullName,
     name: siteConfig.name,
-    aliases: ["Kendrick"],
+    englishName: "Kendrick",
     jobTitle: siteConfig.jobTitle,
     description: siteConfig.description,
     email: siteConfig.email,

@@ -101,7 +101,7 @@ export default function Image() {
             justifyContent: "center",
           }}
         >
-          {["Node.js", "React", "Next.js", "TypeScript", "NestJS", "Web3"].map(
+          {["TypeScript", "Node.js", "React", "Next.js", "NestJS", "Web3"].map(
             (tech) => (
               <div
                 key={tech}

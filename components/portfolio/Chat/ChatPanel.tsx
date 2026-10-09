@@ -4,11 +4,14 @@ import { useChat } from "@ai-sdk/react";
 import { isTextUIPart, type UIMessage } from "ai";
 import { ArrowUp, Mail, RotateCcw, Square, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
-import type { FormEvent, ReactNode } from "react";
+import { memo, useEffect, useRef, useState } from "react";
+import type { FormEvent } from "react";
+import { pickPreviews } from "@/lib/chat/link-previews";
 import { MAX_USER_CHARS } from "@/lib/chat/limits";
+import { linkify } from "@/lib/chat/linkify";
 import { siteConfig } from "@/lib/config";
 import { gmailComposeUrl } from "@/lib/contact";
+import { LinkPreview, PREVIEW_TARGETS } from "./LinkPreview";
 
 const STARTERS = [
   "What has Tai built in Web3?",
@@ -23,23 +26,53 @@ const textOf = (message: UIMessage) =>
     .map((part) => part.text)
     .join("");
 
-const Bubble = ({
-  role,
-  children,
-}: {
-  role: UIMessage["role"];
-  children: ReactNode;
-}) => (
-  <div
-    className={
-      role === "user"
-        ? "max-w-[85%] self-end whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-pf-text px-3.5 py-2.5 text-sm leading-relaxed text-pf-bg"
-        : "max-w-[90%] self-start whitespace-pre-wrap break-words rounded-2xl rounded-bl-md border border-pf-ink/[0.08] bg-pf-bg3 px-3.5 py-2.5 text-sm leading-relaxed text-pf-text2"
-    }
-  >
-    {children}
-  </div>
+// Memoized: the whole list re-renders on every streamed token, but only the last message changes.
+const Bubble = memo(
+  ({ role, text }: { role: UIMessage["role"]; text: string }) => {
+    const segments = linkify(text);
+    const previews =
+      role === "assistant" ? pickPreviews(segments, PREVIEW_TARGETS) : [];
+
+    return (
+      <div
+        className={
+          role === "user"
+            ? "flex max-w-[85%] flex-col gap-2 self-end"
+            : "flex max-w-[90%] flex-col gap-2 self-start"
+        }
+      >
+        <div
+          className={
+            role === "user"
+              ? "whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-pf-text px-3.5 py-2.5 text-sm leading-relaxed text-pf-bg"
+              : "whitespace-pre-wrap break-words rounded-2xl rounded-bl-md border border-pf-ink/[0.08] bg-pf-bg3 px-3.5 py-2.5 text-sm leading-relaxed text-pf-text2"
+          }
+        >
+          {segments.map((segment, i) =>
+            segment.type === "link" ? (
+              <a
+                key={i}
+                href={segment.href}
+                {...(segment.href.startsWith("mailto:")
+                  ? {}
+                  : { target: "_blank", rel: "noopener noreferrer" })}
+                className="underline underline-offset-2 transition-opacity hover:opacity-75"
+              >
+                {segment.text}
+              </a>
+            ) : (
+              segment.text
+            ),
+          )}
+        </div>
+        {previews.map((preview) => (
+          <LinkPreview key={preview.kind} preview={preview} />
+        ))}
+      </div>
+    );
+  },
 );
+Bubble.displayName = "Bubble";
 
 const TypingDots = () => (
   <div
@@ -199,9 +232,10 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
             aria-busy={busy}
             className="flex flex-1 flex-col gap-3 overflow-y-auto overscroll-contain px-5 py-4"
           >
-            <Bubble role="assistant">
-              Hi! Ask me about Tai’s experience, projects or tech stack.
-            </Bubble>
+            <Bubble
+              role="assistant"
+              text="Hi! Ask me about Tai’s experience, projects or tech stack."
+            />
 
             {messages.length === 0 && (
               <div className="flex flex-wrap gap-2 pt-1">
@@ -221,9 +255,7 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
             {messages.map((message) => {
               const text = textOf(message);
               return text ? (
-                <Bubble key={message.id} role={message.role}>
-                  {text}
-                </Bubble>
+                <Bubble key={message.id} role={message.role} text={text} />
               ) : null;
             })}
 
