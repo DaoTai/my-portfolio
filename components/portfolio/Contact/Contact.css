@@ -8,6 +8,15 @@
  */
 
 #contact {
+  /*
+   * Scene scale. Every length below is derived from this rather than the scene being `scale`d
+   * down, because a transform shrinks a layer only after it has been rasterised: at 1 the dish
+   * alone composites eight 960×960 layers and the globe another dozen, and the compositor
+   * re-blends all of them every frame while the sweep, pulses and spin run. Phones were paying
+   * that full desktop bill for a decoration drawn at 60%, which is what made the end of the
+   * page stutter. Scaling the layout instead cuts the texture area to s².
+   */
+  --cb-s: 1;
   --cb-line: rgba(var(--glow), 0.34);
   --cb-line-soft: rgba(var(--glow), 0.17);
   --cb-accent: var(--g3);
@@ -45,10 +54,10 @@ html.light #contact {
   position: absolute;
   left: 34%;
   top: 90%;
-  width: 960px;
-  height: 960px;
+  width: calc(960px * var(--cb-s));
+  height: calc(960px * var(--cb-s));
   translate: -50% -50%;
-  perspective: 1100px;
+  perspective: calc(1100px * var(--cb-s));
 }
 
 .contact-dish {
@@ -125,7 +134,7 @@ html.light #contact {
  * where the strip clips it. Pure translate, so it never repaints the dish.
  */
 .contact-packet {
-  width: var(--len);
+  width: calc(var(--len) * var(--cb-s));
   height: 4px;
   margin-top: -2px;
   overflow: hidden;
@@ -138,7 +147,7 @@ html.light #contact {
   position: absolute;
   left: 0;
   top: 50%;
-  width: calc(var(--len) * 0.07);
+  width: calc(var(--len) * var(--cb-s) * 0.07);
   height: 2.6px;
   margin-top: -1.3px;
   border-radius: 2px;
@@ -181,8 +190,8 @@ html.light #contact {
 
 /* Ripple on the plane where the beam crosses a contact. */
 .contact-blip {
-  width: 38px;
-  height: 38px;
+  width: calc(38px * var(--cb-s));
+  height: calc(38px * var(--cb-s));
   translate: -50% -50%;
   border-radius: 50%;
   border: 1px solid var(--cb-accent);
@@ -193,7 +202,7 @@ html.light #contact {
 /* A mast standing up out of the dish (rotated about its foot), with a light on top. */
 .contact-pin {
   width: 1px;
-  height: var(--h, 40px);
+  height: calc(var(--h, 40px) * var(--cb-s));
   translate: -50% -100%;
   transform-origin: 50% 100%;
   transform: rotateX(-90deg);
@@ -207,38 +216,38 @@ html.light #contact {
   position: absolute;
   left: 50%;
   top: 0;
-  width: 5px;
-  height: 5px;
+  width: calc(5px * var(--cb-s));
+  height: calc(5px * var(--cb-s));
   translate: -50% -50%;
   border-radius: 50%;
   background: var(--cb-accent2);
   box-shadow:
-    0 0 8px var(--cb-accent),
-    0 0 18px rgba(var(--glow3), 0.6);
+    0 0 calc(8px * var(--cb-s)) var(--cb-accent),
+    0 0 calc(18px * var(--cb-s)) rgba(var(--glow3), 0.6);
 }
 
 .contact-pin--mast {
   --h: 92px;
-  width: 1.5px;
+  width: calc(1.5px * var(--cb-s));
   animation-duration: 2s;
   animation-delay: 0s;
 }
 
 .contact-pin--mast::after {
-  width: 7px;
-  height: 7px;
+  width: calc(7px * var(--cb-s));
+  height: calc(7px * var(--cb-s));
   background: var(--cb-accent);
 }
 
 .contact-beacon {
-  width: 14px;
-  height: 14px;
+  width: calc(14px * var(--cb-s));
+  height: calc(14px * var(--cb-s));
   translate: -50% -50%;
   border-radius: 50%;
   background: var(--cb-accent);
   box-shadow:
-    0 0 0 5px rgba(var(--glow3), 0.18),
-    0 0 26px var(--cb-accent);
+    0 0 0 calc(5px * var(--cb-s)) rgba(var(--glow3), 0.18),
+    0 0 calc(26px * var(--cb-s)) var(--cb-accent);
 }
 
 /* ---- wireframe globe ---- */
@@ -247,10 +256,10 @@ html.light #contact {
   position: absolute;
   right: -170px;
   top: 50%;
-  width: 400px;
-  height: 400px;
+  width: calc(400px * var(--cb-s));
+  height: calc(400px * var(--cb-s));
   translate: 0 -50%;
-  perspective: 1200px;
+  perspective: calc(1200px * var(--cb-s));
 }
 
 .contact-globe-halo {
@@ -272,8 +281,8 @@ html.light #contact {
   border-radius: 50%;
   border: 1px solid var(--cb-line);
   box-shadow:
-    inset 0 0 50px rgba(var(--glow3), 0.16),
-    0 0 40px rgba(var(--glow3), 0.12);
+    inset 0 0 calc(50px * var(--cb-s)) rgba(var(--glow3), 0.16),
+    0 0 calc(40px * var(--cb-s)) rgba(var(--glow3), 0.12);
 }
 
 .contact-globe-tilt,
@@ -299,8 +308,8 @@ html.light #contact {
 }
 
 .contact-meridian {
-  width: 400px;
-  height: 400px;
+  width: calc(400px * var(--cb-s));
+  height: calc(400px * var(--cb-s));
   border-radius: 50%;
   border: 1px solid var(--cb-line-soft);
   transform: translate(-50%, -50%) rotateY(var(--a));
@@ -321,8 +330,8 @@ html.light #contact {
 
 /* A great-circle plane (3 × radius square) holding one arc. */
 .contact-arc {
-  width: 600px;
-  height: 600px;
+  width: calc(600px * var(--cb-s));
+  height: calc(600px * var(--cb-s));
   overflow: visible;
   transform: translate(-50%, -50%) rotateY(var(--ry)) rotateX(var(--rx));
 }
@@ -353,9 +362,9 @@ html.light #contact {
   content: "";
   position: absolute;
   left: calc(var(--r) - 1.4px);
-  top: -34px;
+  top: calc(-34px * var(--cb-s));
   width: 2.8px;
-  height: 34px;
+  height: calc(34px * var(--cb-s));
   border-radius: 2px;
   background: linear-gradient(transparent, var(--cb-accent));
   opacity: 0;
@@ -366,20 +375,28 @@ html.light #contact {
   fill: var(--cb-accent2);
 }
 
-/* ---- small screens: one arc, no links or ripples, everything scaled down ---- */
+/* ---- small screens: one arc, no links or ripples, the scene laid out at 60% ---- */
 
 @media (max-width: 767px) {
+  #contact {
+    --cb-s: 0.6;
+  }
+
+  /* Centre-positioned, so the smaller box keeps the dish where it was. */
   .contact-radar {
     left: 50%;
     top: 95%;
-    scale: 0.6;
   }
 
+  /*
+   * The globe hangs off the right edge, so its position is measured from its own box rather
+   * than its centre: shrinking the box from 400px to 240px moves both edges in by 80px, and
+   * these offsets put it back where the scaled-down version sat.
+   */
   .contact-globe {
-    right: -190px;
-    top: 10%;
+    right: -110px;
+    top: calc(10% + 80px);
     translate: 0 0;
-    scale: 0.6;
     opacity: 0.75;
   }
 
@@ -444,7 +461,7 @@ html.light #contact {
   }
   55%,
   100% {
-    translate: var(--len) 0;
+    translate: calc(var(--len) * var(--cb-s)) 0;
   }
 }
 

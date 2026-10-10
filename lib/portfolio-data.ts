@@ -260,6 +260,46 @@ export const TECH_DESCRIPTIONS: Record<string, string> = {
 
 export const PROJECTS: Project[] = [
   {
+    name: "FC Văn Phú Reborn",
+    role: "Fullstack Developer",
+    logo: "/project-images/van-phu-reborn/logo.webp",
+    images: [
+      "/project-images/van-phu-reborn/01-hero.webp",
+      "/project-images/van-phu-reborn/02-chatbot.webp",
+      "/project-images/van-phu-reborn/03-squad.webp",
+      "/project-images/van-phu-reborn/04-squad-picker.webp",
+      "/project-images/van-phu-reborn/05-nextmatch-weather.webp",
+      "/project-images/van-phu-reborn/06-history.webp",
+      "/project-images/van-phu-reborn/07-squad-picker-final.webp",
+    ],
+    tags: ["React 19", "Vite SSR", "AI SDK", "Vercel"],
+    blurb:
+      "Bilingual football club site with an AI assistant chatbot, SSR-prerendered SEO, and a drag-and-drop lineup builder for members.",
+    summary:
+      "A bilingual (VI/EN) fan site for FC Văn Phú Reborn, built in React 19 with a custom Vite SSR pipeline that prerenders every route per language into static HTML for crawlers and social link previews. Shipped an on-site AI chatbot (Vercel AI SDK + OpenRouter) that answers visitor questions grounded in the club's own data, plus a members-only drag-and-drop squad/lineup picker and live match-day weather.",
+    responsibilities: [
+      "Built a streaming AI chatbot: Vercel AI SDK `streamText` over OpenRouter with multi-key and multi-model fallback, per-IP rate limiting, request-size/body guards, UI-message validation, and a hand-built knowledge base (club facts, squad, schedule, timeline) injected into the system prompt so answers stay grounded instead of hallucinated.",
+      "Wrote the chat request/response pipeline as a plain Web Request→Response handler shared verbatim between the Vercel serverless function (api/chat.ts) and the Vite dev server middleware, so local dev and production run identical logic.",
+      "Built a custom React SSR + prerendering pipeline (vite build --ssr + a Node prerender script) that bakes per-language, per-route static HTML, injects per-page <head> SEO tags, and generates sitemap.xml/robots.txt with hreflang alternates directly from the router's route table, failing the build if a route is missing its Vercel rewrite.",
+      "Implemented a members-only drag-and-drop lineup picker (dnd-kit) with a formation pitch, roster panel, pointer-based custom drag ghost, and a hashed-access-key gate that keeps the real secret out of the client bundle.",
+      "Built the live match section: next-kickoff scheduling logic and an Open-Meteo weather forecast hook showing conditions for the exact kickoff time.",
+      "Performance-tuned the build: route-level code splitting with retrying lazy imports, manual vendor chunking (react/react-dom/router, swiper) for long-term browser caching, and an image pipeline that converts assets to WebP and prunes superseded PNG/JPG originals from the deploy.",
+      "Built animated UI sections (hero, history timeline/story map, memories, highlights, squad cards) with scroll-reveal, parallax, tilt, and particle/meteor effects, plus i18n via a language context and bilingual content dictionaries.",
+      "Covered chat guards, rate limiting, key parsing, weather, lineup, and typewriter/reveal logic with Vitest unit tests.",
+    ],
+    highlights: [
+      "Vercel AI SDK streaming chatbot grounded on custom knowledge base",
+      "Multi-key/multi-model fallback + per-IP rate limiting for a free-tier LLM API",
+      "Custom React SSR prerendering for per-language SEO (sitemap, hreflang, meta tags)",
+      "Shared handler code between Vercel serverless function and Vite dev middleware",
+      "Drag-and-drop lineup builder with dnd-kit and a hashed members-only access gate",
+      "Vendor chunking, lazy-loaded routes, and WebP image pipeline for performance",
+      "Bilingual (VI/EN) content and routing",
+      "Vitest unit tests across chat safety logic, weather, and lineup",
+    ],
+  },
+
+  {
     name: "NextVault",
     role: "Frontend Developer",
     logo: "/project-images/next-vault/logo.webp",
@@ -298,7 +338,7 @@ export const PROJECTS: Project[] = [
   },
   {
     name: "Bullbit",
-    role: "Full-Stack Engineer",
+    role: "Full-Stack Developer",
     logo: "/project-images/bullbit/logo.webp",
     images: [
       "/project-images/bullbit/1.webp",
@@ -444,34 +484,7 @@ export const PROJECTS: Project[] = [
       "shadcn/ui component architecture",
     ],
   },
-  {
-    name: "Seagate",
-    role: "Frontend Developer",
-    logo: "/project-images/seagate/logo.webp",
-    images: ["/project-images/seagate/1.webp"],
-    tags: ["Next.js", "Zustand", "Web3"],
-    blurb:
-      "Web3 investment platform for DePIN Initial Package Offerings; built the Next.js frontend and investor dashboards.",
-    summary:
-      "Seagate is a decentralized investment platform for launching Initial Package Offerings (IPOs) for DePIN projects through Web3-powered investment workflows. Owned the Next.js frontend, from investment dashboards and authentication to token-facing interfaces, working alongside backend and blockchain integrations.",
-    responsibilities: [
-      "Owned the frontend application in Next.js, delivering the end-to-end investment experience for DePIN project offerings.",
-      "Built responsive investment dashboards and reusable UI components so investors can follow offerings and holdings on any device.",
-      "Implemented authentication flows and security integrations to protect user accounts and investment actions.",
-      "Engineered investment workflow logic and client state with Zustand, keeping multi-step investment flows consistent across the app.",
-      "Delivered token-related interfaces and QR code utilities supporting Web3 investment actions.",
-      "Connected the UI to backend services and blockchain integrations, surfacing live investment data to users.",
-    ],
-    highlights: [
-      "Next.js application architecture",
-      "Web3 investment workflows",
-      "State management with Zustand",
-      "Authentication and security integrations",
-      "Responsive investment dashboards",
-      "QR code utilities",
-      "Token-related UI",
-    ],
-  },
+
   {
     name: "Regent Reserve",
     role: "Frontend Developer",
@@ -614,8 +627,36 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    name: "Seagate",
+    role: "Frontend Developer",
+    logo: "/project-images/seagate/logo.webp",
+    images: ["/project-images/seagate/1.webp"],
+    tags: ["Next.js", "Zustand", "Web3"],
+    blurb:
+      "Web3 investment platform for DePIN Initial Package Offerings; built the Next.js frontend and investor dashboards.",
+    summary:
+      "Seagate is a decentralized investment platform for launching Initial Package Offerings (IPOs) for DePIN projects through Web3-powered investment workflows. Owned the Next.js frontend, from investment dashboards and authentication to token-facing interfaces, working alongside backend and blockchain integrations.",
+    responsibilities: [
+      "Owned the frontend application in Next.js, delivering the end-to-end investment experience for DePIN project offerings.",
+      "Built responsive investment dashboards and reusable UI components so investors can follow offerings and holdings on any device.",
+      "Implemented authentication flows and security integrations to protect user accounts and investment actions.",
+      "Engineered investment workflow logic and client state with Zustand, keeping multi-step investment flows consistent across the app.",
+      "Delivered token-related interfaces and QR code utilities supporting Web3 investment actions.",
+      "Connected the UI to backend services and blockchain integrations, surfacing live investment data to users.",
+    ],
+    highlights: [
+      "Next.js application architecture",
+      "Web3 investment workflows",
+      "State management with Zustand",
+      "Authentication and security integrations",
+      "Responsive investment dashboards",
+      "QR code utilities",
+      "Token-related UI",
+    ],
+  },
+  {
     name: "EST Edu",
-    role: "Full-Stack Engineer",
+    role: "Full-Stack Developer",
     images: [
       "/project-images/est-edu/full.webp",
       "/project-images/est-edu/est-edu-1.webp",
@@ -687,7 +728,7 @@ export const PROJECTS: Project[] = [
   },
   {
     name: "Bwai Tech",
-    role: "Full-Stack Engineer",
+    role: "Full-Stack Developer",
     images: [
       "/project-images/bwai-tech-1.webp",
       "/project-images/bwai-tech-2.webp",

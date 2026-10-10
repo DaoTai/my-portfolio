@@ -22,6 +22,12 @@ const rad = (deg: number) => (deg * Math.PI) / 180;
 /** Rounded so the server and client markup match exactly. */
 const round = (n: number) => Math.round(n * 100) / 100;
 
+/**
+ * A length in the scene's own px, scaled by `--cb-s` like every length in the stylesheet, so
+ * small screens lay the scene out smaller instead of transform-scaling it after rasterising.
+ */
+const scaled = (n: number) => `calc(${round(n)}px * var(--cb-s))`;
+
 /** Dish rings (diameter, % of the dish). The outermost is drawn dashed. */
 const RINGS = [20, 40, 60, 80, 100] as const;
 
@@ -97,7 +103,7 @@ const arcGeometry = (from: number, to: number) => {
   const b = point(to, 100);
   const c = point(mid, dist);
   const r = round(radius);
-  const px = (u: number) => round(u * ARC_SCALE + ARC_PX / 2);
+  const px = (u: number) => scaled(u * ARC_SCALE + ARC_PX / 2);
   return {
     a,
     b,
@@ -106,7 +112,7 @@ const arcGeometry = (from: number, to: number) => {
     orbit: {
       left: px(c[0]),
       top: px(c[1]),
-      "--r": `${round(radius * ARC_SCALE)}px`,
+      "--r": scaled(radius * ARC_SCALE),
       "--a0": `${round(mid - spread)}deg`,
       "--a1": `${round(mid + spread)}deg`,
     },
@@ -222,8 +228,8 @@ const Globe = () => (
                 : "contact-latitude"
             }
             style={vars({
-              "--d": `${round(2 * GLOBE_R * Math.cos(rad(lat)))}px`,
-              "--y": `${round(-GLOBE_R * Math.sin(rad(lat)))}px`,
+              "--d": scaled(2 * GLOBE_R * Math.cos(rad(lat))),
+              "--y": scaled(-GLOBE_R * Math.sin(rad(lat))),
             })}
           />
         ))}
