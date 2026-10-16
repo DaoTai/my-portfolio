@@ -3,6 +3,7 @@
 import { MessageCircle, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { MascotFlyer } from "./MascotFlyer";
 import "./Chat.css";
 
 // The panel, and the AI SDK it pulls in, load on first open so they stay off the initial page load.
@@ -15,10 +16,10 @@ const ChatLauncher = () => {
   const [mounted, setMounted] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const openPanel = () => {
+  const openPanel = useCallback(() => {
     setMounted(true);
     setOpen(true);
-  };
+  }, []);
 
   const closePanel = useCallback(() => setOpen(false), []);
 
@@ -30,6 +31,7 @@ const ChatLauncher = () => {
   return (
     <>
       {mounted && <ChatPanel open={open} onClose={closePanel} />}
+      <MascotFlyer hidden={open} onOpen={openPanel} />
       <button
         ref={buttonRef}
         type="button"
