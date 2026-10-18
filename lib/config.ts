@@ -1,3 +1,5 @@
+import { YEARS_EXPERIENCE } from "./experience";
+
 /**
  * Single source of truth for site-wide metadata (SEO, Open Graph, JSON-LD, manifest).
  *
@@ -17,11 +19,11 @@ export const siteConfig = {
   themeColor: "#05070d",
   /** Square-ish portrait used as the Person image in structured data. */
   avatar: "/avatar-professional.webp",
-  title: "Dao Duc Tai | Full-Stack Software Engineer",
+  title: "Dao Duc Tai | Full-Stack Engineer – React, Next.js & Web3",
   description:
-    "Full-stack software engineer with 4+ years of experience shipping real-time trading platforms, Web3 products, booking engines and admin CMSs for international clients. Owns features end to end with React, Next.js, Node.js and NestJS, from performance-tuned UIs and REST/WebSocket APIs to wallet and on-chain integrations on Solana, BNB Chain, EVM and TON.",
+    `Dao Duc Tai is a full-stack software engineer with ${YEARS_EXPERIENCE}+ years of experience shipping real-time trading platforms, Web3 products, booking engines and admin CMSs for international clients. Builds fast, SEO-ready React and Next.js frontends and scalable Node.js and NestJS APIs, with wallet and on-chain integrations on Solana, BNB Chain, EVM and TON. Open to freelance and contract projects.`,
   shortDescription:
-    "Full-stack software engineer shipping real-time trading platforms, Web3 products and production web apps with React, Next.js, Node.js and NestJS.",
+    `Full-stack engineer with ${YEARS_EXPERIENCE}+ years shipping real-time trading platforms, Web3 products and production web apps with React, Next.js, Node.js and NestJS.`,
   jobTitle: "Full-Stack Software Engineer",
   email: "daotai.work@gmail.com",
   resume: "/resume.pdf",

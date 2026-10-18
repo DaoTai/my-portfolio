@@ -5,33 +5,48 @@ import { CategoryIcon } from "@/components/common/CategoryIcon";
 import { Reveal } from "@/components/common/Reveal";
 import { TiltCard } from "@/components/common/TiltCard";
 import { TypewriterText } from "@/components/common/TypeWriter";
+import { YEARS_EXPERIENCE } from "@/lib/experience";
 import { ExpertiseBackground } from "./ExpertiseBackground";
 import "./Expertise.css";
 
 const STATS = [
-  { value: 4, label: "Years" },
-  { value: 9, label: "Projects" },
-  { value: 22, label: "Tech" },
+  { value: YEARS_EXPERIENCE, label: "Years" },
+  { value: 15, label: "Projects" },
+  { value: 4, label: "Blockchains" },
 ];
 
 const AREAS = [
   {
     code: "FE",
-    title: "Frontend Engineering",
-    desc: "Next.js and React apps built for heavy, fast-changing data: trading terminals, flight booking and admin CMSs kept smooth with virtualization, memoization and React 19 transitions.",
+    title: "Senior Front-end Engineering",
+    desc: "Next.js and React built for speed and discoverability: SSR/SSG with per-route SEO, Core Web Vitals (LCP, CLS, INP) tuning, a WebP image pipeline, route-level code splitting and vendor chunking for long-term caching, plus virtualization and React 19 transitions for heavy, real-time data.",
     chips: [
-      "React / Next.js",
+      "Next.js SSR / SSG",
+      "Core Web Vitals",
+      "SEO & hreflang",
+      "WebP pipeline",
+      "Code splitting",
+      "React 19",
       "TypeScript",
-      "Tailwind CSS",
-      "shadcn/ui",
       "TanStack",
+      "Vitest",
     ],
   },
   {
     code: "BE",
-    title: "Node.js & Backend",
-    desc: "NestJS and Express services: REST APIs, WebSocket gateways, RabbitMQ queues, Redis caching and cron-driven data sync, containerized with Docker.",
-    chips: ["NestJS", "Express", "Prisma", "Socket.io", "RabbitMQ", "Redis"],
+    title: "Backend, Cloud & Clean Code",
+    desc: "Clean, modular NestJS and Express services with DI, guards and pipes, REST and WebSocket APIs, RabbitMQ queues and Redis caching for throughput. Shipped on Linux behind Nginx, containerized with Docker, with AWS (EC2, S3, KMS) and Firebase for cloud infrastructure.",
+    chips: [
+      "NestJS",
+      "Express",
+      "Clean Code",
+      "Redis caching",
+      "RabbitMQ",
+      "Nginx",
+      "Docker",
+      "AWS EC2 / S3 / KMS",
+      "Firebase",
+    ],
   },
   {
     code: "W3",
@@ -73,9 +88,10 @@ const Expertise = () => {
               </span>
             </h2>
             <p className="m-0 max-w-[440px] text-[15px] leading-[1.65] text-pf-t6 [text-wrap:pretty]">
-              4+ years of full-stack TypeScript and JavaScript work across 13
-              projects: performance-tuned React frontends, Node.js and NestJS
-              backends, and Web3 integrations on Solana, BNB Chain, EVM and TON.
+              Full-stack engineer with {YEARS_EXPERIENCE}+ years and 15 projects
+              delivered: fast, SEO-ready React and Next.js frontends, scalable
+              Node.js and NestJS backends with real-time WebSocket and queue
+              systems, and Web3 integrations on Solana, BNB Chain, EVM and TON.
             </p>
           </Reveal>
           <Reveal delay={0.1}>
@@ -104,7 +120,7 @@ const Expertise = () => {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <ExpertiseChip>Twendee · 2024 – Present</ExpertiseChip>
-                  <ExpertiseChip>Full-Stack</ExpertiseChip>
+                  <ExpertiseChip>Full-Stack Software Engineer</ExpertiseChip>
                 </div>
                 <p className="m-0 text-sm leading-[1.65] text-pf-t4 [text-wrap:pretty]">
                   <TypewriterText

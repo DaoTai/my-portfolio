@@ -15,13 +15,14 @@ import { AnimatedNumber } from "@/components/common/AnimatedNumber";
 import { GithubIcon, LinkedinIcon } from "@/components/common/BrandIcons";
 import { EASE_OUT } from "@/components/common/Reveal";
 import { siteConfig } from "@/lib/config";
+import { YEARS_EXPERIENCE } from "@/lib/experience";
 import { HeroVisual } from "./HeroVisual";
 import "./Hero.css";
 
 const STATS = [
-  { value: 4, label: "YEARS EXPERIENCE" },
-  { value: 9, label: "PROJECTS SHIPPED" },
-  { value: 22, label: "TECHNOLOGIES" },
+  { value: YEARS_EXPERIENCE, label: "YEARS EXPERIENCE" },
+  { value: 13, label: "PROJECTS DELIVERED" },
+  { value: 4, label: "WEB3 CHAINS" },
 ];
 
 /** Fixed positions (%, px size, s duration, s delay) so server and client markup match. */
@@ -233,11 +234,13 @@ const Hero = ({ showAvailable = true }: { showAvailable?: boolean }) => {
             {...rise(4)}
             className="m-0 max-w-[520px] text-pretty border-l-2 border-pf-g2 pl-4 text-base leading-[1.65] text-pf-t4"
           >
-            4+ years shipping production{" "}
+            {YEARS_EXPERIENCE}+ years turning complex requirements into products
+            people rely on. I’ve shipped{" "}
             <span className="text-pf-text">real-time trading platforms</span>,{" "}
-            <span className="text-pf-text">Web3 products</span> and full-stack
-            web apps. I own features end to end with React, Next.js, Node.js and
-            NestJS, from fast UIs to APIs and on-chain integrations.
+            <span className="text-pf-text">Web3 products</span> and booking
+            engines for international clients, owning features{" "}
+            <span className="text-pf-text">end to end</span> with React, Next.js,
+            Node.js and NestJS.
           </motion.p>
 
           <motion.div {...rise(5, false)} className="flex">

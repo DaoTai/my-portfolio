@@ -101,8 +101,10 @@ const TechStack = () => {
             </h2>
           </div>
           <p className="m-0 max-w-[440px] text-[15px] leading-[1.65] text-pf-t6">
-            The stack I’ve used in production to ship trading terminals, Web3
-            platforms, booking engines and full-stack web apps.
+            Proven in production across <span className="text-pf-text">real-time
+            trading terminals</span>, <span className="text-pf-text">Web3
+            platforms</span> and <span className="text-pf-text">booking
+            engines</span>, from UI to API to on-chain.
           </p>
         </Reveal>
 

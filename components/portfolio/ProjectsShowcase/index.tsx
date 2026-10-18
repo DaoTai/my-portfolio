@@ -149,8 +149,9 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
             </h2>
           </div>
           <p className="m-0 max-w-[440px] text-[15px] leading-[1.65] text-pf-t6">
-            Trading platforms, Web3 marketplaces and booking systems I’ve built
-            across frontend and backend.
+            Real-time trading platforms, Web3 marketplaces and booking systems
+            I’ve shipped end to end, from responsive frontends to backend APIs
+            and on-chain integrations.
           </p>
         </Reveal>
 

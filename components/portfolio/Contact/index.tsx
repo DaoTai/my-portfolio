@@ -64,8 +64,8 @@ const Contact = () => {
             Get In Touch
           </span>
           <h2 className="m-0 max-w-[460px] font-display text-[clamp(26px,2.8vw,34px)] font-semibold leading-[1.25] tracking-[-0.02em] text-pf-text">
-            Hiring for a React, Node.js or Web3 role, or have a project in mind?
-            Let’s talk.
+            Hiring a full-stack engineer for React, Next.js or Web3 work? Let’s
+            talk about your next role or project.
           </h2>
         </Reveal>
 
@@ -99,7 +99,7 @@ const Contact = () => {
           <Logo />
           <span>Kendrick</span>
           <span>·</span>
-          <span>Software Engineer</span>
+          <span> Full-Stack Software Engineer</span>
         </div>
         <span>
           © <AnimatedNumber value={2026} format={{ useGrouping: false }} />
