@@ -11,7 +11,7 @@ import "./Expertise.css";
 
 const STATS = [
   { value: YEARS_EXPERIENCE, label: "Years" },
-  { value: 15, label: "Projects" },
+  { value: 16, label: "Projects" },
   { value: 4, label: "Blockchains" },
 ];
 

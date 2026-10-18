@@ -21,7 +21,7 @@ import "./Hero.css";
 
 const STATS = [
   { value: YEARS_EXPERIENCE, label: "YEARS EXPERIENCE" },
-  { value: 13, label: "PROJECTS DELIVERED" },
+  { value: 16, label: "PROJECTS DELIVERED" },
   { value: 4, label: "WEB3 CHAINS" },
 ];
 
@@ -239,8 +239,8 @@ const Hero = ({ showAvailable = true }: { showAvailable?: boolean }) => {
             <span className="text-pf-text">real-time trading platforms</span>,{" "}
             <span className="text-pf-text">Web3 products</span> and booking
             engines for international clients, owning features{" "}
-            <span className="text-pf-text">end to end</span> with React, Next.js,
-            Node.js and NestJS.
+            <span className="text-pf-text">end to end</span> with React,
+            Next.js, Node.js and NestJS.
           </motion.p>
 
           <motion.div {...rise(5, false)} className="flex">
