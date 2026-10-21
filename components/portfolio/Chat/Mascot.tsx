@@ -5,6 +5,7 @@ import { POSES, type MascotMode, type Pose } from "@/lib/mascot-poses";
 import { rootDrop } from "@/lib/mascot-rig";
 import { Comets, Sparkle } from "./MascotEffects";
 import { MascotPart, type PartSlots } from "./MascotPart";
+import { MascotTablet } from "./MascotTablet";
 
 export type { MascotMode };
 
@@ -66,6 +67,7 @@ const SLOTS: PartSlots = {
       </>
     ),
   },
+  forearmL: { attach: <MascotTablet /> },
   bubble: {
     face: (
       <>
