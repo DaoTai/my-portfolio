@@ -1,0 +1,186 @@
+/* ---------------------------------------------------------------------------------------------
+   Rig slices. Mascot writes the pose (lib/mascot-poses.ts) onto .mascot-rig as the registered
+   properties below; registering them lets every pose change blend instead of jumping.
+   --------------------------------------------------------------------------------------------- */
+
+@property --shoulder-l { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
+@property --elbow-l { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
+@property --shoulder-r { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
+@property --elbow-r { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
+@property --hip-l { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
+@property --knee-l { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
+@property --hip-r { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
+@property --knee-r { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
+@property --drop { syntax: "<percentage>"; inherits: true; initial-value: 0%; }
+@property --tablet { syntax: "<number>"; inherits: true; initial-value: 1; }
+@property --rockets { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --throttle { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --dance { syntax: "<number>"; inherits: true; initial-value: 1; }
+
+.mascot-rig {
+  /* Joints swing with a little overshoot; the props fade. */
+  transition-property:
+    --shoulder-l, --elbow-l, --shoulder-r, --elbow-r, --hip-l, --knee-l, --hip-r, --knee-r,
+    --drop, --tablet, --rockets, --throttle, --dance;
+  transition-duration:
+    var(--pose-ms), var(--pose-ms), var(--pose-ms), var(--pose-ms), var(--pose-ms),
+    var(--pose-ms), var(--pose-ms), var(--pose-ms), var(--pose-ms), 400ms, 400ms, 300ms, 350ms;
+  transition-timing-function:
+    cubic-bezier(0.34, 1.2, 0.64, 1), cubic-bezier(0.34, 1.2, 0.64, 1),
+    cubic-bezier(0.34, 1.2, 0.64, 1), cubic-bezier(0.34, 1.2, 0.64, 1),
+    cubic-bezier(0.34, 1.2, 0.64, 1), cubic-bezier(0.34, 1.2, 0.64, 1),
+    cubic-bezier(0.34, 1.2, 0.64, 1), cubic-bezier(0.34, 1.2, 0.64, 1),
+    cubic-bezier(0.33, 1, 0.68, 1), ease, ease, ease, ease;
+}
+
+.mascot-part {
+  position: absolute;
+  pointer-events: none;
+  transform-style: preserve-3d;
+  /* Depth (px at 112 px wide) toward the viewer, relative to the parent slice. */
+  transform: translateZ(calc(var(--depth) * var(--mascot-w) / 112));
+}
+
+.mascot-part-move,
+.mascot-part-dance {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+/* The slice's front: picture and overlays flattened together so their blend modes still work. */
+.mascot-face {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  backface-visibility: hidden;
+}
+
+/* Thickness: baked silhouettes of the slice stepping back behind its face. */
+.mascot-edge,
+.mascot-shade,
+.mascot-back {
+  position: absolute;
+  inset: 0;
+  background: center / 100% 100% no-repeat;
+}
+
+.mascot-edge {
+  transform: translateZ(calc(var(--thickness) * var(--i) / -8));
+}
+
+/* The back art, turned to face away: it shows only once the slice has turned round. */
+.mascot-back {
+  transform: translateZ(calc(var(--thickness) * -1)) rotateY(180deg);
+  backface-visibility: hidden;
+}
+
+/* Opacity only, so turning never repaints. */
+.mascot-shade {
+  transform: translateZ(0.2px);
+  backface-visibility: hidden;
+  opacity: calc(0.6 * (1 - cos(var(--roll-deg, 0deg))));
+}
+
+/* --------------------------------------------------------------------------------------------
+   Joints. Arms turn in the screen plane (the right one mirrored); hips and knees swing in 3D,
+   so bent legs fold toward and away from the viewer instead of squashing.
+   -------------------------------------------------------------------------------------------- */
+
+.mascot-part--torso > .mascot-part-move {
+  transform: translate3d(0, var(--drop), 0);
+}
+.mascot-part--upperArmL > .mascot-part-move {
+  transform: rotate(var(--shoulder-l));
+}
+.mascot-part--forearmL > .mascot-part-move {
+  transform: rotate(var(--elbow-l));
+}
+.mascot-part--upperArmR > .mascot-part-move {
+  transform: rotate(calc(-1 * var(--shoulder-r)));
+}
+.mascot-part--forearmR > .mascot-part-move {
+  transform: rotate(calc(-1 * var(--elbow-r)));
+}
+.mascot-part--thighL > .mascot-part-move {
+  transform: rotateX(var(--hip-l));
+}
+.mascot-part--shinL > .mascot-part-move {
+  transform: rotateX(calc(-1 * var(--knee-l)));
+}
+.mascot-part--thighR > .mascot-part-move {
+  transform: rotateX(var(--hip-r));
+}
+.mascot-part--shinR > .mascot-part-move {
+  transform: rotateX(calc(-1 * var(--knee-r)));
+}
+
+/* --------------------------------------------------------------------------------------------
+   Idle dance, on its own layer so it adds to the pose. Every swing is scaled by --dance, so
+   leaving idle fades the dance out instead of cutting it.
+   -------------------------------------------------------------------------------------------- */
+
+.mascot-part--head > .mascot-part-move > .mascot-part-dance {
+  animation: mascot-head calc(var(--beat) * 2) ease-in-out infinite;
+}
+.mascot-part--forearmR > .mascot-part-move > .mascot-part-dance {
+  animation: mascot-point var(--beat) ease-in-out infinite;
+}
+.mascot-part--thighL > .mascot-part-move > .mascot-part-dance {
+  --kick: 5deg;
+  animation: mascot-step calc(var(--beat) * 2) ease-in-out infinite;
+}
+.mascot-part--thighR > .mascot-part-move > .mascot-part-dance {
+  --kick: -5deg;
+  animation: mascot-step calc(var(--beat) * 2) ease-in-out
+    calc(var(--beat) * -1) infinite;
+}
+.mascot-part--bubble > .mascot-part-move > .mascot-part-dance {
+  animation: mascot-bubble 3.2s ease-in-out infinite;
+}
+
+@keyframes mascot-head {
+  0%,
+  100% {
+    transform: rotate(calc(var(--dance) * -5deg));
+  }
+  25%,
+  75% {
+    transform: translate3d(0, calc(var(--dance) * 1.5%), 0);
+  }
+  50% {
+    transform: rotate(calc(var(--dance) * 5deg));
+  }
+}
+
+@keyframes mascot-point {
+  0%,
+  100% {
+    transform: rotate(calc(var(--dance) * 4deg));
+  }
+  50% {
+    transform: rotate(calc(var(--dance) * -10deg));
+  }
+}
+
+@keyframes mascot-step {
+  0%,
+  50%,
+  100% {
+    transform: none;
+  }
+  25% {
+    transform: translate3d(0, calc(var(--dance) * -7%), 0)
+      rotate(calc(var(--dance) * var(--kick)));
+  }
+}
+
+@keyframes mascot-bubble {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-3deg);
+  }
+  50% {
+    transform: translate3d(3%, -7%, 0) rotate(3deg);
+  }
+}

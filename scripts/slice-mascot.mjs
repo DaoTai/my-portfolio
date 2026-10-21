@@ -209,8 +209,10 @@ const pct = (v, of) => +((v / of) * 100).toFixed(3);
  */
 const SKINS = {
   rim: ["#a5f3fc", "#8b5cf6"],
-  side: ["#4a5a8c", "#161c40"],
+  side: ["#262d5c", "#090b20"],
 };
+/** The white helmet's shell is light on its sides too. */
+const SKIN_OVERRIDES = { head: { side: ["#dfe4f2", "#6b7396"] } };
 
 const gradientSvg = (w, h, [from, to]) =>
   Buffer.from(
@@ -266,7 +268,8 @@ const main = async () => {
 
     const { width: w, height: h } = await sharp(slice).metadata();
     const skins = {};
-    for (const [skin, colors] of Object.entries(SKINS)) {
+    for (const [skin, base] of Object.entries(SKINS)) {
+      const colors = SKIN_OVERRIDES[name]?.[skin] ?? base;
       // Flat colour, so half the resolution of the slice is plenty.
       const silhouette = await sharp(gradientSvg(w, h, colors))
         .composite([{ input: slice, blend: "dest-in" }])
