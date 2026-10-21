@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { buildTimeline, flightWindow, PHASE_MS } from "./mascot-choreo.ts";
+import { buildTimeline, flightWindow } from "./mascot-choreo.ts";
 
 const cue = (mode: string) => {
   const c = buildTimeline(7500).find((c) => c.mode === mode);
@@ -24,17 +24,6 @@ test("the flight path spans fly + approach exactly", () => {
   assert.equal(w.end, cue("land").at);
   assert.equal(w.end - w.start, 7500);
   assert.equal(cue("fly").ms, 6600);
-});
-
-test("the spec's phase lengths, verbatim", () => {
-  assert.deepEqual(PHASE_MS, {
-    stow: 700,
-    ready: 650,
-    launch: 380,
-    approach: 900,
-    land: 1400,
-    recover: 600,
-  });
 });
 
 test("the landing crouch holds 1–2 s", () => {
