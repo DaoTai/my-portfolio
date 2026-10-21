@@ -4,79 +4,142 @@
 export const MASCOT_ASPECT = 1139 / 1381;
 
 export const MASCOT_PARTS = {
-  "legL": {
-    "src": "/mascot/legL.webp",
+  "torso": {
+    "src": "/mascot/torso.webp",
+    "back": "/mascot/torso-back.webp",
     "skins": {
-      "rim": "/mascot/legL-rim.webp",
-      "side": "/mascot/legL-side.webp",
-      "back": "/mascot/legL-back.webp"
-    },
-    "box": {
-      "left": 25.461,
-      "top": 68.791,
-      "width": 25.549,
-      "height": 31.209
-    },
-    "origin": {
-      "x": 54.983,
-      "y": 2.32
-    },
-    "anchors": {
-      "flame": {
-        "x": 48.797,
-        "y": 89.327
-      }
-    }
-  },
-  "legR": {
-    "src": "/mascot/legR.webp",
-    "skins": {
-      "rim": "/mascot/legR-rim.webp",
-      "side": "/mascot/legR-side.webp",
-      "back": "/mascot/legR-back.webp"
-    },
-    "box": {
-      "left": 44.425,
-      "top": 68.791,
-      "width": 27.568,
-      "height": 31.209
-    },
-    "origin": {
-      "x": 52.229,
-      "y": 2.32
-    },
-    "anchors": {
-      "flame": {
-        "x": 35.669,
-        "y": 95.128
-      }
-    }
-  },
-  "body": {
-    "src": "/mascot/body.webp",
-    "skins": {
-      "rim": "/mascot/body-rim.webp",
-      "side": "/mascot/body-side.webp",
-      "back": "/mascot/body-back.webp"
+      "rim": "/mascot/torso-rim.webp",
+      "side": "/mascot/torso-side.webp"
     },
     "box": {
       "left": 0,
       "top": 0,
       "width": 100,
-      "height": 100
+      "height": 71.325
     },
     "origin": {
-      "x": 49.166,
-      "y": 79.652
+      "x": 51.8,
+      "y": 97.97
     },
-    "anchors": {}
+    "parent": null,
+    "depth": 0,
+    "anchors": {
+      "pocket": {
+        "x": 41.615,
+        "y": 85.279
+      }
+    }
+  },
+  "thighL": {
+    "src": "/mascot/thighL.webp",
+    "back": "/mascot/thighL-back.webp",
+    "skins": {
+      "rim": "/mascot/thighL-rim.webp",
+      "side": "/mascot/thighL-side.webp"
+    },
+    "box": {
+      "left": 25.461,
+      "top": 68.791,
+      "width": 25.549,
+      "height": 14.482
+    },
+    "origin": {
+      "x": 54.983,
+      "y": 6
+    },
+    "parent": "torso",
+    "depth": -4,
+    "anchors": {
+      "rocket": {
+        "x": 30.241,
+        "y": 55
+      }
+    }
+  },
+  "shinL": {
+    "src": "/mascot/shinL.webp",
+    "back": "/mascot/shinL-back.webp",
+    "skins": {
+      "rim": "/mascot/shinL-rim.webp",
+      "side": "/mascot/shinL-side.webp"
+    },
+    "box": {
+      "left": 25.461,
+      "top": 80.521,
+      "width": 25.549,
+      "height": 19.479
+    },
+    "origin": {
+      "x": 53.265,
+      "y": 4.833
+    },
+    "parent": "thighL",
+    "depth": 0,
+    "anchors": {
+      "sole": {
+        "x": 48.797,
+        "y": 96.654
+      }
+    }
+  },
+  "thighR": {
+    "src": "/mascot/thighR.webp",
+    "back": "/mascot/thighR-back.webp",
+    "skins": {
+      "rim": "/mascot/thighR-rim.webp",
+      "side": "/mascot/thighR-side.webp"
+    },
+    "box": {
+      "left": 44.425,
+      "top": 68.791,
+      "width": 27.568,
+      "height": 14.482
+    },
+    "origin": {
+      "x": 52.229,
+      "y": 6
+    },
+    "parent": "torso",
+    "depth": -2,
+    "anchors": {
+      "rocket": {
+        "x": 90.446,
+        "y": 62.5
+      }
+    }
+  },
+  "shinR": {
+    "src": "/mascot/shinR.webp",
+    "back": "/mascot/shinR-back.webp",
+    "skins": {
+      "rim": "/mascot/shinR-rim.webp",
+      "side": "/mascot/shinR-side.webp"
+    },
+    "box": {
+      "left": 44.425,
+      "top": 80.521,
+      "width": 27.568,
+      "height": 19.479
+    },
+    "origin": {
+      "x": 47.452,
+      "y": 4.833
+    },
+    "parent": "thighR",
+    "depth": 0,
+    "anchors": {
+      "sole": {
+        "x": 35.669,
+        "y": 98.141
+      }
+    }
   },
   "head": {
     "src": "/mascot/head.webp",
+    "back": "/mascot/head-back.webp",
     "skins": {
       "rim": "/mascot/head-rim.webp",
-      "side": "/mascot/head-side.webp",
-      "back": "/mascot/head-back.webp"
+      "side": "/mascot/head-side.webp"
     },
     "box": {
       "left": 16.506,
@@ -88,6 +151,8 @@ export const MASCOT_PARTS = {
       "x": 54.755,
       "y": 96.078
     },
+    "parent": "torso",
+    "depth": 6,
     "anchors": {
       "eyeL": {
         "x": 47.853,
@@ -111,53 +176,106 @@ export const MASCOT_PARTS = {
       }
     }
   },
-  "tablet": {
-    "src": "/mascot/tablet.webp",
+  "upperArmL": {
+    "src": "/mascot/upperArmL.webp",
+    "back": "/mascot/upperArmL-back.webp",
     "skins": {
-      "rim": "/mascot/tablet-rim.webp",
-      "side": "/mascot/tablet-side.webp",
-      "back": "/mascot/tablet-back.webp"
+      "rim": "/mascot/upperArmL-rim.webp",
+      "side": "/mascot/upperArmL-side.webp"
     },
     "box": {
-      "left": 12.994,
-      "top": 42.143,
-      "width": 34.592,
-      "height": 27.227
+      "left": 31.255,
+      "top": 43.157,
+      "width": 9.131,
+      "height": 12.6
     },
     "origin": {
-      "x": 67.766,
-      "y": 85.904
+      "x": 50,
+      "y": 25.287
     },
-    "anchors": {},
-    "clips": {
-      "screen": "polygon(4.315% 14.362%, 79.695% 4.787%, 96.193% 64.894%, 57.614% 68.617%, 56.345% 56.649%, 17.005% 55.851%)"
+    "parent": "torso",
+    "depth": 10,
+    "anchors": {}
+  },
+  "forearmL": {
+    "src": "/mascot/forearmL.webp",
+    "back": "/mascot/forearmL-back.webp",
+    "skins": {
+      "rim": "/mascot/forearmL-rim.webp",
+      "side": "/mascot/forearmL-side.webp"
+    },
+    "box": {
+      "left": 27.041,
+      "top": 51.557,
+      "width": 17.559,
+      "height": 25.199
+    },
+    "origin": {
+      "x": 50,
+      "y": 8.621
+    },
+    "parent": "upperArmL",
+    "depth": 4,
+    "anchors": {
+      "hand": {
+        "x": 50,
+        "y": 57.471
+      }
     }
   },
-  "arm": {
-    "src": "/mascot/arm.webp",
+  "upperArmR": {
+    "src": "/mascot/upperArmR.webp",
+    "back": "/mascot/upperArmR-back.webp",
     "skins": {
-      "rim": "/mascot/arm-rim.webp",
-      "side": "/mascot/arm-side.webp",
-      "back": "/mascot/arm-back.webp"
+      "rim": "/mascot/upperArmR-rim.webp",
+      "side": "/mascot/upperArmR-side.webp"
     },
     "box": {
-      "left": 70.061,
-      "top": 30.413,
-      "width": 17.735,
-      "height": 27.154
+      "left": 64.091,
+      "top": 43.157,
+      "width": 9.131,
+      "height": 12.6
     },
     "origin": {
-      "x": 0.99,
-      "y": 74.667
+      "x": 50,
+      "y": 25.287
     },
+    "parent": "torso",
+    "depth": 10,
     "anchors": {}
+  },
+  "forearmR": {
+    "src": "/mascot/forearmR.webp",
+    "back": "/mascot/forearmR-back.webp",
+    "skins": {
+      "rim": "/mascot/forearmR-rim.webp",
+      "side": "/mascot/forearmR-side.webp"
+    },
+    "box": {
+      "left": 59.877,
+      "top": 51.557,
+      "width": 17.559,
+      "height": 25.199
+    },
+    "origin": {
+      "x": 50,
+      "y": 8.621
+    },
+    "parent": "upperArmR",
+    "depth": 4,
+    "anchors": {
+      "hand": {
+        "x": 50,
+        "y": 90.23
+      }
+    }
   },
   "bubble": {
     "src": "/mascot/bubble.webp",
+    "back": "/mascot/bubble-back.webp",
     "skins": {
       "rim": "/mascot/bubble-rim.webp",
-      "side": "/mascot/bubble-side.webp",
-      "back": "/mascot/bubble-back.webp"
+      "side": "/mascot/bubble-side.webp"
     },
     "box": {
       "left": 73.749,
@@ -169,6 +287,8 @@ export const MASCOT_PARTS = {
       "x": 48.495,
       "y": 53.846
     },
+    "parent": null,
+    "depth": 34,
     "anchors": {
       "dot1": {
         "x": 30.769,

@@ -1,10 +1,12 @@
 /**
- * Cuts public/mascot.png into rig layers (public/mascot/*.webp) and writes their boxes, pivots
- * and overlay anchors to lib/mascot-parts.ts. Run after replacing the source art:
+ * Cuts the mascot's art sheets (art/mascot/*.png, drawn by scripts/mascot-art.mjs) into rig
+ * layers (public/mascot/*.webp) and writes their boxes, pivots, parents and overlay anchors to
+ * lib/mascot-parts.ts. Run after changing the art:
  *
- *   node scripts/slice-mascot.mjs
+ *   node scripts/mascot-art.mjs && node scripts/slice-mascot.mjs
  *
- * All coordinates below are in source pixels (1139 × 1381).
+ * All coordinates below are in source pixels (1139 × 1381). Every sheet shares that canvas, and
+ * each back sheet is drawn as seen through the front, so a slice's back is cut with its own mask.
  */
 import { createRequire } from "node:module";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -18,12 +20,19 @@ const sharp = require(
 );
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const SRC = path.join(ROOT, "public/mascot.png");
+const ART = path.join(ROOT, "art/mascot");
 const OUT_DIR = path.join(ROOT, "public/mascot");
 const OUT_TS = path.join(ROOT, "lib/mascot-parts.ts");
 /** Output width of the full canvas: ~3x the largest on-screen size. */
 const OUT_W = 560;
 const QUALITY = 86;
+
+const SHEETS = {
+  body: { front: path.join(ART, "front-clean.png"), back: path.join(ART, "back-body.png") },
+  arms: { front: path.join(ART, "front-arms.png"), back: path.join(ART, "back-arms.png") },
+  // The bubble is a flat panel: its back is its own face, seen mirrored.
+  bubble: { front: path.join(ROOT, "public/mascot.png"), back: null },
+};
 
 /** Seam between the legs, shared by both leg polygons (top → bottom). */
 const LEG_SEAM = [
@@ -37,132 +46,135 @@ const LEG_SEAM = [
   [518, 1345],
   [506, 1381],
 ];
+const LEG_L = [[310, 950], ...LEG_SEAM, [290, 1381], [290, 1100]];
+const LEG_R = [[820, 950], [820, 1381], ...[...LEG_SEAM].reverse()];
+/** Knee line: the thigh runs past it and the shin starts above it, so a bend shows no gap. */
+const THIGH_END = 1150;
+const SHIN_START = 1112;
 
-/** Back → front. `pivot` is the joint the part rotates around. */
+const HEAD = [
+  [188, 30], [840, 30], [840, 300], [830, 420], [800, 462], [722, 496], [622, 515],
+  [522, 522], [422, 526], [342, 532], [290, 540], [228, 528], [188, 500],
+];
+
+const BUBBLE = [[840, 160], [1139, 160], [1139, 420], [840, 420]];
+
+/** Hanging arms in art/mascot/front-arms.png: the elbow overlap goes to both segments. */
+const upperArm = (x) => [[x - 52, 596], [x + 52, 596], [x + 52, 770], [x - 52, 770]];
+const forearm = (x) => [[x - 100, 712], [x + 100, 712], [x + 100, 1060], [x - 100, 1060]];
+
+const rect = (top, bottom) => [[0, top], [1139, top], [1139, bottom], [0, bottom]];
+
+/**
+ * Back → front. `pivot` is the joint the part turns around, `parent` the part it hangs from,
+ * and `depth` its offset (px at 112 px wide) toward the viewer. `clip` trims the polygon to a
+ * band; `minus` cuts other polygons out of it.
+ */
 const PARTS = {
-  legL: {
-    poly: [[310, 950], ...LEG_SEAM, [290, 1381], [290, 1100]],
-    pivot: [450, 960],
-    anchors: { flame: [432, 1335] },
+  torso: {
+    sheet: "body",
+    poly: rect(0, 985),
+    minus: [HEAD, BUBBLE],
+    pivot: [590, 965],
+    parent: null,
+    depth: 0,
+    anchors: { pocket: [474, 840] },
   },
-  legR: {
-    poly: [[820, 950], [820, 1381], ...[...LEG_SEAM].reverse()],
-    pivot: [670, 960],
-    anchors: { flame: [618, 1360] },
+  thighL: {
+    sheet: "body",
+    poly: LEG_L,
+    clip: [940, THIGH_END],
+    pivot: [450, 962],
+    parent: "torso",
+    depth: -4,
+    anchors: { rocket: [378, 1060] },
   },
-  body: { poly: null, pivot: [560, 1100], anchors: {} },
+  shinL: {
+    sheet: "body",
+    poly: LEG_L,
+    clip: [SHIN_START, 1381],
+    pivot: [445, 1125],
+    parent: "thighL",
+    depth: 0,
+    anchors: { sole: [432, 1372] },
+  },
+  thighR: {
+    sheet: "body",
+    poly: LEG_R,
+    clip: [940, THIGH_END],
+    pivot: [670, 962],
+    parent: "torso",
+    depth: -2,
+    anchors: { rocket: [790, 1075] },
+  },
+  shinR: {
+    sheet: "body",
+    poly: LEG_R,
+    clip: [SHIN_START, 1381],
+    pivot: [655, 1125],
+    parent: "thighR",
+    depth: 0,
+    anchors: { sole: [618, 1376] },
+  },
   head: {
-    poly: [
-      [188, 30],
-      [840, 30],
-      [840, 300],
-      [830, 420],
-      [800, 462],
-      [722, 496],
-      [622, 515],
-      [522, 522],
-      [422, 526],
-      [342, 532],
-      [290, 540],
-      [228, 528],
-      [188, 500],
-    ],
+    sheet: "body",
+    poly: HEAD,
     pivot: [545, 520],
+    parent: "torso",
+    depth: 6,
     anchors: { eyeL: [500, 360], eyeR: [717, 338], mouth: [612, 418] },
     ellipses: { visor: [585, 355, 222, 146] },
   },
-  tablet: {
-    poly: [
-      [148, 600],
-      [300, 582],
-      [470, 585],
-      [493, 650],
-      [519, 750],
-      [542, 835],
-      [470, 852],
-      [432, 905],
-      [400, 950],
-      [300, 958],
-      [195, 945],
-      [185, 800],
-      [148, 720],
-    ],
-    pivot: [415, 905],
+  upperArmL: {
+    sheet: "arms",
+    poly: upperArm(408),
+    pivot: [408, 640],
+    parent: "torso",
+    depth: 10,
     anchors: {},
-    clips: {
-      screen: [
-        [165, 636],
-        [462, 600],
-        [527, 826],
-        [375, 840],
-        [370, 795],
-        [215, 792],
-      ],
-    },
   },
-  arm: {
-    poly: [
-      [822, 420],
-      [1000, 420],
-      [1000, 790],
-      [880, 795],
-      [830, 770],
-      [805, 740],
-      [798, 700],
-      [808, 620],
-      [818, 560],
-    ],
-    pivot: [800, 700],
+  forearmL: {
+    sheet: "arms",
+    poly: forearm(408),
+    pivot: [408, 742],
+    parent: "upperArmL",
+    depth: 4,
+    anchors: { hand: [408, 912] },
+  },
+  upperArmR: {
+    sheet: "arms",
+    poly: upperArm(782),
+    pivot: [782, 640],
+    parent: "torso",
+    depth: 10,
     anchors: {},
+  },
+  forearmR: {
+    sheet: "arms",
+    poly: forearm(782),
+    pivot: [782, 742],
+    parent: "upperArmR",
+    depth: 4,
+    anchors: { hand: [782, 1026] },
   },
   bubble: {
-    poly: [
-      [840, 160],
-      [1139, 160],
-      [1139, 420],
-      [840, 420],
-    ],
+    sheet: "bubble",
+    poly: BUBBLE,
     pivot: [985, 300],
+    parent: null,
+    depth: 34,
     anchors: { dot1: [932, 292], dot2: [985, 292], dot3: [1037, 290] },
   },
 };
 
-/** Everything under the jacket hem belongs to the legs. */
-const BELOW_HEM = [
-  [0, 985],
-  [1139, 985],
-  [1139, 1381],
-  [0, 1381],
-];
-
 /**
- * Dark fill behind the body, so a moving part uncovers a neck or jacket instead of a hole.
- * Clipped to the cut-outs, it never shows while the parts sit in place.
+ * Dark fill behind the torso where the head is cut out, so a nodding head uncovers a neck
+ * instead of a hole. Clipped to the cut-out, it never shows while the head sits in place.
  */
-const BACKFILL = [
-  [
-    [390, 480],
-    [790, 440],
-    [790, 505],
-    [720, 508],
-    [600, 528],
-    [440, 538],
-    [390, 538],
-  ],
-  [
-    [425, 600],
-    [493, 650],
-    [519, 750],
-    [542, 835],
-    [470, 852],
-    [432, 905],
-    [400, 950],
-    [380, 950],
-    [380, 850],
-    [425, 700],
-  ],
+const NECK = [
+  [390, 480], [790, 440], [790, 505], [720, 508], [600, 528], [440, 538], [390, 538],
 ];
-const BACKFILL_COLOR = "#07081a";
+const NECK_COLOR = "#07081a";
 
 const pts = (poly) => poly.map(([x, y]) => `${x},${y}`).join(" ");
 
@@ -175,16 +187,16 @@ const polySvg = (W, H, polys, fill = "#fff") =>
       `</svg>`,
   );
 
-const bounds = (poly, W, H) => {
+const bounds = (poly, W, H, [top, bottom] = [0, H]) => {
   const xs = poly.map((p) => p[0]);
   const ys = poly.map((p) => p[1]);
   const left = Math.max(0, Math.min(...xs));
-  const top = Math.max(0, Math.min(...ys));
+  const y0 = Math.max(0, top, Math.min(...ys));
   return {
     left,
-    top,
+    top: y0,
     width: Math.min(W, Math.max(...xs)) - left,
-    height: Math.min(H, Math.max(...ys)) - top,
+    height: Math.min(H, bottom, Math.max(...ys)) - y0,
   };
 };
 
@@ -192,13 +204,12 @@ const pct = (v, of) => +((v / of) * 100).toFixed(3);
 
 /**
  * Solid silhouettes of each slice for its thickness in 3D, lit from the top left: a bright rim
- * just behind the face, the sides, and the back plate (also used to shade the face as it turns).
- * Baked rather than CSS-masked, because every masked layer costs a render pass per frame.
+ * just behind the face and the sides. Baked rather than CSS-masked, because every masked layer
+ * costs a render pass per frame.
  */
 const SKINS = {
   rim: ["#a5f3fc", "#8b5cf6"],
   side: ["#4a5a8c", "#161c40"],
-  back: ["#2c3768", "#0b0f27"],
 };
 
 const gradientSvg = (w, h, [from, to]) =>
@@ -209,49 +220,49 @@ const gradientSvg = (w, h, [from, to]) =>
       `</linearGradient></defs><rect width="${w}" height="${h}" fill="url(#g)"/></svg>`,
   );
 
+/** The part's pixels from one sheet, masked and cropped to its box at output scale. */
+const cutLayer = async (file, part, W, H, box, scale) => {
+  const composites = [{ input: polySvg(W, H, [part.poly]), blend: "dest-in" }];
+  if (part.clip) {
+    composites.push({ input: polySvg(W, H, [rect(...part.clip)]), blend: "dest-in" });
+  }
+  if (part.minus) {
+    composites.push({ input: polySvg(W, H, part.minus), blend: "dest-out" });
+  }
+  let layer = sharp(await sharp(file).ensureAlpha().composite(composites).png().toBuffer());
+  if (part === PARTS.torso) {
+    const fill = await sharp(polySvg(W, H, [NECK], NECK_COLOR))
+      .composite([{ input: polySvg(W, H, [HEAD]), blend: "dest-in" }])
+      .png()
+      .toBuffer();
+    layer = sharp(await layer.png().toBuffer()).composite([
+      { input: fill, blend: "dest-over" },
+    ]);
+  }
+  return sharp(await layer.png().toBuffer())
+    .extract(box)
+    .resize(Math.round(box.width * scale))
+    .png()
+    .toBuffer();
+};
+
 const main = async () => {
-  const { width: W, height: H } = await sharp(SRC).metadata();
+  const { width: W, height: H } = await sharp(SHEETS.body.front).metadata();
   const scale = OUT_W / W;
   await mkdir(OUT_DIR, { recursive: true });
 
-  const others = Object.entries(PARTS)
-    .filter(([name]) => name !== "body" && !name.startsWith("leg"))
-    .map(([, p]) => p.poly);
-
   const out = {};
   for (const [name, part] of Object.entries(PARTS)) {
-    const isBody = part.poly === null;
-    // The body keeps everything except the other parts; each part keeps only its polygon.
-    let layer = sharp(SRC)
-      .ensureAlpha()
-      .composite([
-        isBody
-          ? { input: polySvg(W, H, [...others, BELOW_HEM]), blend: "dest-out" }
-          : { input: polySvg(W, H, [part.poly]), blend: "dest-in" },
-      ]);
+    const sheet = SHEETS[part.sheet];
+    const box = bounds(part.poly, W, H, part.clip);
+    const slice = await cutLayer(sheet.front, part, W, H, box, scale);
+    const back = sheet.back ? await cutLayer(sheet.back, part, W, H, box, scale) : slice;
 
-    if (isBody) {
-      const fill = await sharp(polySvg(W, H, BACKFILL, BACKFILL_COLOR))
-        .composite([{ input: polySvg(W, H, others), blend: "dest-in" }])
-        .png()
-        .toBuffer();
-      layer = sharp(await layer.png().toBuffer()).composite([
-        { input: fill, blend: "dest-over" },
-      ]);
-    }
-
-    const box = isBody
-      ? { left: 0, top: 0, width: W, height: H }
-      : bounds(part.poly, W, H);
     const file = path.join(OUT_DIR, `${name}.webp`);
-    const slice = await sharp(await layer.png().toBuffer())
-      .extract(box)
-      .resize(Math.round(box.width * scale))
-      .png()
-      .toBuffer();
-    await sharp(slice)
-      .webp({ quality: QUALITY, alphaQuality: 90, effort: 6 })
-      .toFile(file);
+    const webp = (buf, q = QUALITY) =>
+      sharp(buf).webp({ quality: q, alphaQuality: 90, effort: 6 });
+    await webp(slice).toFile(file);
+    await webp(back).toFile(path.join(OUT_DIR, `${name}-back.webp`));
 
     const { width: w, height: h } = await sharp(slice).metadata();
     const skins = {};
@@ -274,6 +285,7 @@ const main = async () => {
     });
     const entry = {
       src: `/mascot/${name}.webp`,
+      back: `/mascot/${name}-back.webp`,
       skins,
       box: {
         left: pct(box.left, W),
@@ -282,6 +294,8 @@ const main = async () => {
         height: pct(box.height, H),
       },
       origin: rel(part.pivot),
+      parent: part.parent,
+      depth: part.depth,
       anchors: Object.fromEntries(
         Object.entries(part.anchors).map(([k, p]) => [k, rel(p)]),
       ),
@@ -294,22 +308,9 @@ const main = async () => {
         ]),
       );
     }
-    if (part.clips) {
-      entry.clips = Object.fromEntries(
-        Object.entries(part.clips).map(([k, poly]) => [
-          k,
-          `polygon(${poly
-            .map((p) => {
-              const r = rel(p);
-              return `${r.x}% ${r.y}%`;
-            })
-            .join(", ")})`,
-        ]),
-      );
-    }
     out[name] = entry;
     console.log(
-      `${name.padEnd(7)} ${box.width}x${box.height} -> ${path.relative(ROOT, file)}`,
+      `${name.padEnd(9)} ${box.width}x${box.height} -> ${path.relative(ROOT, file)}`,
     );
   }
 
