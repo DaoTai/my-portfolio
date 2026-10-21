@@ -2,7 +2,10 @@
 
 import { useAnimate, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { PHASE_MS } from "@/lib/mascot-choreo";
 import { buildFlightPath } from "@/lib/mascot-flight";
+import type { RocketSoundControls } from "@/lib/mascot-sound";
+import { buildSoundCurves } from "@/lib/mascot-sound-curves";
 import { Mascot, type MascotMode } from "./Mascot";
 import { MascotTrail } from "./MascotTrail";
 import "./Mascot.css";
@@ -28,13 +31,15 @@ type MascotFlyerProps = {
   /** The chat is open: tuck the mascot away and hold the flights. */
   hidden: boolean;
   onOpen: () => void;
+  /** Rocket sounds, played on each phase of the flight. */
+  sound: RocketSoundControls;
 };
 
 /**
  * The mascot's home is just above the chat launcher. It dances there, and every so often fires
  * its rocket boots and loops around the screen before landing back home.
  */
-export const MascotFlyer = ({ hidden, onOpen }: MascotFlyerProps) => {
+export const MascotFlyer = ({ hidden, onOpen, sound }: MascotFlyerProps) => {
   const reduce = useReducedMotion();
   const [scope, animate] = useAnimate<HTMLDivElement>();
   const [mode, setMode] = useState<MascotMode>("idle");
@@ -48,6 +53,7 @@ export const MascotFlyer = ({ hidden, onOpen }: MascotFlyerProps) => {
     if (!el || !orient || !ground) return;
 
     let timer = 0;
+    let approachTimer = 0;
     let flight: ReturnType<typeof animate>[] = [];
     let cancelled = false;
 
@@ -60,6 +66,7 @@ export const MascotFlyer = ({ hidden, onOpen }: MascotFlyerProps) => {
       flight = [];
       animate(orient, SQUARE, { duration: 0 });
       animate(ground, { opacity: 0 }, { duration: 0.3 });
+      sound.touchdown();
       setMode("land");
       timer = window.setTimeout(() => {
         setMode("idle");
@@ -70,10 +77,8 @@ export const MascotFlyer = ({ hidden, onOpen }: MascotFlyerProps) => {
     const fly = () => {
       // Home rect: everything left of and above it is open sky.
       const home = el.getBoundingClientRect();
-      const path = buildFlightPath(
-        Math.max(0, home.left - EDGE_PX),
-        Math.max(0, home.top - HEADER_PX),
-      );
+      const travelX = Math.max(0, home.left - EDGE_PX);
+      const path = buildFlightPath(travelX, Math.max(0, home.top - HEADER_PX));
       const timing = {
         duration: FLIGHT_S,
         ease: "linear",
@@ -84,6 +89,11 @@ export const MascotFlyer = ({ hidden, onOpen }: MascotFlyerProps) => {
         (r) => 1 + 0.6 * Math.abs(Math.sin((r * Math.PI) / 180)),
       );
       setMode("fly");
+      sound.cruise(buildSoundCurves(path, travelX), FLIGHT_S);
+      approachTimer = window.setTimeout(
+        () => sound.throttleDown(PHASE_MS.approach),
+        FLIGHT_S * 1000 - PHASE_MS.approach,
+      );
       flight = [
         animate(el, { x: path.x, y: path.y, scale: path.scale }, timing),
         animate(
@@ -113,6 +123,7 @@ export const MascotFlyer = ({ hidden, onOpen }: MascotFlyerProps) => {
       // A background tab would fly unseen; try again shortly.
       if (document.hidden) return schedule(3000);
       setMode("launch");
+      sound.ignite();
       timer = window.setTimeout(fly, LAUNCH_MS);
     };
 
@@ -121,6 +132,8 @@ export const MascotFlyer = ({ hidden, onOpen }: MascotFlyerProps) => {
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
+      window.clearTimeout(approachTimer);
+      sound.stop();
       if (flight.length) {
         flight.forEach((a) => a.stop());
         animate(el, { x: 0, y: 0, scale: 1 }, { duration: 0 });
@@ -129,7 +142,7 @@ export const MascotFlyer = ({ hidden, onOpen }: MascotFlyerProps) => {
       }
       setMode("idle");
     };
-  }, [reduce, hidden, animate, scope]);
+  }, [reduce, hidden, animate, scope, sound]);
 
   return (
     <>
