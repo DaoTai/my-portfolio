@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { absoluteUrl, siteConfig } from "@/lib/config";
 import { TECH_GROUPS } from "@/lib/portfolio-data";
@@ -155,6 +157,8 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} ${interTight.variable}`}>
         <ThemeProvider>{children}</ThemeProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
