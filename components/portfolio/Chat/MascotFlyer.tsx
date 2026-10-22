@@ -26,8 +26,11 @@ const HEADER_PX = 88;
 /** Where the flyer and its ground shadow sit: just above the chat launcher. */
 const HOME = "fixed bottom-[76px] right-2 sm:bottom-[84px] sm:right-5";
 
+/** Heading in the screen plane, nod, then roll on the spine (degrees). */
+const turn = (heading: number, pitch: number, roll: number) =>
+  `rotate(${heading}deg) rotateX(${pitch}deg) rotateY(${roll}deg)`;
 /** The flyer's 3D turn, cleared after each flight (a full barrel roll looks the same as none). */
-const SQUARE = { "--heading": 0, "--roll": 0, "--pitch": 0 };
+const SQUARE = { transform: turn(0, 0, 0) };
 
 type MascotFlyerProps = {
   /** The chat is open: tuck the mascot away and hold the flights. */
@@ -87,12 +90,12 @@ export const MascotFlyer = ({ hidden, onOpen, sound }: MascotFlyerProps) => {
       sound.cruise(buildSoundCurves(path, travelX), FLIGHT_MS / 1000);
       flight = [
         animate(el, { x: path.x, y: path.y, scale: path.scale }, timing),
+        // The transform itself, not CSS variables: a variable would restyle every slice of
+        // the rig each frame, while a transform runs on the compositor.
         animate(
           orient,
           {
-            "--heading": path.rotate,
-            "--roll": path.roll,
-            "--pitch": path.pitch,
+            transform: path.rotate.map((h, i) => turn(h, path.pitch[i], path.roll[i])),
           },
           timing,
         ),

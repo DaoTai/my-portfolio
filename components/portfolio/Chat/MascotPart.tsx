@@ -79,11 +79,6 @@ export const MascotPart = memo(({ name, slots }: MascotPartProps) => {
             />
             {slot?.face}
           </div>
-          {/* Darkens the face as it turns away from the viewer. */}
-          <span
-            className="mascot-shade"
-            style={{ backgroundImage: url(skins.side) }}
-          />
           {slot?.attach}
           {childrenOf(name).map((child) => (
             <MascotPart key={child} name={child} slots={slots} />

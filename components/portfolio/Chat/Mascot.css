@@ -114,11 +114,11 @@ html.light .mascot-rig {
   transition: filter 0.6s ease;
 }
 
-/* Turned by MascotFlyer in flight: heading in the screen plane, nod, then roll on the spine. */
+/* Heading in the screen plane, nod, then roll on the spine. In flight MascotFlyer animates the
+   transform itself; these variables are for the /dev/mascot bench. */
 .mascot-orient {
-  --roll-deg: calc(var(--roll, 0) * 1deg);
   transform: rotate(calc(var(--heading, 0) * 1deg))
-    rotateX(calc(var(--pitch, 0) * 1deg)) rotateY(var(--roll-deg));
+    rotateX(calc(var(--pitch, 0) * 1deg)) rotateY(calc(var(--roll, 0) * 1deg));
 }
 
 .mascot-orient,

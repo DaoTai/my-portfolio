@@ -86,7 +86,7 @@ const SLOTS: PartSlots = {
  * The mascot cut into nested slices (see scripts/slice-mascot.mjs) and rigged in CSS. Each mode
  * is a pose from lib/mascot-poses.ts that the joints blend into. Slices sit at different depths
  * and carry their real backs, so it turns like a 2.5D figure rather than a flat sticker. In
- * flight, MascotFlyer turns the whole figure through --heading, --roll and --pitch.
+ * flight, MascotFlyer turns the whole figure by animating `.mascot-orient`'s transform.
  */
 export const Mascot = memo(({ mode }: { mode: MascotMode }) => (
   <div

@@ -58,7 +58,6 @@
 
 /* Thickness: baked silhouettes of the slice stepping back behind its face. */
 .mascot-edge,
-.mascot-shade,
 .mascot-back {
   position: absolute;
   inset: 0;
@@ -74,13 +73,6 @@
 .mascot-back {
   transform: translateZ(calc(var(--thickness) * -1)) rotateY(180deg);
   backface-visibility: hidden;
-}
-
-/* Opacity only, so turning never repaints. */
-.mascot-shade {
-  transform: translateZ(0.2px);
-  backface-visibility: hidden;
-  opacity: calc(0.6 * (1 - cos(var(--roll-deg, 0deg))));
 }
 
 /* --------------------------------------------------------------------------------------------
