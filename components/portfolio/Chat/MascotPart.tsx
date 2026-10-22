@@ -9,8 +9,14 @@ import "./MascotPart.css";
 export type PartSlot = { face?: ReactNode; attach?: ReactNode };
 export type PartSlots = Partial<Record<MascotPartName, PartSlot>>;
 
-/** Silhouettes stacked behind each slice, front to back, so it shows a solid edge as it turns. */
-const EDGE_LAYERS = ["rim", "side", "side", "side", "side", "side", "side"] as const;
+/**
+ * Silhouettes stacked behind each slice, front to back, so it shows a solid edge as it turns.
+ * Every layer is composited each frame, so only the big slices whose sides really show get a
+ * full stack; a limb's thin edge reads fine from two.
+ */
+const FULL_EDGE = ["rim", "side", "side", "side", "side"] as const;
+const THIN_EDGE = ["rim", "side"] as const;
+const FULL_EDGE_PARTS: ReadonlySet<MascotPartName> = new Set(["torso", "head"]);
 
 const url = (src: string) => `url(${src})`;
 
@@ -25,6 +31,7 @@ export const MascotPart = memo(({ name, slots }: MascotPartProps) => {
   const { src, back, skins, depth, origin } = MASCOT_PARTS[name];
   const box = relativeBox(name);
   const slot = slots[name];
+  const edges = FULL_EDGE_PARTS.has(name) ? FULL_EDGE : THIN_EDGE;
   return (
     <div
       className={`mascot-part mascot-part--${name}`}
@@ -35,6 +42,7 @@ export const MascotPart = memo(({ name, slots }: MascotPartProps) => {
           width: `${box.width}%`,
           height: `${box.height}%`,
           "--depth": depth,
+          "--edges": edges.length,
         } as CSSProperties
       }
     >
@@ -46,7 +54,7 @@ export const MascotPart = memo(({ name, slots }: MascotPartProps) => {
           className="mascot-part-dance"
           style={{ transformOrigin: `${origin.x}% ${origin.y}%` }}
         >
-          {EDGE_LAYERS.map((skin, i) => (
+          {edges.map((skin, i) => (
             <span
               key={i}
               className="mascot-edge"

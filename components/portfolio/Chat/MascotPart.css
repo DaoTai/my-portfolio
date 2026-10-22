@@ -66,7 +66,8 @@
 }
 
 .mascot-edge {
-  transform: translateZ(calc(var(--thickness) * var(--i) / -8));
+  /* Spread evenly through the thickness, however many layers the slice has. */
+  transform: translateZ(calc(var(--thickness) * var(--i) / (-1 - var(--edges))));
 }
 
 /* The back art, turned to face away: it shows only once the slice has turned round. */
@@ -183,4 +184,15 @@
   50% {
     transform: translate3d(3%, -7%, 0) rotate(3deg);
   }
+}
+
+/* --------------------------------------------------------------------------------------------
+   Nothing animates unseen: comets only orbit in the air, flames only flicker with the rockets on.
+   -------------------------------------------------------------------------------------------- */
+
+.mascot-rig:not([data-mode="fly"]):not([data-mode="approach"]) .mascot-comets *,
+.mascot-rig:is([data-mode="idle"], [data-mode="stow"], [data-mode="recover"])
+  .mascot-flame
+  * {
+  animation-play-state: paused;
 }
