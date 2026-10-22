@@ -6,14 +6,25 @@ import { createRocketSound } from "./mascot-sound.ts";
  * A minimal stand-in for the Web Audio API (Node has none): it records contexts, resumes and
  * every node started, which is what the engine's gating decides.
  */
-const fake = { contexts: 0, resumes: 0, started: 0, state: "running" as AudioContextState };
+const fake = {
+  contexts: 0,
+  resumes: 0,
+  started: 0,
+  /** The browser refuses to start the context (no gesture yet, or Safari outside one). */
+  blocked: false,
+  last: null as null | { state: AudioContextState },
+  /** Every setValueCurveAtTime call: points, start and duration. */
+  curves: [] as { points: number; start: number; duration: number }[],
+};
 
 const param = () => ({
   value: 0,
   setValueAtTime() {},
   linearRampToValueAtTime() {},
   exponentialRampToValueAtTime() {},
-  setValueCurveAtTime() {},
+  setValueCurveAtTime(values: Float32Array, start: number, duration: number) {
+    fake.curves.push({ points: values.length, start, duration });
+  },
   cancelScheduledValues() {},
 });
 const node = (extra: object = {}) => ({
@@ -28,15 +39,18 @@ class FakeContext {
   sampleRate = 8000;
   currentTime = 0;
   destination = node();
-  state = fake.state;
+  state: AudioContextState = fake.blocked ? "suspended" : "running";
   constructor() {
     fake.contexts++;
+    fake.last = this;
   }
   resume() {
     fake.resumes++;
+    if (!fake.blocked) this.state = "running";
     return Promise.resolve();
   }
   suspend() {
+    this.state = "suspended";
     return Promise.resolve();
   }
   close() {
@@ -64,7 +78,7 @@ Object.assign(globalThis, {
 const CURVES = { gain: [0.5, 1], pan: [0.8, 0], cutoff: [400, 3000] };
 
 beforeEach(() => {
-  Object.assign(fake, { contexts: 0, resumes: 0, started: 0, state: "running" });
+  Object.assign(fake, { contexts: 0, resumes: 0, started: 0, blocked: false, last: null, curves: [] });
 });
 
 test("nothing is created or scheduled before the sound is unlocked", () => {
@@ -85,7 +99,7 @@ test("unlocking creates the context and resumes it, inside the visitor's gesture
 });
 
 test("a context that is not running schedules nothing, so nodes never pile up", () => {
-  fake.state = "suspended";
+  fake.blocked = true;
   const sound = createRocketSound();
   sound.unlock();
   const before = fake.started;
@@ -102,4 +116,51 @@ test("a running context plays the ignition and the cruise", () => {
   assert.equal(fake.started - before, 2, "noise burst + thump");
   sound.cruise(CURVES, 7.5);
   assert.equal(fake.started - before, 4, "+ roar + flutter");
+});
+
+test("the context rests shortly after touchdown instead of rendering silence until the next flight", (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const sound = createRocketSound();
+  sound.unlock();
+  sound.touchdown();
+  assert.equal(fake.last?.state, "running", "the thud still plays");
+  t.mock.timers.tick(1000);
+  assert.equal(fake.last?.state, "suspended");
+});
+
+test("waking before the next flight resumes a resting context", (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const sound = createRocketSound();
+  sound.unlock();
+  sound.rest();
+  assert.equal(fake.last?.state, "suspended");
+  sound.wake();
+  assert.equal(fake.last?.state, "running");
+});
+
+test("coming back to the tab between flights leaves a resting context asleep", () => {
+  const sound = createRocketSound();
+  sound.unlock();
+  sound.rest();
+  sound.resume();
+  assert.equal(fake.last?.state, "suspended");
+});
+
+test("coming back to the tab mid-flight resumes the roar", () => {
+  const sound = createRocketSound();
+  sound.unlock();
+  sound.cruise(CURVES, 7.5);
+  sound.suspend();
+  sound.resume();
+  assert.equal(fake.last?.state, "running");
+});
+
+test("the roar's loudness follows the path in step with its pan and brightness", () => {
+  const sound = createRocketSound();
+  sound.unlock();
+  sound.cruise({ gain: [0.5, 1, 0.4], pan: [0.8, 0, -0.8], cutoff: [400, 3000, 900] }, 7.5);
+  const ends = fake.curves.map((c) => c.start + c.duration);
+  assert.equal(fake.curves.length, 3);
+  assert.ok(fake.curves.every((c) => c.points === 3), "one point per keyframe on every curve");
+  assert.ok(ends.every((e) => Math.abs(e - ends[0]) < 1e-9), "all curves end together");
 });

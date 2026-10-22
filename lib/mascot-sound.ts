@@ -11,12 +11,16 @@ export type RocketSoundControls = {
   cruise: (curves: SoundCurves, seconds: number) => void;
   throttleDown: (ms: number) => void;
   touchdown: () => void;
+  /** Gets a resting context going again ahead of a flight (outside a gesture is fine now). */
+  wake: () => void;
   stop: () => void;
 };
 
 export type RocketSound = RocketSoundControls & {
   /** Creates and starts the context; call from a pointer, key or touch handler. */
   unlock: () => void;
+  /** Puts the context to sleep while nothing is playing. */
+  rest: () => void;
   suspend: () => void;
   resume: () => void;
   dispose: () => void;
@@ -27,6 +31,10 @@ const MASTER_GAIN = 0.22;
 const APPROACH_THROTTLE = 0.3;
 /** Brightness flutter of the roar: rate (Hz) and depth (Hz). */
 const FLUTTER = [7, 180] as const;
+/** Sleep this long after touchdown, once the thud has rung out. */
+const REST_AFTER_MS = 700;
+/** Fade-in (s) of the roar, so it starts from silence without a click. */
+const FADE_IN = 0.05;
 
 type Cruise = { source: AudioBufferSourceNode; lfo: OscillatorNode; throttle: GainNode };
 
@@ -35,6 +43,7 @@ export const createRocketSound = (): RocketSound => {
   let master: GainNode | null = null;
   let noise: AudioBuffer | null = null;
   let cruising: Cruise | null = null;
+  let restTimer: ReturnType<typeof setTimeout> | undefined;
   const voices = new Set<AudioScheduledSourceNode>();
 
   const unlock = () => {
@@ -127,6 +136,17 @@ export const createRocketSound = (): RocketSound => {
     });
   };
 
+  const rest = () => {
+    clearTimeout(restTimer);
+    if (ctx && !cruising) void ctx.suspend();
+  };
+
+  const wake = () => {
+    clearTimeout(restTimer);
+    const hidden = typeof document !== "undefined" && document.hidden;
+    if (ctx?.state === "suspended" && !hidden) void ctx.resume();
+  };
+
   return {
     ignite: () => {
       noiseBurst("bandpass", 1200, 0.8, 0.35);
@@ -143,10 +163,16 @@ export const createRocketSound = (): RocketSound => {
       source.buffer = noise;
       source.loop = true;
       const filter = new BiquadFilterNode(ctx, { type: "lowpass", Q: 1.2 });
-      // Starting from silence avoids a click; the curves then run the whole flight.
       filter.frequency.setValueCurveAtTime(Float32Array.from(curves.cutoff), now, seconds);
+      // A short fade from silence avoids a click; then loudness follows the path like the rest.
       const body = ctx.createGain();
-      body.gain.setValueCurveAtTime(Float32Array.from([0, ...curves.gain]), now, seconds);
+      body.gain.setValueAtTime(0, now);
+      body.gain.linearRampToValueAtTime(curves.gain[0] ?? 0, now + FADE_IN);
+      body.gain.setValueCurveAtTime(
+        Float32Array.from(curves.gain),
+        now + FADE_IN,
+        seconds - FADE_IN,
+      );
       const throttle = ctx.createGain();
       const panner = new StereoPannerNode(ctx);
       panner.pan.setValueCurveAtTime(Float32Array.from(curves.pan), now, seconds);
@@ -170,13 +196,21 @@ export const createRocketSound = (): RocketSound => {
       endCruise(0.25);
       thump(110, 45, 1, 0.18);
       noiseBurst("lowpass", 800, 0.5, 0.06);
+      clearTimeout(restTimer);
+      restTimer = setTimeout(rest, REST_AFTER_MS);
     },
 
     stop,
     unlock,
+    rest,
+    wake,
     suspend: () => void ctx?.suspend(),
-    resume: () => void ctx?.resume(),
+    // Back on the tab: only a flight in progress needs the clock running again.
+    resume: () => {
+      if (cruising) void ctx?.resume();
+    },
     dispose: () => {
+      clearTimeout(restTimer);
       stop();
       void ctx?.close();
       ctx = null;

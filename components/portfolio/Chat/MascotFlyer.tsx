@@ -64,6 +64,8 @@ export const MascotFlyer = ({ hidden, onOpen, sound }: MascotFlyerProps) => {
 
     /** Sounds that go with entering each phase. */
     const cueSound: Partial<Record<MascotMode, () => void>> = {
+      // The context sleeps between flights; get it going before the ignition.
+      ready: sound.wake,
       launch: sound.ignite,
       approach: () => sound.throttleDown(PHASE_MS.approach),
     };

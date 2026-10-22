@@ -20,6 +20,8 @@ const storage = () => {
  */
 export const useMascotSound = () => {
   const [enabled, setEnabled] = useState(true);
+  /** The stored choice has been read, so `enabled` is the visitor's, not the default. */
+  const [ready, setReady] = useState(false);
   const enabledRef = useRef(true);
   const engine = useRef<RocketSound | null>(null);
 
@@ -35,6 +37,7 @@ export const useMascotSound = () => {
     const on = readSoundPref(storage()) === "on";
     enabledRef.current = on;
     setEnabled(on);
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -67,8 +70,12 @@ export const useMascotSound = () => {
     setEnabled(on);
     writeSoundPref(storage(), on ? "on" : "off");
     // The toggle's own click is a gesture: turning sound on unlocks it right here.
-    if (on) unlock();
-    else engine.current?.stop();
+    if (on) {
+      unlock();
+    } else {
+      engine.current?.stop();
+      engine.current?.rest();
+    }
   }, [unlock]);
 
   const controls = useMemo<RocketSoundControls>(() => {
@@ -79,10 +86,11 @@ export const useMascotSound = () => {
       cruise: (curves, seconds) => live()?.cruise(curves, seconds),
       throttleDown: (ms) => live()?.throttleDown(ms),
       touchdown: () => live()?.touchdown(),
+      wake: () => live()?.wake(),
       // Stopping never needs a gesture, and must not create an AudioContext.
       stop: () => engine.current?.stop(),
     };
   }, []);
 
-  return { enabled, toggle, controls };
+  return { enabled, ready, toggle, controls };
 };
