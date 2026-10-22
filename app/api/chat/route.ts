@@ -8,10 +8,12 @@ export const maxDuration = 30;
 
 const DEFAULT_MODEL = "google/gemma-4-31b-it:free";
 // If the primary free model is rate-limited or down, OpenRouter tries these in order.
+// Each fallback is on a DIFFERENT provider from the Google primary, so one provider's
+// 429 (shared :free daily quota) doesn't take out the whole chain at once.
 // Not "openrouter/free": its pool includes a content-safety classifier.
 const FALLBACK_MODELS = [
-  "google/gemma-4-26b-a4b-it:free",
-  "nvidia/nemotron-3-super-120b-a12b:free",
+  "minimax/minimax-m3.1-flash:free",
+  "nvidia/nemotron-3.5-lightning:free",
 ];
 
 const allow = createRateLimiter({ limit: 10, windowMs: 60_000 });
