@@ -1,6 +1,7 @@
 "use client";
 
 import { MessageCircle, X } from "lucide-react";
+import { useReducedMotion } from "motion/react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMascotSound } from "@/lib/hooks/useMascotSound";
@@ -17,7 +18,14 @@ const ChatLauncher = () => {
   // Stays true after the first open so the conversation survives closing the panel.
   const [mounted, setMounted] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const { enabled: soundOn, toggle: toggleSound, controls: sound } = useMascotSound();
+  const {
+    enabled: soundOn,
+    ready: soundReady,
+    toggle: toggleSound,
+    controls: sound,
+  } = useMascotSound();
+  // Reduced motion means no flights, so there is never a sound to mute.
+  const reduce = useReducedMotion();
 
   const openPanel = useCallback(() => {
     setMounted(true);
@@ -35,7 +43,10 @@ const ChatLauncher = () => {
     <>
       {mounted && <ChatPanel open={open} onClose={closePanel} />}
       <MascotFlyer hidden={open} onOpen={openPanel} sound={sound} />
-      {!open && <MascotSoundToggle enabled={soundOn} onToggle={toggleSound} />}
+      {/* Shown once the stored choice is known, so its icon never flips on load. */}
+      {!open && !reduce && soundReady && (
+        <MascotSoundToggle enabled={soundOn} onToggle={toggleSound} />
+      )}
       <button
         ref={buttonRef}
         type="button"
@@ -49,7 +60,11 @@ const ChatLauncher = () => {
         className="chat-launcher fixed bottom-5 right-5 z-40 flex h-12 items-center gap-2 rounded-full bg-pf-base2/90 px-4 text-sm font-semibold text-pf-text backdrop-blur transition-transform duration-300 hover:-translate-y-0.5 active:scale-95 max-sm:data-[open=true]:hidden sm:bottom-6 sm:right-6"
       >
         <span className="chat-launcher-icons">
-          <MessageCircle aria-hidden="true" size={18} className="chat-icon-open" />
+          <MessageCircle
+            aria-hidden="true"
+            size={18}
+            className="chat-icon-open"
+          />
           <X aria-hidden="true" size={18} className="chat-icon-close" />
         </span>
         <span className="hidden sm:inline">
