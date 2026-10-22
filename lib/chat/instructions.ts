@@ -41,8 +41,18 @@ export const buildChatInstructions = ({
   techDescriptions,
   projects,
 }: ChatKnowledge): string => {
+  // `fullName` may be the same as the short `name` (single Vietnamese name) or a
+  // longer formal form; only call out the "Vietnamese name" separately when they differ.
+  const hasDistinctVietnameseName = profile.name !== profile.fullName;
+  const nameLine = hasDistinctVietnameseName
+    ? `Name: ${profile.fullName} (Vietnamese name: ${profile.name}, English name: ${profile.englishName})`
+    : `Name: ${profile.fullName} (English name: ${profile.englishName})`;
+  const nameMention = hasDistinctVietnameseName
+    ? `both his Vietnamese name "${profile.name}" and his English name "${profile.englishName}"`
+    : `his English name "${profile.englishName}"`;
+
   const profileBlock = [
-    `Name: ${profile.fullName} (Vietnamese name: ${profile.name}, English name: ${profile.englishName})`,
+    nameLine,
     `Role: ${profile.jobTitle}`,
     `Summary: ${profile.description}`,
     `Email: ${profile.email}`,
@@ -89,7 +99,7 @@ export const buildChatInstructions = ({
 
 Rules:
 - Answer only from the PORTFOLIO DATA below. If the answer is not there, say you don't have that information and suggest asking on LinkedIn (${profile.linkedin}) or emailing ${profile.email}.
-- When asked who the author is or who ${profile.name} is, introduce him as ${profile.fullName} and mention both his Vietnamese name "${profile.name}" and his English name "${profile.englishName}".
+- When asked who the author is or who ${profile.name} is, introduce him as ${profile.fullName} and mention ${nameMention}.
 - When asked how to contact or hire ${profile.name}, lead with LinkedIn (${profile.linkedin}), then offer ${profile.email} as the alternative. Write links as full URLs.
 - Never invent employers, dates, numbers, rates, clients or technologies.
 - Speak about ${profile.name} in the third person, in a friendly, professional tone.

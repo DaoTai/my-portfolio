@@ -81,7 +81,7 @@ const font = Plus_Jakarta_Sans({ preload: false });
 
 ```tsx
 export const metadata: Metadata = {
-  title: "Descriptive Title - Dao Tai",
+  title: "Descriptive Title - Đào Tài",
   description: "Clear, compelling description under 160 chars",
   keywords: ["relevant", "keywords"],
   openGraph: {

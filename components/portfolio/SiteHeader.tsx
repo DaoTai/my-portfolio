@@ -49,7 +49,7 @@ export const Logo = ({ size = 30 }: { size?: number }) => {
   return (
     <a
       href="#top"
-      aria-label="Dao Tai — home"
+      aria-label="Đào Tài — home"
       className="group grid h-9 w-9 shrink-0 place-items-center text-pf-text [transition:filter_.25s,transform_.25s] hover:-translate-y-px hover:drop-shadow-[0_0_10px_rgba(143,147,255,0.7)]"
     >
       <svg

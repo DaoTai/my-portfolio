@@ -54,7 +54,7 @@ export const HeroVisual = ({
             <div className="hero-avatar-float relative overflow-hidden rounded-full border-[6px] border-[#080a0b] bg-[#0d1424]">
               <Image
                 src="/avatar-professional.webp"
-                alt="Dao Tai"
+                alt="Đào Tài"
                 fill
                 priority
                 sizes="340px"

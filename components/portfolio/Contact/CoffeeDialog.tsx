@@ -166,7 +166,7 @@ export const CoffeeDialog = ({ onClose }: CoffeeDialogProps) => {
             >
               <Image
                 src="/author/qr-bank.webp"
-                alt={`${BANK} VietQR code for Dao Duc Tai, account ${ACCOUNT_DISPLAY}`}
+                alt={`${BANK} VietQR code for Đào Tài, account ${ACCOUNT_DISPLAY}`}
                 width={929}
                 height={1280}
                 sizes="280px"

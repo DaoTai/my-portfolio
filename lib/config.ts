@@ -11,17 +11,17 @@ const rawSiteUrl =
   process.env.NEXT_PUBLIC_SITE_URL || "https://dao-tai.vercel.app";
 
 export const siteConfig = {
-  name: "Dao Tai",
-  fullName: "Dao Duc Tai",
+  name: "Đào Tài",
+  fullName: "Đào Tài",
   url: rawSiteUrl.replace(/\/+$/, ""),
   locale: "en_US",
   language: "en",
   themeColor: "#05070d",
   /** Square-ish portrait used as the Person image in structured data. */
   avatar: "/avatar-professional.webp",
-  title: "Dao Duc Tai | Full-Stack Engineer – React, Next.js & Web3",
+  title: "Kendrick | Full-Stack Engineer – React, Next.js & Web3",
   description:
-    `Dao Duc Tai is a full-stack software engineer with ${YEARS_EXPERIENCE}+ years of experience shipping real-time trading platforms, Web3 products, booking engines and admin CMSs for international clients. Builds fast, SEO-ready React and Next.js frontends and scalable Node.js and NestJS APIs, with wallet and on-chain integrations on Solana, BNB Chain, EVM and TON. Open to freelance and contract projects.`,
+    `Đào Tài is a full-stack software engineer with ${YEARS_EXPERIENCE}+ years of experience shipping real-time trading platforms, Web3 products, booking engines and admin CMSs for international clients. Builds fast, SEO-ready React and Next.js frontends and scalable Node.js and NestJS APIs, with wallet and on-chain integrations on Solana, BNB Chain, EVM and TON. Open to freelance and contract projects.`,
   shortDescription:
     `Full-stack engineer with ${YEARS_EXPERIENCE}+ years shipping real-time trading platforms, Web3 products and production web apps with React, Next.js, Node.js and NestJS.`,
   jobTitle: "Full-Stack Software Engineer",
@@ -34,6 +34,9 @@ export const siteConfig = {
     linkedin: "https://www.linkedin.com/in/dao-tai-61757325a/",
   },
   keywords: [
+    // Primary diacritic spelling, with ASCII fallbacks so searches typed
+    // without Vietnamese diacritics still resolve.
+    "Đào Tài",
     "Dao Duc Tai",
     "Dao Tai",
     "Software Engineer",
