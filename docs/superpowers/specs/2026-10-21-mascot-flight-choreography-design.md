@@ -51,7 +51,7 @@ The flying mascot (`components/portfolio/Chat/Mascot*.tsx`) reads as a flat stic
 | stow | 0 | 700 | left hand goes to the jacket pocket, tablet shrinks into it |
 | ready | 700 | 650 | hands come together at the chest, knees bend, rockets fade in (throttle 0.3) |
 | launch | 1350 | 380 | the jump: legs push straight, throttle 0.6 |
-| fly | 1730 | 6600 | arms straight overhead (leading the head), legs tucked, throttle 1, cruise sound |
+| fly | 1730 | 6600 | arms straight, spread a little down along the body (raised chibi arms would cover the visor), legs tucked, throttle 1, cruise sound |
 | approach | 8330 | 900 | flight path still running: arms come in, tablet comes out, legs reach down, throttle 0.4 |
 | land | 9230 | 1400 | touchdown thud, knees bent and holding, rockets fade out |
 | recover | 10630 | 600 | stands straight, idle dance resumes |
