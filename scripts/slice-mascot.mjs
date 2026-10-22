@@ -6,7 +6,8 @@
  *   node scripts/mascot-art.mjs && node scripts/slice-mascot.mjs
  *
  * All coordinates below are in source pixels (1139 × 1381). Every sheet shares that canvas, and
- * each back sheet is drawn as seen through the front, so a slice's back is cut with its own mask.
+ * each back sheet is drawn as seen through the front, so a slice's back is cut with its own mask
+ * and then mirrored: turned round, the slice shows it the right way round.
  */
 import { createRequire } from "node:module";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -30,7 +31,7 @@ const QUALITY = 86;
 const SHEETS = {
   body: { front: path.join(ART, "front-clean.png"), back: path.join(ART, "back-body.png") },
   arms: { front: path.join(ART, "front-arms.png"), back: path.join(ART, "back-arms.png") },
-  // The bubble is a flat panel: its back is its own face, seen mirrored.
+  // The bubble is a flat panel: its back is its own face, seen from behind.
   bubble: { front: path.join(ROOT, "public/mascot.png"), back: null },
 };
 
@@ -258,7 +259,14 @@ const main = async () => {
     const sheet = SHEETS[part.sheet];
     const box = bounds(part.poly, W, H, part.clip);
     const slice = await cutLayer(sheet.front, part, W, H, box, scale);
-    const back = sheet.back ? await cutLayer(sheet.back, part, W, H, box, scale) : slice;
+    // A back is mounted turned round (rotateY 180°) inside a slice that is itself turned round
+    // when it shows, so the two turns cancel: mirror it here so it lands on the mirrored outline.
+    const back = await sharp(
+      sheet.back ? await cutLayer(sheet.back, part, W, H, box, scale) : slice,
+    )
+      .flop()
+      .png()
+      .toBuffer();
 
     const file = path.join(OUT_DIR, `${name}.webp`);
     const webp = (buf, q = QUALITY) =>

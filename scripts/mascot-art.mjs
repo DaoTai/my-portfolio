@@ -222,9 +222,12 @@ const solid = async (image) => {
   return png(sharp(out, { raw: { width: info.width, height: info.height, channels: 4 } }).blur(0.6));
 };
 
-/** The "TD" monogram: a T bar and a D bowl. */
+/**
+ * The "TD" monogram: a T bar and a D bowl. Drawn mirrored, because the back sheets are seen
+ * through the front and are flipped back when the slices turn round.
+ */
 const monogram = (x, y, s, color) =>
-  `<g transform="translate(${x} ${y}) scale(${s})" fill="none" stroke="${color}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">` +
+  `<g transform="translate(${x} ${y}) scale(${-s} ${s})" fill="none" stroke="${color}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">` +
   `<path d="M-38 -26 H 8 M-16 -26 V 30"/><path d="M8 -26 H 14 C 44 -26 50 2 50 2 C 50 2 44 30 14 30 H 4"/></g>`;
 
 const backBody = async (front) => {
