@@ -15,13 +15,20 @@ const storage = () => {
 
 /**
  * The mascot's rocket sounds and the visitor's on/off choice. Sounds stay silent until the
- * visitor has interacted with the page (browsers block audio before that) and while it is off.
+ * visitor's first tap, click or key press unlocks them (browsers block audio before that), and
+ * while the choice is off.
  */
 export const useMascotSound = () => {
   const [enabled, setEnabled] = useState(true);
   const enabledRef = useRef(true);
-  const gestured = useRef(false);
   const engine = useRef<RocketSound | null>(null);
+
+  /** Starts the audio from inside a gesture: the only moment Safari allows it. */
+  const unlock = useCallback(() => {
+    if (!enabledRef.current) return;
+    engine.current ??= createRocketSound();
+    engine.current.unlock();
+  }, []);
 
   // Read after mount so the server render and the first client render agree.
   useEffect(() => {
@@ -30,18 +37,16 @@ export const useMascotSound = () => {
     setEnabled(on);
   }, []);
 
-  // Fallback for browsers without navigator.userActivation.
   useEffect(() => {
-    const mark = () => {
-      gestured.current = true;
+    const events = ["pointerdown", "keydown", "touchend"] as const;
+    const onGesture = () => {
+      unlock();
+      // Once the context exists, later gestures have nothing left to unlock.
+      if (engine.current) events.forEach((e) => window.removeEventListener(e, onGesture, true));
     };
-    window.addEventListener("pointerdown", mark, { once: true, capture: true });
-    window.addEventListener("keydown", mark, { once: true, capture: true });
-    return () => {
-      window.removeEventListener("pointerdown", mark, { capture: true });
-      window.removeEventListener("keydown", mark, { capture: true });
-    };
-  }, []);
+    events.forEach((e) => window.addEventListener(e, onGesture, true));
+    return () => events.forEach((e) => window.removeEventListener(e, onGesture, true));
+  }, [unlock]);
 
   useEffect(() => {
     const onVisibility = () => {
@@ -61,16 +66,14 @@ export const useMascotSound = () => {
     enabledRef.current = on;
     setEnabled(on);
     writeSoundPref(storage(), on ? "on" : "off");
-    if (!on) engine.current?.stop();
-  }, []);
+    // The toggle's own click is a gesture: turning sound on unlocks it right here.
+    if (on) unlock();
+    else engine.current?.stop();
+  }, [unlock]);
 
   const controls = useMemo<RocketSoundControls>(() => {
-    const live = () => {
-      const active = navigator.userActivation?.hasBeenActive ?? gestured.current;
-      if (!enabledRef.current || !active) return null;
-      engine.current ??= createRocketSound();
-      return engine.current;
-    };
+    // Before the unlock there is no engine; the engine itself stays silent until it runs.
+    const live = () => (enabledRef.current ? engine.current : null);
     return {
       ignite: () => live()?.ignite(),
       cruise: (curves, seconds) => live()?.cruise(curves, seconds),

@@ -1,7 +1,8 @@
 /**
  * The mascot's rocket sounds, synthesised with Web Audio (no audio files): an ignition burst,
  * a cruise roar that follows the flight's curves, a throttle-down on the way in and a touchdown
- * thud. The AudioContext is only created on the first sound, so call these after a user gesture.
+ * thud. Nothing plays until `unlock()` runs inside a visitor's gesture: it creates the
+ * AudioContext there, because Safari only lets a context start during the gesture itself.
  */
 import type { SoundCurves } from "./mascot-sound-curves";
 
@@ -14,6 +15,8 @@ export type RocketSoundControls = {
 };
 
 export type RocketSound = RocketSoundControls & {
+  /** Creates and starts the context; call from a pointer, key or touch handler. */
+  unlock: () => void;
   suspend: () => void;
   resume: () => void;
   dispose: () => void;
@@ -34,7 +37,7 @@ export const createRocketSound = (): RocketSound => {
   let cruising: Cruise | null = null;
   const voices = new Set<AudioScheduledSourceNode>();
 
-  const audio = () => {
+  const unlock = () => {
     if (!ctx) {
       ctx = new AudioContext();
       master = ctx.createGain();
@@ -45,9 +48,20 @@ export const createRocketSound = (): RocketSound => {
       const data = noise.getChannelData(0);
       for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
     }
-    if (ctx.state === "suspended") void ctx.resume();
-    return { ctx, master: master!, noise: noise! };
+    void ctx.resume();
+    // A silent blip started during the gesture is what finally unlocks iOS.
+    const blip = ctx.createBufferSource();
+    blip.buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+    blip.connect(ctx.destination);
+    blip.start();
   };
+
+  /**
+   * The running context, or null: before unlock, while the tab is hidden, or when the browser
+   * keeps it suspended. Scheduling into a stopped clock would leave nodes that never end.
+   */
+  const audio = () =>
+    ctx?.state === "running" ? { ctx, master: master!, noise: noise! } : null;
 
   /** Starts a source and forgets it once it ends, so finished nodes are released. */
   const play = <T extends AudioScheduledSourceNode>(node: T, at: number, end?: number) => {
@@ -59,7 +73,9 @@ export const createRocketSound = (): RocketSound => {
   };
 
   const noiseBurst = (filterType: BiquadFilterType, freq: number, peak: number, length: number) => {
-    const { ctx, master, noise } = audio();
+    const a = audio();
+    if (!a) return;
+    const { ctx, master, noise } = a;
     const now = ctx.currentTime;
     const src = ctx.createBufferSource();
     src.buffer = noise;
@@ -73,7 +89,9 @@ export const createRocketSound = (): RocketSound => {
   };
 
   const thump = (from: number, to: number, peak: number, length: number) => {
-    const { ctx, master } = audio();
+    const a = audio();
+    if (!a) return;
+    const { ctx, master } = a;
     const now = ctx.currentTime;
     const osc = new OscillatorNode(ctx, { type: "sine", frequency: from });
     osc.frequency.exponentialRampToValueAtTime(to, now + length);
@@ -117,7 +135,9 @@ export const createRocketSound = (): RocketSound => {
 
     cruise: (curves, seconds) => {
       endCruise(0.05);
-      const { ctx, master, noise } = audio();
+      const a = audio();
+      if (!a) return;
+      const { ctx, master, noise } = a;
       const now = ctx.currentTime;
       const source = ctx.createBufferSource();
       source.buffer = noise;
@@ -153,6 +173,7 @@ export const createRocketSound = (): RocketSound => {
     },
 
     stop,
+    unlock,
     suspend: () => void ctx?.suspend(),
     resume: () => void ctx?.resume(),
     dispose: () => {
