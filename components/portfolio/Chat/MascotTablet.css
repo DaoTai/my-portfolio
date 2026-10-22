@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------------------------
-   Holo tablet, held at the left hand (the forearmL slice's `hand` anchor). Its grip point — the
-   bottom-left of the panel, where the original art's fingers wrap it — sits on the anchor.
+   Holo tablet, floating just above the left hand (the forearmL slice's `hand` anchor) and in
+   front of it: its bottom edge rests on the glove, which peeks out underneath.
    --------------------------------------------------------------------------------------------- */
 
 .mascot-tablet {
@@ -11,9 +11,11 @@
   transform-style: preserve-3d;
   transform-origin: 0 0;
   /* Undo the arm's turn so the panel stays level, then a slight tilt like the original. */
-  transform: translateZ(-1px)
+  transform: translateZ(10px)
     rotate(calc(-1 * (var(--shoulder-l) + var(--elbow-l)) - 4deg))
-    translate(-24%, -86%);
+    translate(var(--grip-x), var(--grip-y));
+  --grip-x: -42%;
+  --grip-y: -122%;
   pointer-events: none;
 }
 
@@ -22,7 +24,7 @@
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
-  transform-origin: 24% 86%;
+  transform-origin: 42% 122%;
   opacity: var(--tablet);
   transform: scale(calc(0.15 + 0.85 * var(--tablet)));
   animation: mascot-tablet calc(var(--beat) * 2) ease-in-out infinite;
