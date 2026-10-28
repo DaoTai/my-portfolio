@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
@@ -20,6 +21,13 @@ const ProjectModal = dynamic(() => import("@/components/portfolio/ProjectModal")
 type ProjectsShowcaseProps = {
   autoplay?: boolean;
 };
+
+// The View Transitions API isn't in the DOM lib types yet; narrow to just what we call.
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (callback: () => void) => { finished: Promise<void> };
+};
+
+const HERO_VT_NAME = "project-hero";
 
 const AUTOPLAY_MS = 5000;
 const SIDES_MIN_WIDTH = 820;
@@ -76,6 +84,8 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
   const [narrow, setNarrow] = useState(false);
   const [modalIndex, setModalIndex] = useState<number | null>(null);
   const carRef = useRef<HTMLDivElement>(null);
+  // The featured card's image, tagged as the morph source when the modal opens/closes.
+  const heroImgRef = useRef<HTMLButtonElement>(null);
   // Set while the current card is being dragged, so the release doesn't also open the modal.
   const dragged = useRef(false);
 
@@ -97,15 +107,48 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
     setDir(k >= i ? 1 : -1);
     setI(k);
   };
-  const openCur = () => {
-    if (!dragged.current) setModalIndex(i);
-  };
   const onDragEnd = (_: unknown, { offset, velocity }: PanInfo) => {
     const swipe = offset.x + velocity.x * SWIPE_VELOCITY_WEIGHT;
     if (swipe < -SWIPE_THRESHOLD) goNext();
     else if (swipe > SWIPE_THRESHOLD) goPrev();
   };
-  const closeModal = useCallback(() => setModalIndex(null), []);
+
+  // Grow the clicked card image into the modal hero (and shrink it back on close) when the
+  // browser supports view transitions and the viewer hasn't asked for reduced motion.
+  const withHeroMorph = useCallback(
+    (apply: () => void) => {
+      const el = heroImgRef.current;
+      const doc = document as ViewTransitionDocument;
+      if (reduce || !el || !doc.startViewTransition) {
+        apply();
+        return;
+      }
+      el.style.setProperty("view-transition-name", HERO_VT_NAME);
+      const transition = doc.startViewTransition(() => {
+        flushSync(apply);
+        // Freed here so the modal's hero is the only element carrying the name mid-transition.
+        el.style.removeProperty("view-transition-name");
+      });
+      transition.finished.finally(() => {
+        el.style.removeProperty("view-transition-name");
+      });
+    },
+    [reduce],
+  );
+
+  const openCur = () => {
+    if (!dragged.current) withHeroMorph(() => setModalIndex(i));
+  };
+  const closeModal = useCallback(
+    () => withHeroMorph(() => setModalIndex(null)),
+    [withHeroMorph],
+  );
+  // Keep the carousel on the project the modal is showing, so the close morph and the
+  // counter land on the right card.
+  const navigateModal = useCallback((k: number) => {
+    setI(k);
+    setModalIndex(k);
+  }, []);
 
   // Hide the side cards when the carousel is narrower than 820px.
   useEffect(() => {
@@ -189,6 +232,7 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
                 className="flex w-full flex-col gap-[18px] rounded-[20px] border border-[rgba(160,170,255,0.3)] p-4 shadow-[0_30px_80px_-30px_rgba(110,116,255,0.45)] [background:radial-gradient(circle_at_100%_0%,rgba(143,147,255,0.16),transparent_50%),var(--bg3)]"
               >
                 <button
+                  ref={heroImgRef}
                   type="button"
                   onClick={openCur}
                   aria-label={`Open ${cur.name}`}
@@ -288,7 +332,7 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
         <ProjectModal
           index={modalIndex}
           onClose={closeModal}
-          onNavigate={setModalIndex}
+          onNavigate={navigateModal}
         />
       )}
     </section>

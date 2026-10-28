@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import Image from "next/image";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Maximize2, X } from "lucide-react";
 import { createPortal } from "react-dom";
 
@@ -34,10 +35,16 @@ const Eyebrow = ({ children }: { children: ReactNode }) => (
 );
 
 const ProjectModal = ({ index, onClose, onNavigate }: ProjectModalProps) => {
+  const reduce = useReducedMotion();
   const [shot, setShot] = useState(0);
+  // Which way the gallery is moving, so the crossfade slides with the swipe/arrow.
+  const [shotDir, setShotDir] = useState(0);
   const [zoomed, setZoomed] = useState(false);
+  // True once the hero has scrolled out of view, which docks the title into the top bar.
+  const [stuck, setStuck] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   const total = PROJECTS.length;
   const project = PROJECTS[index];
@@ -48,10 +55,16 @@ const ProjectModal = ({ index, onClose, onNavigate }: ProjectModalProps) => {
 
   const stepShot = useCallback(
     (d: number) => {
+      setShotDir(d);
       setShot((s) => (s + d + imageCount) % imageCount);
     },
     [imageCount],
   );
+
+  const goToShot = (j: number) => {
+    setShotDir(j > shot ? 1 : -1);
+    setShot(j);
+  };
 
   const closeZoom = useCallback(() => setZoomed(false), []);
 
@@ -93,6 +106,20 @@ const ProjectModal = ({ index, onClose, onNavigate }: ProjectModalProps) => {
     overlayRef.current?.scrollTo({ top: 0 });
   }, [index]);
 
+  // Reveal the title in the top bar once the hero scrolls out from under it.
+  useEffect(() => {
+    const root = overlayRef.current;
+    const target = heroRef.current;
+    if (!root || !target || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      ([entry]) => setStuck(!entry.isIntersecting),
+      // Trip just before the hero clears the ~56px sticky bar.
+      { root, threshold: 0, rootMargin: "-56px 0px 0px 0px" },
+    );
+    io.observe(target);
+    return () => io.disconnect();
+  }, []);
+
   // Keep the active thumbnail centred in the strip. Scrolls the strip only, never the page.
   useEffect(() => {
     const strip = thumbsRef.current;
@@ -105,6 +132,12 @@ const ProjectModal = ({ index, onClose, onNavigate }: ProjectModalProps) => {
   }, [shot, index]);
 
   const stop = (e: MouseEvent) => e.stopPropagation();
+
+  const shotVariants = {
+    enter: (d: number) => ({ opacity: 0, x: reduce ? 0 : d * 26 }),
+    center: { opacity: 1, x: 0 },
+    exit: (d: number) => ({ opacity: 0, x: reduce ? 0 : d * -26 }),
+  };
 
   // Portal to <body> so the fixed overlay escapes any ancestor stacking context.
   return createPortal(
@@ -120,17 +153,56 @@ const ProjectModal = ({ index, onClose, onNavigate }: ProjectModalProps) => {
         aria-label={project.name}
         className="min-h-full w-full animate-[dcPop_.3s_cubic-bezier(.2,.8,.2,1)] overflow-clip bg-pf-bg3 sm:my-auto sm:min-h-0 sm:max-w-[1120px] sm:rounded-3xl sm:border sm:border-[rgba(160,170,255,0.25)] sm:shadow-[0_50px_120px_-40px_rgba(110,116,255,0.55)]"
       >
-        {/* Sticky on mobile so Close stays reachable while reading. */}
-        <div className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-pf-ink/[0.06] px-4 pb-2.5 pt-[max(10px,env(safe-area-inset-top))] backdrop-blur-[12px] [background:color-mix(in_srgb,var(--bg2)_85%,transparent)] sm:static sm:border-0 sm:px-6 sm:pb-3.5 sm:pt-[18px] sm:backdrop-blur-none sm:[background:var(--bg2)]">
-          <Eyebrow>
-            Project <AnimatedNumber value={index + 1} format={TWO_DIGITS} /> /{" "}
-            <AnimatedNumber value={total} format={TWO_DIGITS} />
-          </Eyebrow>
+        {/* Stays docked while reading; the project title fades in here once you scroll past the hero. */}
+        <div
+          className={`sticky top-0 z-20 flex items-center justify-between gap-4 border-b px-4 pb-2.5 pt-[max(10px,env(safe-area-inset-top))] backdrop-blur-[12px] transition-colors duration-300 sm:px-6 sm:pb-3.5 sm:pt-[18px] ${
+            stuck
+              ? "border-pf-ink/[0.08] [background:color-mix(in_srgb,var(--bg2)_92%,transparent)]"
+              : "border-transparent [background:color-mix(in_srgb,var(--bg2)_78%,transparent)]"
+          }`}
+        >
+          <div className="relative flex min-w-0 flex-1 items-center">
+            <div
+              className={`flex items-center transition-opacity duration-300 ${
+                stuck ? "pointer-events-none opacity-0" : "opacity-100"
+              }`}
+            >
+              <Eyebrow>
+                Project <AnimatedNumber value={index + 1} format={TWO_DIGITS} />{" "}
+                / <AnimatedNumber value={total} format={TWO_DIGITS} />
+              </Eyebrow>
+            </div>
+            <div
+              aria-hidden={!stuck}
+              className={`absolute inset-y-0 left-0 flex min-w-0 items-center gap-2.5 transition-[opacity,transform] duration-300 ${
+                stuck
+                  ? "translate-y-0 opacity-100"
+                  : "pointer-events-none translate-y-1 opacity-0"
+              }`}
+            >
+              <span className="grid h-7 w-7 flex-none place-items-center overflow-hidden rounded-lg bg-[linear-gradient(135deg,var(--g1),var(--g2)_50%,var(--g3))] font-display text-[12px] font-bold text-[#0a0b14]">
+                {project.logo ? (
+                  <Image
+                    src={project.logo}
+                    alt=""
+                    width={18}
+                    height={18}
+                    className="h-[18px] w-[18px] object-contain"
+                  />
+                ) : (
+                  project.name[0]
+                )}
+              </span>
+              <span className="min-w-0 truncate font-display text-[15px] font-semibold text-pf-text">
+                {project.name}
+              </span>
+            </div>
+          </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="grid h-10 w-10 place-items-center rounded-full border border-pf-ink/[0.14] bg-pf-ink/[0.03] text-pf-text2 hover:border-pf-g2 hover:text-pf-text sm:h-9 sm:w-9"
+            className="grid h-10 w-10 flex-none place-items-center rounded-full border border-pf-ink/[0.14] bg-pf-ink/[0.03] text-pf-text2 hover:border-pf-g2 hover:text-pf-text sm:h-9 sm:w-9"
           >
             <X size={14} strokeWidth={2.4} aria-hidden="true" />
           </button>
@@ -140,23 +212,37 @@ const ProjectModal = ({ index, onClose, onNavigate }: ProjectModalProps) => {
           <div className="relative">
             <div
               {...swipe}
-              className="relative aspect-[16/10] touch-pan-y overflow-hidden rounded-xl border border-pf-ink/[0.08] bg-pf-tilebg sm:aspect-[16/8] sm:rounded-2xl"
+              ref={heroRef}
+              className="vt-project-hero relative aspect-[16/10] touch-pan-y overflow-hidden rounded-xl border border-pf-ink/[0.08] bg-pf-tilebg sm:aspect-[16/8] sm:rounded-2xl"
             >
+              <AnimatePresence initial={false} custom={shotDir}>
+                <motion.div
+                  key={shot}
+                  custom={shotDir}
+                  variants={shotVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: reduce ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={project.images[shot]}
+                    alt={`${project.name} screenshot`}
+                    fill
+                    sizes="(max-width: 1160px) 100vw, 1080px"
+                    className="object-cover object-top"
+                    priority={shot === 0}
+                  />
+                </motion.div>
+              </AnimatePresence>
               <button
                 type="button"
                 onClick={() => setZoomed(true)}
                 aria-label="View image fullscreen"
-                className="absolute inset-0 cursor-zoom-in"
-              >
-                <Image
-                  src={project.images[shot]}
-                  alt={`${project.name} screenshot`}
-                  fill
-                  sizes="(max-width: 1160px) 100vw, 1080px"
-                  className="object-cover object-top"
-                />
-              </button>
-              <div className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(180deg,rgba(var(--base2),0)_40%,rgba(var(--base2),0.55)_70%,rgba(var(--base2),0.96)_100%)] sm:block" />
+                className="absolute inset-0 z-[1] cursor-zoom-in"
+              />
+              <div className="pointer-events-none absolute inset-0 z-[2] hidden bg-[linear-gradient(180deg,rgba(var(--base2),0)_40%,rgba(var(--base2),0.55)_70%,rgba(var(--base2),0.96)_100%)] sm:block" />
               <span className="pointer-events-none absolute right-2.5 top-2.5 z-10 flex items-center gap-1.5 rounded-full border border-pf-ink/[0.12] bg-pf-base/60 px-2.5 py-1 font-display text-xs text-pf-t3 backdrop-blur-[8px] sm:right-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-[13px]">
                 <Maximize2 size={12} strokeWidth={2.2} aria-hidden="true" />
                 <AnimatedNumber value={shot + 1} format={TWO_DIGITS} /> /{" "}
@@ -223,7 +309,7 @@ const ProjectModal = ({ index, onClose, onNavigate }: ProjectModalProps) => {
                   <button
                     key={src}
                     type="button"
-                    onClick={() => setShot(j)}
+                    onClick={() => goToShot(j)}
                     aria-label={`Image ${j + 1}`}
                     aria-current={active}
                     className={`relative h-12 w-20 flex-none snap-center overflow-hidden rounded-lg bg-pf-tilebg p-0 transition-[opacity,box-shadow] duration-200 sm:h-16 sm:w-28 sm:rounded-[10px] ${

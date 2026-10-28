@@ -172,6 +172,51 @@
   animation: item-glow-pulse 2s ease-in-out infinite;
 }
 
+/* Logo self-draw: every 5s the gradient strokes trace themselves in, hold, then
+   fade back to the base colour underneath. pathLength="1" normalises every path
+   so they all draw over the same window regardless of their real length. */
+@keyframes logo-draw {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  50% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  80% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.logo-draw {
+  stroke-dasharray: 1;
+  animation: logo-draw 5s ease-in-out infinite;
+}
+
+/* Hover shows the finished gradient, holding the loop in place. */
+.group:hover .logo-draw {
+  animation: none;
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
 @layer utilities {
   .text-gradient {
     @apply bg-gradient bg-clip-text text-transparent;
@@ -290,5 +335,35 @@ html.light {
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+/*
+ * Shared-element morph between the carousel's featured card and the project detail
+ * hero. The showcase tags the clicked card with this name just before opening (and
+ * the card again just before closing); the modal's hero frame carries it while open,
+ * so the browser tweens the one into the other. Falls back to a plain open where
+ * the View Transitions API is absent, and is disabled under reduced motion.
+ */
+.vt-project-hero {
+  view-transition-name: project-hero;
+}
+
+::view-transition-group(project-hero) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-old(project-hero),
+::view-transition-new(project-hero) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

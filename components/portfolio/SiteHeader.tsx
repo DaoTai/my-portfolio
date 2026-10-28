@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import {
+  Check,
   Cpu,
   FileText,
   Globe,
@@ -10,10 +11,18 @@ import {
   Monitor,
   Moon,
   Rocket,
+  Share2,
   Sun,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { siteConfig } from "@/lib/config";
 import { NAV } from "@/lib/portfolio-data";
 import { cn } from "@/lib/utils";
 
@@ -33,12 +42,15 @@ const PROGRESS_STYLE = {
 const iconButtonClass =
   "relative grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-pf-ink/10 bg-pf-ink/[0.04] text-pf-t3 [transition:color_.2s,background_.2s,border-color_.2s] hover:border-pf-ink/20 hover:bg-pf-ink/[0.08] hover:text-pf-text";
 
+const tooltipContentClass =
+  "border border-pf-ink/10 bg-pf-base/90 font-medium text-pf-text shadow-[0_8px_30px_-8px_rgba(var(--glow3),0.5)] backdrop-blur-md";
+
 const LogoPaths = () => (
   <>
-    <path d="M3 6H15" />
-    <path d="M8 6V27" />
-    <path d="M12.5 10V24H16A7 7 0 0 0 16 10H12.5" />
-    <path d="M16 6A11 11 0 0 1 16 28" />
+    <path d="M3 6H15" pathLength={1} />
+    <path d="M8 6V27" pathLength={1} />
+    <path d="M12.5 10V24H16A7 7 0 0 0 16 10H12.5" pathLength={1} />
+    <path d="M16 6A11 11 0 0 1 16 28" pathLength={1} />
   </>
 );
 
@@ -83,10 +95,7 @@ export const Logo = ({ size = 30 }: { size?: number }) => {
         >
           <LogoPaths />
         </g>
-        <g
-          stroke={`url(#${gradientId})`}
-          className="opacity-0 [transition:opacity_.25s] group-hover:opacity-100"
-        >
+        <g stroke={`url(#${gradientId})`} className="logo-draw">
           <LogoPaths />
         </g>
       </svg>
@@ -114,12 +123,113 @@ const ProgressBar = ({
   </div>
 );
 
+const ShareButton = () => {
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  const handleShare = async () => {
+    const data = {
+      title: siteConfig.title,
+      text: siteConfig.shortDescription,
+      url: siteConfig.url,
+    };
+
+    // Native share sheet where the device offers one (mobile, some desktops).
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share(data);
+      } catch (err) {
+        // The user dismissing the sheet throws AbortError — not an error to us.
+        if ((err as Error)?.name !== "AbortError") console.error(err);
+      }
+      return;
+    }
+
+    // Fallback: copy the link and flash a confirmation.
+    try {
+      await navigator.clipboard.writeText(data.url);
+      setCopied(true);
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const label = copied ? "Link copied!" : "Share this site";
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          onClick={handleShare}
+          aria-label={label}
+          className={iconButtonClass}
+        >
+          <Share2
+            aria-hidden="true"
+            size={15}
+            className={cn(
+              "absolute [transition:transform_.3s,opacity_.2s]",
+              copied && "scale-50 opacity-0",
+            )}
+          />
+          <Check
+            aria-hidden="true"
+            size={15}
+            className={cn(
+              "absolute text-pf-text [transition:transform_.3s,opacity_.2s]",
+              !copied && "scale-50 opacity-0",
+            )}
+          />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent className={tooltipContentClass}>{label}</TooltipContent>
+    </Tooltip>
+  );
+};
+
+const ThemeToggle = () => {
+  const { resolvedTheme, setTheme } = useTheme();
+  const toggleTheme = () =>
+    setTheme(resolvedTheme === "light" ? "dark" : "light");
+  // resolvedTheme is undefined until mounted; default to the dark-mode label.
+  const label = resolvedTheme === "light" ? "Switch to dark" : "Switch to light";
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label={label}
+          className={iconButtonClass}
+        >
+          <Moon
+            aria-hidden="true"
+            size={15}
+            className="absolute [transition:transform_.4s,opacity_.3s] [.light_&]:-rotate-90 [.light_&]:scale-50 [.light_&]:opacity-0"
+          />
+          <Sun
+            aria-hidden="true"
+            size={15}
+            className="absolute rotate-90 scale-50 opacity-0 [transition:transform_.4s,opacity_.3s] [.light_&]:rotate-0 [.light_&]:scale-100 [.light_&]:opacity-100"
+          />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent className={tooltipContentClass}>{label}</TooltipContent>
+    </Tooltip>
+  );
+};
+
 export default function SiteHeader() {
   const [progress, setProgress] = useState(0);
   const [active, setActive] = useState(NAV[0].id);
   const [menuOpen, setMenuOpen] = useState(false);
   const progressRef = useRef(0);
-  const { resolvedTheme, setTheme } = useTheme();
 
   // Nothing here reads layout on scroll (which would force a reflow every frame): the page
   // height is cached from a ResizeObserver, and the active section comes from an
@@ -202,193 +312,164 @@ export default function SiteHeader() {
     };
   }, [menuOpen]);
 
-  const toggleTheme = () =>
-    setTheme(resolvedTheme === "light" ? "dark" : "light");
-
   return (
-    <header className="fixed left-0 right-0 top-0 z-50">
-      {/* ── Mobile: full-width bar ── */}
-      <div className="relative md:hidden">
-        <div className="flex items-center justify-between border-b border-pf-ink/[0.06] bg-pf-base/[0.62] px-4 py-2.5 backdrop-blur-[18px] backdrop-saturate-150">
-          <Logo />
+    <TooltipProvider delayDuration={300}>
+      <header className="fixed left-0 right-0 top-0 z-50">
+        {/* ── Mobile: full-width bar ── */}
+        <div className="relative md:hidden">
+          <div className="flex items-center justify-between border-b border-pf-ink/[0.06] bg-pf-base/[0.62] px-4 py-2.5 backdrop-blur-[18px] backdrop-saturate-150">
+            <Logo />
 
-          {/* Actions */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-              className={iconButtonClass}
-            >
-              <Moon
-                aria-hidden="true"
-                size={15}
-                className="absolute [transition:transform_.4s,opacity_.3s] [.light_&]:-rotate-90 [.light_&]:scale-50 [.light_&]:opacity-0"
-              />
-              <Sun
-                aria-hidden="true"
-                size={15}
-                className="absolute rotate-90 scale-50 opacity-0 [transition:transform_.4s,opacity_.3s] [.light_&]:rotate-0 [.light_&]:scale-100 [.light_&]:opacity-100"
-              />
-            </button>
+            {/* Actions */}
+            <div className="flex items-center gap-2">
+              <ShareButton />
 
-            <button
-              type="button"
-              onClick={() => setMenuOpen((o) => !o)}
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={menuOpen}
-              aria-controls="mobile-menu"
-              className={iconButtonClass}
-            >
-              <Menu
-                aria-hidden="true"
-                size={15}
-                className={cn(
-                  "absolute [transition:transform_.3s,opacity_.2s]",
-                  menuOpen && "rotate-90 scale-50 opacity-0",
-                )}
-              />
-              <X
-                aria-hidden="true"
-                size={15}
-                className={cn(
-                  "absolute [transition:transform_.3s,opacity_.2s]",
-                  !menuOpen && "-rotate-90 scale-50 opacity-0",
-                )}
-              />
-            </button>
-          </div>
-        </div>
+              <ThemeToggle />
 
-        <ProgressBar progress={progress} />
-
-        {/* Mobile dropdown */}
-        <AnimatePresence>
-          {menuOpen && (
-            <>
-              <motion.button
+              <button
                 type="button"
-                aria-label="Close menu"
-                tabIndex={-1}
-                onClick={() => setMenuOpen(false)}
-                className="fixed inset-0 -z-10 cursor-default bg-black/30"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              />
-              <motion.nav
-                id="mobile-menu"
-                aria-label="Mobile"
-                className="absolute left-3 right-3 top-full mt-2 flex flex-col gap-1 rounded-2xl border border-pf-ink/10 bg-pf-base/[0.72] p-2 shadow-[0_24px_60px_-20px_rgba(var(--glow3),0.6)] backdrop-blur-[18px] backdrop-saturate-150"
-                initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                onClick={() => setMenuOpen((o) => !o)}
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={menuOpen}
+                aria-controls="mobile-menu"
+                className={iconButtonClass}
               >
-                {NAV.map((n) => {
-                  const on = n.id === active;
-                  const Icon = NAV_ICONS[n.id];
-                  return (
-                    <a
-                      key={n.id}
-                      href={`#${n.id}`}
-                      onClick={() => {
-                        setActive(n.id);
-                        setMenuOpen(false);
-                      }}
-                      aria-current={on ? "location" : undefined}
-                      className={cn(
-                        "flex items-center gap-3 rounded-xl px-4 py-3 text-[15px] [transition:color_.2s,background_.2s] hover:bg-pf-ink/[0.05] hover:text-pf-text",
-                        on
-                          ? "bg-pf-ink/[0.06] font-semibold text-pf-text"
-                          : "font-medium text-pf-t4",
-                      )}
-                    >
-                      {Icon && (
-                        <Icon
-                          size={16}
-                          aria-hidden="true"
-                          className="shrink-0 opacity-70"
-                        />
-                      )}
-                      <span className="flex-1">{n.label}</span>
-                      {on && (
-                        <span className="h-1.5 w-1.5 rounded-full bg-[linear-gradient(90deg,var(--g2),var(--g3))] shadow-[0_0_10px_2px_rgba(var(--dot-glow),0.8)]" />
-                      )}
-                    </a>
-                  );
-                })}
-              </motion.nav>
-            </>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* ── Desktop: centered floating pill ── */}
-      <div className="hidden justify-center px-3 pt-3 md:flex">
-        <div className="relative flex items-center gap-1 overflow-hidden rounded-full border border-pf-ink/10 bg-pf-base/[0.55] py-2 pl-2.5 pr-4 shadow-[0_12px_40px_-16px_rgba(var(--glow3),0.55)] backdrop-blur-[18px] backdrop-saturate-150">
-          <Logo size={32} />
-
-          <span className="mx-1 h-5 w-px bg-pf-ink/10" />
-
-          <nav className="flex items-center gap-0.5">
-            {NAV.map((n) => {
-              const on = n.id === active;
-              const Icon = NAV_ICONS[n.id];
-              return (
-                <a
-                  key={n.id}
-                  href={`#${n.id}`}
-                  onClick={() => setActive(n.id)}
-                  aria-current={on ? "location" : undefined}
+                <Menu
+                  aria-hidden="true"
+                  size={15}
                   className={cn(
-                    "relative flex items-center gap-2 rounded-full px-3.5 py-2 text-sm [transition:color_.2s,background_.2s]",
-                    on
-                      ? "bg-pf-ink/[0.08] font-semibold text-pf-text [text-shadow:0_0_18px_rgba(143,147,255,0.9)]"
-                      : "font-medium text-pf-t5 hover:bg-pf-ink/[0.05] hover:text-pf-text",
+                    "absolute [transition:transform_.3s,opacity_.2s]",
+                    menuOpen && "rotate-90 scale-50 opacity-0",
                   )}
-                >
-                  {Icon && (
-                    <Icon
-                      size={14}
-                      aria-hidden="true"
-                      className={cn(
-                        "shrink-0 [transition:opacity_.2s]",
-                        on
-                          ? "opacity-100 drop-shadow-[0_0_6px_rgba(143,147,255,0.9)]"
-                          : "opacity-60",
-                      )}
-                    />
+                />
+                <X
+                  aria-hidden="true"
+                  size={15}
+                  className={cn(
+                    "absolute [transition:transform_.3s,opacity_.2s]",
+                    !menuOpen && "-rotate-90 scale-50 opacity-0",
                   )}
-                  {n.label}
-                </a>
-              );
-            })}
-          </nav>
-
-          <span className="mx-1 h-5 w-px bg-pf-ink/10" />
-
-          <button
-            type="button"
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-            className={iconButtonClass}
-          >
-            <Moon
-              aria-hidden="true"
-              size={15}
-              className="absolute [transition:transform_.4s,opacity_.3s] [.light_&]:-rotate-90 [.light_&]:scale-50 [.light_&]:opacity-0"
-            />
-            <Sun
-              aria-hidden="true"
-              size={15}
-              className="absolute rotate-90 scale-50 opacity-0 [transition:transform_.4s,opacity_.3s] [.light_&]:rotate-0 [.light_&]:scale-100 [.light_&]:opacity-100"
-            />
-          </button>
+                />
+              </button>
+            </div>
+          </div>
 
           <ProgressBar progress={progress} />
+
+          {/* Mobile dropdown */}
+          <AnimatePresence>
+            {menuOpen && (
+              <>
+                <motion.button
+                  type="button"
+                  aria-label="Close menu"
+                  tabIndex={-1}
+                  onClick={() => setMenuOpen(false)}
+                  className="fixed inset-0 -z-10 cursor-default bg-black/30"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                />
+                <motion.nav
+                  id="mobile-menu"
+                  aria-label="Mobile"
+                  className="absolute left-3 right-3 top-full mt-2 flex flex-col gap-1 rounded-2xl border border-pf-ink/10 bg-pf-base/[0.72] p-2 shadow-[0_24px_60px_-20px_rgba(var(--glow3),0.6)] backdrop-blur-[18px] backdrop-saturate-150"
+                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  {NAV.map((n) => {
+                    const on = n.id === active;
+                    const Icon = NAV_ICONS[n.id];
+                    return (
+                      <a
+                        key={n.id}
+                        href={`#${n.id}`}
+                        onClick={() => {
+                          setActive(n.id);
+                          setMenuOpen(false);
+                        }}
+                        aria-current={on ? "location" : undefined}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl px-4 py-3 text-[15px] [transition:color_.2s,background_.2s] hover:bg-pf-ink/[0.05] hover:text-pf-text",
+                          on
+                            ? "bg-pf-ink/[0.06] font-semibold text-pf-text"
+                            : "font-medium text-pf-t4",
+                        )}
+                      >
+                        {Icon && (
+                          <Icon
+                            size={16}
+                            aria-hidden="true"
+                            className="shrink-0 opacity-70"
+                          />
+                        )}
+                        <span className="flex-1">{n.label}</span>
+                        {on && (
+                          <span className="h-1.5 w-1.5 rounded-full bg-[linear-gradient(90deg,var(--g2),var(--g3))] shadow-[0_0_10px_2px_rgba(var(--dot-glow),0.8)]" />
+                        )}
+                      </a>
+                    );
+                  })}
+                </motion.nav>
+              </>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
-    </header>
+
+        {/* ── Desktop: centered floating pill ── */}
+        <div className="hidden justify-center px-3 pt-3 md:flex">
+          <div className="relative flex items-center gap-1 overflow-hidden rounded-full border border-pf-ink/10 bg-pf-base/[0.55] py-2 pl-2.5 pr-4 shadow-[0_12px_40px_-16px_rgba(var(--glow3),0.55)] backdrop-blur-[18px] backdrop-saturate-150">
+            <Logo size={32} />
+
+            <span className="mx-1 h-5 w-px bg-pf-ink/10" />
+
+            <nav className="flex items-center gap-0.5">
+              {NAV.map((n) => {
+                const on = n.id === active;
+                const Icon = NAV_ICONS[n.id];
+                return (
+                  <a
+                    key={n.id}
+                    href={`#${n.id}`}
+                    onClick={() => setActive(n.id)}
+                    aria-current={on ? "location" : undefined}
+                    className={cn(
+                      "relative flex items-center gap-2 rounded-full px-3.5 py-2 text-sm [transition:color_.2s,background_.2s]",
+                      on
+                        ? "bg-pf-ink/[0.08] font-semibold text-pf-text [text-shadow:0_0_18px_rgba(143,147,255,0.9)]"
+                        : "font-medium text-pf-t5 hover:bg-pf-ink/[0.05] hover:text-pf-text",
+                    )}
+                  >
+                    {Icon && (
+                      <Icon
+                        size={14}
+                        aria-hidden="true"
+                        className={cn(
+                          "shrink-0 [transition:opacity_.2s]",
+                          on
+                            ? "opacity-100 drop-shadow-[0_0_6px_rgba(143,147,255,0.9)]"
+                            : "opacity-60",
+                        )}
+                      />
+                    )}
+                    {n.label}
+                  </a>
+                );
+              })}
+            </nav>
+
+            <span className="mx-1 h-5 w-px bg-pf-ink/10" />
+
+            <ShareButton />
+
+            <ThemeToggle />
+
+            <ProgressBar progress={progress} />
+          </div>
+        </div>
+      </header>
+    </TooltipProvider>
   );
 }

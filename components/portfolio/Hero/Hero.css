@@ -243,22 +243,36 @@ html.light .hero-star {
 .hero-wave {
   display: inline-block;
   font-size: 1.6rem;
-  transform-origin: 70% 70%;
-  animation: hero-wave 4.6s ease-in-out 1.2s infinite;
+  /* Pivot at the wrist so it swings like a metronome, not spins in place. */
+  transform-origin: 50% 90%;
+  /* Sine easing => velocity eases through zero at each extreme, no snap. */
+  animation: hero-wave 6s cubic-bezier(0.37, 0, 0.63, 1) 1.2s infinite;
+  will-change: transform;
 }
 
-/* A 2.4s wave (0 → 6° → -2° → 0), then a 2.2s rest. */
+/* Rest is 0deg (upright). Shake swings symmetrically ±45deg, then rests. */
 @keyframes hero-wave {
-  0%,
-  52.17%,
-  100% {
+  0% {
     rotate: 0deg;
   }
-  18.26% {
-    rotate: 6deg;
+  10% {
+    rotate: 45deg;
   }
-  36.52% {
-    rotate: -2deg;
+  20% {
+    rotate: -45deg;
+  }
+  30% {
+    rotate: 45deg;
+  }
+  40% {
+    rotate: -45deg;
+  }
+  50% {
+    rotate: 0deg;
+  }
+  50%,
+  100% {
+    rotate: 0deg;
   }
 }
 
