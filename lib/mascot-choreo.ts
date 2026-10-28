@@ -1,6 +1,6 @@
 /**
- * The mascot's flight, phase by phase: it puts the tablet away, crouches with its rockets on,
- * jumps, flies, takes the tablet back out on the way in, lands on bent knees and stands up.
+ * The mascot's flight, phase by phase: it puts the tablet away, kneels on the drum as it comes
+ * down as a carpet, lifts off, flies, comes in, lands, and stands up as the drum goes back.
  */
 
 export type FlightPhase =

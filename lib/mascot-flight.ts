@@ -1,5 +1,5 @@
 /**
- * Keyframes for the mascot's rocket flight: a smooth loop out from its home corner and back.
+ * Keyframes for the mascot's carpet flight: a smooth loop out from its home corner and back.
  * Positions are offsets in px from home (it lives bottom-right, so it only travels left and up).
  */
 
@@ -20,11 +20,8 @@ const WAYPOINTS: readonly Point[] = [
   [0, 0, 1],
 ];
 
-/**
- * Keeps the body upright at low horizontal speed (as a fraction of the top speed): the smaller
- * it is, the sooner the mascot tips over to fly flat, head first.
- */
-const UPRIGHT_BIAS = 0.12;
+/** Lean (deg) into the direction of travel at top horizontal speed, riding upright on the carpet. */
+const MAX_LEAN = 20;
 /** Fraction of the flight at each end spent straightening up for take-off and landing. */
 const TAPER = 0.1;
 /** Samples averaged on each side of the tilt, so swinging over at a turn takes ~0.4s. */
@@ -35,8 +32,9 @@ const CRUISE_ROLL = 30;
 const MAX_BANK = 36;
 /** Roll stays within this (deg) outside the barrel roll, so the front stays readable. */
 const MAX_ROLL = 62;
-/** Nod (deg) toward the viewer while coming closest, away while receding. */
-const MAX_PITCH = 26;
+/** Nod (deg) toward the viewer while coming closest, away while receding. Kept under the view's
+ *  look-down on the carpet (.mascot-camera), so receding never shows the carpet from below. */
+const MAX_PITCH = 18;
 /** Samples on each side of the far turn spent on the barrel roll (~0.9s in all). */
 const BARREL_HALF = 4;
 
@@ -44,7 +42,7 @@ export type FlightKeyframes = {
   x: number[];
   y: number[];
   scale: number[];
-  /** Screen-plane tilt: the head points along the direction of travel. */
+  /** Screen-plane lean into the direction of travel, at most MAX_LEAN either way. */
   rotate: number[];
   /** Turn (deg) around its own spine: banking, and one full barrel roll at the far turn. */
   roll: number[];
@@ -164,13 +162,9 @@ export const buildFlightPath = (
   const topSpeed = Math.max(1, ...speed);
   const w = times.map(taper);
 
-  // Head along the heading, like a superhero: climbing tips it toward the climb, level or
-  // descending flight lays it flat, and the bias keeps it upright when barely moving sideways.
-  const tilt = vx.map((v, i) => {
-    const climb = Math.max(-vy[i], 0);
-    return (Math.atan2(v, climb + UPRIGHT_BIAS * topSpeed) * 180) / Math.PI;
-  });
-  const rotate = smooth(tilt, TILT_SMOOTHING).map((r, i) => round(r * w[i]));
+  // Kneeling upright on the carpet, it leans into the way it is going, more the faster it goes.
+  const lean = vx.map((v) => (MAX_LEAN * v) / topSpeed);
+  const rotate = smooth(lean, TILT_SMOOTHING).map((r, i) => round(r * w[i]));
 
   // Bank into curves (sideways acceleration), on top of a three-quarter cruise.
   const lateral = normalise(

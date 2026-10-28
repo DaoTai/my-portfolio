@@ -42,8 +42,8 @@ type MascotFlyerProps = {
 
 /**
  * The mascot's home is just above the chat launcher. It dances there, and every so often puts
- * its tablet away, crouches, fires its rockets and loops around the screen, then lands on bent
- * knees and takes the tablet back out (see lib/mascot-choreo.ts).
+ * its tablet away, kneels on its bronze drum as a flying carpet and loops around the screen, then
+ * lands, stands up and sends the drum back behind its head (see lib/mascot-choreo.ts).
  */
 export const MascotFlyer = ({ hidden, onOpen, sound }: MascotFlyerProps) => {
   const reduce = useReducedMotion();
@@ -83,7 +83,7 @@ export const MascotFlyer = ({ hidden, onOpen, sound }: MascotFlyerProps) => {
         ease: "linear",
         times: path.times,
       } as const;
-      // The ground shadow stretches out under the body as it lies flat, and fades with height.
+      // The ground shadow stretches out as it leans, and fades with height.
       const stretch = path.rotate.map(
         (r) => 1 + 0.6 * Math.abs(Math.sin((r * Math.PI) / 180)),
       );

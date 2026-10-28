@@ -30,13 +30,22 @@ test("a child's relativeBox maps back to its canvas box through its parent", () 
   }
 });
 
+/** Idle with both legs bent the same: hip `hip`°, knee `knee`°. */
+const bent = (hip: number, knee: number, grounded = true) => ({
+  ...POSES.idle,
+  hipL: hip,
+  kneeL: knee,
+  hipR: hip,
+  kneeR: knee,
+  grounded,
+});
+
 test("standing straight drops nothing; bent knees drop the body to keep the feet down", () => {
   assert.equal(rootDrop(POSES.idle), 0);
   // Hip 35° and knee 70° on a 163 px thigh and 247 px shin: 410 − (163·cos35 + 247·cos35) ≈ 74 px.
-  assert.ok(Math.abs(rootDrop(POSES.land) - (74 / 1381) * 100) < 0.6);
+  assert.ok(Math.abs(rootDrop(bent(35, 70)) - (74 / 1381) * 100) < 0.6);
 });
 
 test("in the air the legs tuck up instead of dropping the body", () => {
-  assert.ok(POSES.fly.kneeL > 0);
-  assert.equal(rootDrop(POSES.fly), 0);
+  assert.equal(rootDrop(bent(24, 82, false)), 0);
 });

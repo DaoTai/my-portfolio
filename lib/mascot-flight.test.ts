@@ -35,13 +35,12 @@ test("the mascot stays inside the travel box (only left and up from home)", () =
   for (const y of path.y) assert.ok(y <= 0.5 && y >= -400, `y=${y}`);
 });
 
-test("it flies head first: flat when crossing the screen, never upside down", () => {
+test("it rides upright, leaning into the way it flies", () => {
   const path = buildFlightPath(1600, 900);
-  for (const r of path.rotate) assert.ok(Math.abs(r) <= 90, `rotate=${r}`);
-  // Heading left it lies close to horizontal, head to the left.
-  assert.ok(Math.min(...path.rotate) < -70, `min=${Math.min(...path.rotate)}`);
-  // Heading back right it lies flat the other way.
-  assert.ok(Math.max(...path.rotate) > 60, `max=${Math.max(...path.rotate)}`);
+  for (const r of path.rotate) assert.ok(Math.abs(r) <= 20, `rotate=${r}`);
+  // Heading left it leans left; heading back right, it leans right.
+  assert.ok(Math.min(...path.rotate) < -10, `min=${Math.min(...path.rotate)}`);
+  assert.ok(Math.max(...path.rotate) > 8, `max=${Math.max(...path.rotate)}`);
 });
 
 test("it cruises three-quarter on and barrel-rolls once at the far turn", () => {
@@ -60,7 +59,7 @@ test("it cruises three-quarter on and barrel-rolls once at the far turn", () => 
 
 test("it nods toward the viewer when coming closer", () => {
   const path = buildFlightPath(1600, 900);
-  for (const p of path.pitch) assert.ok(Math.abs(p) <= 26, `pitch=${p}`);
+  for (const p of path.pitch) assert.ok(Math.abs(p) <= 18, `pitch=${p}`);
   const nearest = path.scale.indexOf(Math.max(...path.scale));
   const approaching = path.pitch.slice(nearest - 8, nearest);
   assert.ok(Math.min(...approaching) < -10, `min=${Math.min(...approaching)}`);

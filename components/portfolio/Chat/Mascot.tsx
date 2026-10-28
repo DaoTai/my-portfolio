@@ -3,9 +3,9 @@ import type { CSSProperties } from "react";
 import { MASCOT_PARTS } from "@/lib/mascot-parts";
 import { POSES, type MascotMode, type Pose } from "@/lib/mascot-poses";
 import { rootDrop } from "@/lib/mascot-rig";
+import { MascotDrum } from "./MascotDrum";
 import { Comets, Sparkle } from "./MascotEffects";
 import { MascotPart, type PartSlots } from "./MascotPart";
-import { MascotRocket } from "./MascotRocket";
 import { MascotTablet } from "./MascotTablet";
 
 export type { MascotMode };
@@ -35,7 +35,6 @@ const poseVars = (pose: Pose) =>
     // rootDrop is in % of the canvas; the torso translates in % of its own height.
     "--drop": `${(rootDrop(pose) / torso.box.height) * 100}%`,
     "--tablet": pose.tablet,
-    "--rockets": pose.rockets,
     "--throttle": pose.throttle,
     "--dance": pose.dance,
     "--pose-ms": `${pose.ms}ms`,
@@ -69,8 +68,6 @@ const SLOTS: PartSlots = {
     ),
   },
   forearmL: { attach: <MascotTablet /> },
-  thighL: { attach: <MascotRocket side="L" /> },
-  thighR: { attach: <MascotRocket side="R" /> },
   bubble: {
     face: (
       <>
@@ -86,12 +83,14 @@ const SLOTS: PartSlots = {
  * The mascot cut into nested slices (see scripts/slice-mascot.mjs) and rigged in CSS. Each mode
  * is a pose from lib/mascot-poses.ts that the joints blend into. Slices sit at different depths
  * and carry their real backs, so it turns like a 2.5D figure rather than a flat sticker. In
- * flight, MascotFlyer turns the whole figure by animating `.mascot-orient`'s transform.
+ * flight, MascotFlyer turns the whole figure by animating `.mascot-orient`'s transform; the drum
+ * sways and turns with it, as a halo or as the carpet it kneels on.
  */
 export const Mascot = memo(({ mode }: { mode: MascotMode }) => (
   <div
     className="mascot-rig"
     data-mode={mode}
+    data-carpet={POSES[mode].carpet}
     style={poseVars(POSES[mode])}
     aria-hidden="true"
   >
@@ -100,11 +99,14 @@ export const Mascot = memo(({ mode }: { mode: MascotMode }) => (
     <Comets />
 
     <div className="mascot-stage">
-      <div className="mascot-orient">
-        <div className="mascot-sway">
-          <div className="mascot-dance">
-            <MascotPart name="torso" slots={SLOTS} />
-            <MascotPart name="bubble" slots={SLOTS} />
+      <div className="mascot-camera">
+        <div className="mascot-orient">
+          <div className="mascot-sway">
+            <MascotDrum />
+            <div className="mascot-dance">
+              <MascotPart name="torso" slots={SLOTS} />
+              <MascotPart name="bubble" slots={SLOTS} />
+            </div>
           </div>
         </div>
       </div>

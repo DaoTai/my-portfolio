@@ -15,7 +15,7 @@ const px = (x: number, y: number) => ({ x: (x / 1139) * 100, y: (y / 1381) * 100
 test("idle reproduces the original art: left hand at the tablet, right finger at the bubble", () => {
   near(handPoint("L", POSES.idle), px(285, 840), 4);
   near(handPoint("R", POSES.idle), px(940, 445), 4);
-  assert.deepEqual([POSES.idle.tablet, POSES.idle.rockets, POSES.idle.dance], [1, 0, 1]);
+  assert.deepEqual([POSES.idle.tablet, POSES.idle.carpet, POSES.idle.dance], [1, false, 1]);
 });
 
 test("stow: the left hand reaches the jacket pocket and the tablet is away", () => {
@@ -23,45 +23,47 @@ test("stow: the left hand reaches the jacket pocket and the tablet is away", () 
   assert.equal(POSES.stow.tablet, 0);
 });
 
-test("ready: hands meet at the chest, knees loaded, rockets in", () => {
-  const l = handPoint("L", POSES.ready);
-  const r = handPoint("R", POSES.ready);
-  assert.ok(dist(l, r) < 8, `hands ${dist(l, r)} apart`);
-  const mid = (l.x + r.x) / 2;
-  assert.ok(mid > 40 && mid < 60, `mid x ${mid}`);
-  assert.ok(l.y > 45 && l.y < 65, `y ${l.y}`);
-  assert.ok(POSES.ready.kneeL >= 30 && POSES.ready.kneeR >= 30);
-  assert.equal(POSES.ready.rockets, 1);
-  assert.equal(POSES.ready.tablet, 0);
-});
+const RIDING = ["ready", "launch", "fly", "approach", "land"] as const;
 
-test("fly: arms straight along the body, legs tucked, full throttle", () => {
-  for (const s of ["L", "R"] as const) {
-    assert.ok(Math.abs(POSES.fly[`elbow${s}`]) <= 10);
-    // Spread a little from the body like fins, never raised over the visor.
-    assert.ok(POSES.fly[`shoulder${s}`] >= 12 && POSES.fly[`shoulder${s}`] <= 40);
-    assert.ok(POSES.fly[`knee${s}`] >= 60 && POSES.fly[`hip${s}`] >= 15);
-  }
-  // Fully reached out: each hand is a whole arm's length (102 + forearm) below its shoulder.
-  assert.ok(handPoint("L", POSES.fly).y > px(0, 840).y);
-  assert.ok(handPoint("R", POSES.fly).y > px(0, 940).y);
-  assert.deepEqual([POSES.fly.throttle, POSES.fly.tablet, POSES.fly.dance], [1, 0, 0]);
-});
-
-test("approach: arms in, tablet out, legs reaching down", () => {
-  assert.equal(POSES.approach.tablet, 1);
-  for (const s of ["L", "R"] as const) {
-    const h = handPoint(s, POSES.approach);
-    assert.ok(h.x > 15 && h.x < 85, `${s} hand x ${h.x}`);
-    assert.ok(POSES.approach[`knee${s}`] <= 20);
+test("riding: kneels on the carpet from the run-up to touchdown, tablet away", () => {
+  for (const m of RIDING) {
+    const p = POSES[m];
+    assert.equal(p.carpet, true, m);
+    assert.equal(p.tablet, 0, m);
+    // The carpet is its floor: the body drops so the folded legs rest on it.
+    assert.equal(p.grounded, true, m);
+    assert.ok(rootDrop(p) > 8, `${m} drop ${rootDrop(p)}`);
+    for (const s of ["L", "R"] as const) {
+      // Thighs near upright, shins folded well back toward the carpet.
+      assert.ok(p[`hip${s}`] <= 40, `${m} hip${s}`);
+      assert.ok(p[`knee${s}`] - p[`hip${s}`] >= 55, `${m} shin${s}`);
+    }
   }
 });
 
-test("land: knees bent with the body dropped, rockets off, tablet in hand", () => {
-  assert.ok(POSES.land.kneeL >= 50 && POSES.land.kneeR >= 50);
-  assert.ok(rootDrop(POSES.land) > 3);
-  assert.equal(POSES.land.rockets, 0);
-  assert.equal(POSES.land.tablet, 1);
+test("riding: the left hand holds the carpet's rim, low and out to its side", () => {
+  for (const m of RIDING) {
+    const h = handPoint("L", POSES[m]);
+    const drop = rootDrop(POSES[m]);
+    assert.ok(h.y + drop > 72, `${m} hand y ${h.y + drop}`);
+    assert.ok(h.x < 35, `${m} hand x ${h.x}`);
+  }
+});
+
+test("in the air the right hand points the way: out and above the shoulder", () => {
+  for (const m of ["launch", "fly"] as const) {
+    const h = handPoint("R", POSES[m]);
+    assert.ok(h.x > 85, `${m} hand x ${h.x}`);
+    assert.ok(h.y < px(0, 640).y, `${m} hand y ${h.y}`);
+  }
+  // Lower on the way in, toward the landing spot.
+  assert.ok(handPoint("R", POSES.approach).y > handPoint("R", POSES.fly).y);
+  assert.deepEqual([POSES.fly.throttle, POSES.fly.dance], [1, 0]);
+});
+
+test("land: throttle off, still on the carpet; recover stands up and lets it go", () => {
+  assert.equal(POSES.land.throttle, 0);
+  assert.equal(POSES.recover.carpet, false);
 });
 
 test("recover blends back to the idle stance", () => {

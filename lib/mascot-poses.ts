@@ -7,8 +7,9 @@
  * - hip:      + swings the thigh forward, toward the viewer (in 3D)
  * - knee:     + folds the shin back (in 3D)
  *
- * `tablet`, `rockets`, `throttle` and `dance` run 0 → 1; `ms` is how long blending into the pose
- * takes; `grounded` poses drop the body so the feet stay on the floor as the knees bend.
+ * `tablet`, `throttle` and `dance` run 0 → 1; `ms` is how long blending into the pose takes;
+ * `carpet` lays the bronze drum down under the knees as a flying carpet (otherwise it stands
+ * behind the head); `grounded` poses drop the body so the legs stay on the floor, or the carpet.
  */
 import type { FlightPhase } from "./mascot-choreo";
 
@@ -24,7 +25,7 @@ export type Joint =
 
 export type Pose = Record<Joint, number> & {
   tablet: number;
-  rockets: number;
+  carpet: boolean;
   throttle: number;
   dance: number;
   ms: number;
@@ -35,15 +36,22 @@ export type MascotMode = "idle" | FlightPhase;
 
 /** Left hand holding the tablet up, right arm raised with the finger at the bubble. */
 const ARMS_IDLE = { shoulderL: -8.5, elbowL: 63, shoulderR: 43, elbowR: 119 };
-/** Both hands meeting in front of the chest. */
-const ARMS_TOGETHER = { shoulderL: -9.6, elbowL: -80.6, shoulderR: 63.9, elbowR: -142.7 };
 const LEGS_STRAIGHT = { hipL: 0, kneeL: 0, hipR: 0, kneeR: 0 };
+/** Kneeling lightly on the carpet: thighs near upright (the right knee a little forward), shins
+ *  folded back toward it. Folded flatter, a shin's edge layers fan out into visible strips. */
+const LEGS_KNEEL = { hipL: 15, kneeL: 75, hipR: 35, kneeR: 95 };
+/** Left hand down at the carpet's rim, holding on. */
+const HOLD_L = { shoulderL: 28, elbowL: -6 };
+/** Right arm out and up, the finger pointing the way. */
+const POINT_R = { shoulderR: 105, elbowR: 25 };
+/** Right hand resting forward on the knee. */
+const REST_R = { shoulderR: 18, elbowR: -32 };
 
 const IDLE: Pose = {
   ...ARMS_IDLE,
   ...LEGS_STRAIGHT,
   tablet: 1,
-  rockets: 0,
+  carpet: false,
   throttle: 0,
   dance: 1,
   ms: 400,
@@ -61,79 +69,67 @@ export const POSES: Record<MascotMode, Pose> = {
     dance: 0,
     ms: 600,
   },
-  // Hands together, knees loaded for the jump, rockets fading in and sputtering.
+  // The drum slides down under it as a carpet and it kneels on, holding the rim.
   ready: {
-    ...ARMS_TOGETHER,
-    hipL: 22,
-    kneeL: 44,
-    hipR: 22,
-    kneeR: 44,
+    ...HOLD_L,
+    ...REST_R,
+    ...LEGS_KNEEL,
     tablet: 0,
-    rockets: 1,
+    carpet: true,
     throttle: 0.3,
     dance: 0,
     ms: 550,
     grounded: true,
   },
-  // The jump: legs push straight.
+  // Lift-off: the free hand points the way.
   launch: {
-    ...ARMS_TOGETHER,
-    ...LEGS_STRAIGHT,
+    ...HOLD_L,
+    ...POINT_R,
+    ...LEGS_KNEEL,
     tablet: 0,
-    rockets: 1,
+    carpet: true,
     throttle: 0.6,
     dance: 0,
-    ms: 260,
+    ms: 300,
     grounded: true,
   },
-  // Arms straight and spread a little like fins, legs tucked up, full thrust.
+  // Riding the carpet: still kneeling, one hand on the rim, the other pointing ahead.
   fly: {
-    shoulderL: 22,
-    elbowL: 0,
-    shoulderR: 22,
-    elbowR: 0,
-    hipL: 24,
-    kneeL: 82,
-    hipR: 18,
-    kneeR: 74,
+    ...HOLD_L,
+    ...POINT_R,
+    ...LEGS_KNEEL,
     tablet: 0,
-    rockets: 1,
+    carpet: true,
     throttle: 1,
     dance: 0,
-    ms: 500,
-    grounded: false,
+    ms: 400,
+    grounded: true,
   },
-  // Coming in: arms close in, the tablet comes back out, legs reach for the floor.
+  // Coming in: the pointing arm lowers toward the landing spot.
   approach: {
-    shoulderL: 10,
-    elbowL: 40,
-    shoulderR: 10,
-    elbowR: -10,
-    hipL: 6,
-    kneeL: 10,
-    hipR: 6,
-    kneeR: 10,
-    tablet: 1,
-    rockets: 1,
+    ...HOLD_L,
+    shoulderR: 62,
+    elbowR: 12,
+    ...LEGS_KNEEL,
+    tablet: 0,
+    carpet: true,
     throttle: 0.4,
     dance: 0,
-    ms: 700,
-    grounded: false,
+    ms: 600,
+    grounded: true,
   },
-  // Touchdown: knees give and hold, rockets off.
+  // Touchdown: the carpet settles, hand back on the knee.
   land: {
-    ...ARMS_IDLE,
-    hipL: 35,
-    kneeL: 70,
-    hipR: 35,
-    kneeR: 70,
-    tablet: 1,
-    rockets: 0,
+    ...HOLD_L,
+    ...REST_R,
+    ...LEGS_KNEEL,
+    tablet: 0,
+    carpet: true,
     throttle: 0,
     dance: 0,
     ms: 220,
     grounded: true,
   },
-  // Stands back up, slowly.
+  // Stands back up, slowly, takes the tablet out; the drum rises back behind the head.
   recover: { ...IDLE, dance: 0, ms: 600 },
 };

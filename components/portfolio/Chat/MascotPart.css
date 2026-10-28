@@ -13,7 +13,6 @@
 @property --knee-r { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
 @property --drop { syntax: "<percentage>"; inherits: true; initial-value: 0%; }
 @property --tablet { syntax: "<number>"; inherits: true; initial-value: 1; }
-@property --rockets { syntax: "<number>"; inherits: true; initial-value: 0; }
 @property --throttle { syntax: "<number>"; inherits: true; initial-value: 0; }
 @property --dance { syntax: "<number>"; inherits: true; initial-value: 1; }
 
@@ -21,16 +20,16 @@
   /* Joints swing with a little overshoot; the props fade. */
   transition-property:
     --shoulder-l, --elbow-l, --shoulder-r, --elbow-r, --hip-l, --knee-l, --hip-r, --knee-r,
-    --drop, --tablet, --rockets, --throttle, --dance;
+    --drop, --tablet, --throttle, --dance;
   transition-duration:
     var(--pose-ms), var(--pose-ms), var(--pose-ms), var(--pose-ms), var(--pose-ms),
-    var(--pose-ms), var(--pose-ms), var(--pose-ms), var(--pose-ms), 400ms, 400ms, 300ms, 350ms;
+    var(--pose-ms), var(--pose-ms), var(--pose-ms), var(--pose-ms), 400ms, 300ms, 350ms;
   transition-timing-function:
     cubic-bezier(0.34, 1.2, 0.64, 1), cubic-bezier(0.34, 1.2, 0.64, 1),
     cubic-bezier(0.34, 1.2, 0.64, 1), cubic-bezier(0.34, 1.2, 0.64, 1),
     cubic-bezier(0.34, 1.2, 0.64, 1), cubic-bezier(0.34, 1.2, 0.64, 1),
     cubic-bezier(0.34, 1.2, 0.64, 1), cubic-bezier(0.34, 1.2, 0.64, 1),
-    cubic-bezier(0.33, 1, 0.68, 1), ease, ease, ease, ease;
+    cubic-bezier(0.33, 1, 0.68, 1), ease, ease, ease;
 }
 
 .mascot-part {
@@ -179,12 +178,9 @@
 }
 
 /* --------------------------------------------------------------------------------------------
-   Nothing animates unseen: comets only orbit in the air, flames only flicker with the rockets on.
+   Nothing animates unseen: comets only orbit in the air.
    -------------------------------------------------------------------------------------------- */
 
-.mascot-rig:not([data-mode="fly"]):not([data-mode="approach"]) .mascot-comets *,
-.mascot-rig:is([data-mode="idle"], [data-mode="stow"], [data-mode="recover"])
-  .mascot-flame
-  * {
+.mascot-rig:not([data-mode="fly"]):not([data-mode="approach"]) .mascot-comets * {
   animation-play-state: paused;
 }

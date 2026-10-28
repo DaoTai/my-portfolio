@@ -51,12 +51,12 @@ type Loop = {
 type MascotTrailProps = {
   /** Emit while true; already-emitted particles still fade out after it turns false. */
   active: boolean;
-  /** Element containing the `.mascot-flame-tip` emitters. */
+  /** Element containing the `.mascot-trail-tip` emitters (on the carpet's rim). */
   sourceRef: RefObject<HTMLElement | null>;
 };
 
 /**
- * Full-screen canvas behind the flying mascot: sparks pour from the rocket boots and a glowing
+ * Full-screen canvas behind the flying mascot: sparks pour from the carpet's rim and a glowing
  * shooting-star streak stays behind along its path. It only runs while there is something to draw.
  */
 export const MascotTrail = ({ active, sourceRef }: MascotTrailProps) => {
@@ -80,7 +80,7 @@ export const MascotTrail = ({ active, sourceRef }: MascotTrailProps) => {
 
     const light = document.documentElement.classList.contains("light");
     const sprites = makeSprites(light ? LIGHT_COLORS : COLORS);
-    const tips = Array.from(root.querySelectorAll<HTMLElement>(".mascot-flame-tip"));
+    const tips = Array.from(root.querySelectorAll<HTMLElement>(".mascot-trail-tip"));
     const previous = new Map<HTMLElement, { x: number; y: number }>();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let last = performance.now();
@@ -126,7 +126,7 @@ export const MascotTrail = ({ active, sourceRef }: MascotTrailProps) => {
         });
       }
 
-      // Rocket sparks: thrown downward, inheriting a little of the opposite of the flight.
+      // Sparks shed from the rim: thrown downward, inheriting a little of the opposite of the flight.
       for (let i = 0; i < 3; i++) {
         spawn({
           x: x + rand(-3, 3),

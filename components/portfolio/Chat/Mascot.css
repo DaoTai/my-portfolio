@@ -114,6 +114,16 @@ html.light .mascot-rig {
   transition: filter 0.6s ease;
 }
 
+/* Riding the carpet, the view tips to look down on it a little, so its top shows whichever way
+   the figure turns (tilting the carpet itself toward the viewer would flip when it turns round). */
+.mascot-camera {
+  transition: transform 0.7s cubic-bezier(0.45, 0, 0.25, 1);
+}
+
+.mascot-rig[data-carpet="true"] .mascot-camera {
+  transform: rotateX(-22deg);
+}
+
 /* Heading in the screen plane, nod, then roll on the spine. In flight MascotFlyer animates the
    transform itself; these variables are for the /dev/mascot bench. */
 .mascot-orient {
@@ -121,6 +131,7 @@ html.light .mascot-rig {
     rotateX(calc(var(--pitch, 0) * 1deg)) rotateY(calc(var(--roll, 0) * 1deg));
 }
 
+.mascot-camera,
 .mascot-orient,
 .mascot-sway,
 .mascot-dance {
@@ -218,6 +229,113 @@ html.light .mascot-aura {
   50% {
     transform: scale(1.12);
     opacity: 0.65;
+  }
+}
+
+/* --------------------------------------------------------------------------------------------
+   Trống đồng (MascotDrum.tsx). It lives in the 3D scene, so it turns with the figure: standing
+   behind the head it is a halo; while data-carpet is set it drops under the knees and lies flat
+   as a flying carpet. Two layers move it so it never cuts through the body: .mascot-totem slides
+   and .mascot-totem-tilt lays it down, after the slide going down and before it coming back up.
+   -------------------------------------------------------------------------------------------- */
+
+.mascot-totem {
+  --drum-hi: #cffafe;
+  --drum-1: #67e8f9;
+  --drum-2: #8b5cf6;
+  position: absolute;
+  left: 45%;
+  top: 20%;
+  width: 86%;
+  aspect-ratio: 1;
+  pointer-events: none;
+  transform-style: preserve-3d;
+  /* Behind the torso's back even as the idle sway turns it. */
+  transform: translate3d(-50%, -50%, calc(var(--mascot-w) * -0.22));
+  transition: transform 0.75s cubic-bezier(0.45, 0, 0.25, 1) 0.3s;
+}
+
+html.light .mascot-totem {
+  --drum-hi: #22d3ee;
+  --drum-1: #6366f1;
+  --drum-2: #6d28d9;
+}
+
+.mascot-totem-tilt {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.33, 0, 0.3, 1);
+}
+
+/* Down at the floor line, a little below the knees so they rest on it rather than in it. */
+.mascot-rig[data-carpet="true"] .mascot-totem {
+  transform: translate3d(
+    calc(-50% + var(--mascot-w) * 0.04),
+    calc(-50% + var(--mascot-w) * 0.99),
+    calc(var(--mascot-w) * -0.08)
+  );
+  transition: transform 0.6s cubic-bezier(0.45, 0, 0.25, 1);
+}
+
+/* Level with the floor; .mascot-camera is what shows its top. */
+.mascot-rig[data-carpet="true"] .mascot-totem-tilt {
+  transform: rotateX(90deg);
+  transition: transform 0.45s cubic-bezier(0.34, 1.2, 0.64, 1) 0.3s;
+}
+
+.mascot-totem-tilt::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(103, 232, 249, 0.3),
+    rgba(139, 92, 246, 0.18) 60%,
+    transparent
+  );
+  filter: blur(6px);
+  /* Brighter under the carpet as it speeds up. */
+  opacity: calc(0.7 + 0.6 * var(--throttle));
+}
+
+/* Opacity sits on this leaf: on an ancestor it would flatten the 3D layers above. */
+.mascot-totem-wheel {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0.7;
+  animation:
+    mascot-totem-spin 90s linear infinite,
+    mascot-totem-breathe 5.2s ease-in-out infinite;
+}
+
+/* The trail canvas reads these two points on the carpet's rim to emit sparks. */
+.mascot-trail-tip {
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 1px;
+}
+
+.mascot-trail-tip--l {
+  left: 6%;
+}
+.mascot-trail-tip--r {
+  left: 94%;
+}
+
+@keyframes mascot-totem-breathe {
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes mascot-totem-spin {
+  to {
+    transform: rotate(-360deg);
   }
 }
 
@@ -448,7 +566,7 @@ html.light .mascot-aura {
    Modes
    -------------------------------------------------------------------------------------------- */
 
-/* Fly: comets out, body rumbling. */
+/* Fly: comets out, the carpet bobbing. */
 .mascot-rig[data-mode="fly"] .mascot-comets,
 .mascot-rig[data-mode="approach"] .mascot-comets {
   opacity: 1;
@@ -474,39 +592,19 @@ html.light .mascot-aura {
   );
 }
 
-.mascot-rig[data-mode="fly"] .mascot-dance,
-.mascot-rig[data-mode="approach"] .mascot-dance {
-  animation: mascot-rumble 0.14s linear infinite;
-}
-
 .mascot-rig[data-mode="fly"] .mascot-eye-glow,
 .mascot-rig[data-mode="approach"] .mascot-eye-glow {
   animation-duration: 0.6s;
 }
 
+/* Rider and carpet rock and bob together, riding the air. */
 @keyframes mascot-sway-fly {
   0%,
   100% {
-    transform: rotateY(-8deg) rotateX(5deg);
+    transform: translate3d(0, 0, 0) rotateY(-8deg) rotateX(4deg);
   }
   50% {
-    transform: rotateY(8deg) rotateX(-4deg);
-  }
-}
-
-@keyframes mascot-rumble {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  25% {
-    transform: translate3d(0.6%, -0.4%, 0);
-  }
-  50% {
-    transform: translate3d(-0.4%, 0.3%, 0);
-  }
-  75% {
-    transform: translate3d(0.3%, 0.5%, 0);
+    transform: translate3d(0, -3%, 0) rotateY(8deg) rotateX(-3deg);
   }
 }
 
