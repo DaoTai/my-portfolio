@@ -1,7 +1,6 @@
 import { AnimatedNumber } from "@/components/common/AnimatedNumber";
 import {
   FacebookIcon,
-  GithubIcon,
   GmailIcon,
   LinkedinIcon,
   TelegramIcon,
@@ -27,14 +26,6 @@ const CONTACT_LINKS = [
     label: "Gmail",
     value: siteConfig.email,
     icon: <GmailIcon size={16} />,
-    // Longest value: give it the full row so it never truncates beside the others.
-    className: "col-span-full",
-  },
-  {
-    href: siteConfig.links.github,
-    label: "GitHub",
-    value: "github.com/youngcrizzal",
-    icon: <GithubIcon />,
   },
   {
     href: siteConfig.links.linkedin,
@@ -88,7 +79,7 @@ const Contact = () => {
             max={5}
             className="flex flex-col gap-[22px] rounded-[18px] border border-pf-ink/10 bg-pf-ink/[0.025] p-6 shadow-[0_30px_70px_-34px_rgba(var(--glow3),0.5)]"
           >
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-[18px]">
+            <div className="grid grid-cols-2 gap-[18px]">
               {CONTACT_LINKS.map((link) => (
                 <ContactLink key={link.label} {...link} />
               ))}

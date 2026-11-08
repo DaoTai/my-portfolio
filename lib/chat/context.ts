@@ -13,7 +13,6 @@ export const CHAT_INSTRUCTIONS = buildChatInstructions({
     jobTitle: siteConfig.jobTitle,
     description: siteConfig.description,
     email: siteConfig.email,
-    github: siteConfig.links.github,
     linkedin: siteConfig.links.linkedin,
     resumeUrl: absoluteUrl(siteConfig.resume),
     websiteUrl: siteConfig.url,

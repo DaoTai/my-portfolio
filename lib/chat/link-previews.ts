@@ -1,7 +1,7 @@
 /** Preview cards for the links the assistant knows about. No network: matched against site config. */
 import type { Segment } from "./linkify";
 
-export type PreviewKind = "linkedin" | "email" | "github" | "resume" | "website";
+export type PreviewKind = "linkedin" | "email" | "resume" | "website";
 
 export type PreviewTarget = {
   kind: PreviewKind;
@@ -13,7 +13,6 @@ export type PreviewTarget = {
 type PreviewProfile = {
   name: string;
   email: string;
-  github: string;
   linkedin: string;
   resumeUrl: string;
   websiteUrl: string;
@@ -42,7 +41,9 @@ const hostOf = (href: string) => {
 };
 
 /** Ordered by priority: LinkedIn leads, as the preferred way to get in touch. */
-export const buildPreviewTargets = (profile: PreviewProfile): PreviewTarget[] => [
+export const buildPreviewTargets = (
+  profile: PreviewProfile,
+): PreviewTarget[] => [
   {
     kind: "linkedin",
     href: profile.linkedin,
@@ -55,12 +56,12 @@ export const buildPreviewTargets = (profile: PreviewProfile): PreviewTarget[] =>
     title: "Email",
     subtitle: profile.email,
   },
-  {
-    kind: "github",
-    href: profile.github,
-    title: "GitHub",
-    subtitle: `@${new URL(profile.github).pathname.replace(/^\/|\/$/g, "")}`,
-  },
+  // {
+  //   kind: "github",
+  //   href: profile.github,
+  //   title: "GitHub",
+  //   subtitle: `@${new URL(profile.github).pathname.replace(/^\/|\/$/g, "")}`,
+  // },
   {
     kind: "resume",
     href: profile.resumeUrl,

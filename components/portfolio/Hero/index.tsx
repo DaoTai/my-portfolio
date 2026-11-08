@@ -1,5 +1,11 @@
 "use client";
 
+import { AnimatedNumber } from "@/components/common/AnimatedNumber";
+import { LinkedinIcon } from "@/components/common/BrandIcons";
+import { EASE_OUT } from "@/components/common/Reveal";
+import { siteConfig } from "@/lib/config";
+import { YEARS_EXPERIENCE } from "@/lib/experience";
+import { ArrowRight, Hand, Mail } from "lucide-react";
 import {
   motion,
   useInView,
@@ -8,16 +14,10 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import { ArrowRight, Hand, Mail } from "lucide-react";
-import { useEffect, useRef } from "react";
 import type { CSSProperties, PointerEvent, ReactNode } from "react";
-import { AnimatedNumber } from "@/components/common/AnimatedNumber";
-import { GithubIcon, LinkedinIcon } from "@/components/common/BrandIcons";
-import { EASE_OUT } from "@/components/common/Reveal";
-import { siteConfig } from "@/lib/config";
-import { YEARS_EXPERIENCE } from "@/lib/experience";
-import { HeroVisual } from "./HeroVisual";
+import { useEffect, useRef } from "react";
 import "./Hero.css";
+import { HeroVisual } from "./HeroVisual";
 
 const STATS = [
   { value: YEARS_EXPERIENCE, label: "YEARS EXPERIENCE" },
@@ -49,11 +49,6 @@ const SOCIALS: { href: string; label: string; icon: ReactNode }[] = [
     href: `mailto:${siteConfig.email}`,
     label: "Email",
     icon: <Mail aria-hidden="true" size={18} strokeWidth={2} color={FLOW} />,
-  },
-  {
-    href: siteConfig.links.github,
-    label: "GitHub",
-    icon: <GithubIcon fill={FLOW} />,
   },
   {
     href: siteConfig.links.linkedin,

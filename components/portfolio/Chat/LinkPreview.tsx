@@ -1,21 +1,17 @@
-import { ArrowUpRight, FileText, Globe } from "lucide-react";
-import type { ReactNode } from "react";
-import {
-  GithubIcon,
-  GmailIcon,
-  LinkedinIcon,
-} from "@/components/common/BrandIcons";
-import { absoluteUrl, siteConfig } from "@/lib/config";
+import { GmailIcon, LinkedinIcon } from "@/components/common/BrandIcons";
 import {
   buildPreviewTargets,
   type PreviewKind,
   type PreviewTarget,
 } from "@/lib/chat/link-previews";
+import { absoluteUrl, siteConfig } from "@/lib/config";
+import { ArrowUpRight, FileText, Globe } from "lucide-react";
+import type { ReactNode } from "react";
 
 export const PREVIEW_TARGETS = buildPreviewTargets({
   name: siteConfig.name,
   email: siteConfig.email,
-  github: siteConfig.links.github,
+  // github: siteConfig.links.github,
   linkedin: siteConfig.links.linkedin,
   resumeUrl: absoluteUrl(siteConfig.resume),
   websiteUrl: siteConfig.url,
@@ -24,7 +20,6 @@ export const PREVIEW_TARGETS = buildPreviewTargets({
 const ICONS: Record<PreviewKind, ReactNode> = {
   linkedin: <LinkedinIcon size={16} />,
   email: <GmailIcon size={16} />,
-  github: <GithubIcon size={17} />,
   resume: <FileText aria-hidden="true" size={17} />,
   website: <Globe aria-hidden="true" size={17} />,
 };

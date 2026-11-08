@@ -20,17 +20,15 @@ export const siteConfig = {
   /** Square-ish portrait used as the Person image in structured data. */
   avatar: "/avatar-professional.webp",
   title: "Kendrick | Full-Stack Engineer – React, Next.js & Web3",
-  description:
-    `Đào Tài is a full-stack software engineer with ${YEARS_EXPERIENCE}+ years of experience shipping real-time trading platforms, Web3 products, booking engines and admin CMSs for international clients. Builds fast, SEO-ready React and Next.js frontends and scalable Node.js and NestJS APIs, with wallet and on-chain integrations on Solana, BNB Chain, EVM and TON. Open to freelance and contract projects.`,
-  shortDescription:
-    `Full-stack engineer with ${YEARS_EXPERIENCE}+ years shipping real-time trading platforms, Web3 products and production web apps with React, Next.js, Node.js and NestJS.`,
+  description: `Đào Tài is a full-stack software engineer with ${YEARS_EXPERIENCE}+ years of experience shipping real-time trading platforms, Web3 products, booking engines and admin CMSs for international clients. Builds fast, SEO-ready React and Next.js frontends and scalable Node.js and NestJS APIs, with wallet and on-chain integrations on Solana, BNB Chain, EVM and TON. Open to freelance and contract projects.`,
+  shortDescription: `Full-stack engineer with ${YEARS_EXPERIENCE}+ years shipping real-time trading platforms, Web3 products and production web apps with React, Next.js, Node.js and NestJS.`,
   jobTitle: "Full-Stack Software Engineer",
   email: "daotai.work@gmail.com",
   resume: "/resume.pdf",
   /** Shown by the chat assistant; can also be surfaced on the page. */
   availability: "Open to freelance and contract projects.",
   links: {
-    github: "https://github.com/youngcrizzal",
+    // github: "https://github.com/youngcrizzal",
     linkedin: "https://www.linkedin.com/in/dao-tai-61757325a/",
     facebook: "https://www.facebook.com/YC011",
     telegram: "https://t.me/kendrick2dt",

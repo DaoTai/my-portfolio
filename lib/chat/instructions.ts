@@ -6,7 +6,6 @@ export type ChatKnowledge = {
     jobTitle: string;
     description: string;
     email: string;
-    github: string;
     linkedin: string;
     resumeUrl: string;
     websiteUrl: string;
@@ -31,7 +30,8 @@ export type ChatKnowledge = {
   }[];
 };
 
-const bullets = (items: string[]) => items.map((item) => `  - ${item}`).join("\n");
+const bullets = (items: string[]) =>
+  items.map((item) => `  - ${item}`).join("\n");
 
 /** The assistant's instructions: rules first, then the only facts it may use. */
 export const buildChatInstructions = ({
@@ -56,7 +56,6 @@ export const buildChatInstructions = ({
     `Role: ${profile.jobTitle}`,
     `Summary: ${profile.description}`,
     `Email: ${profile.email}`,
-    `GitHub: ${profile.github}`,
     `LinkedIn: ${profile.linkedin}`,
     `Resume (PDF): ${profile.resumeUrl}`,
     `Website: ${profile.websiteUrl}`,
