@@ -32,6 +32,8 @@ export const siteConfig = {
   links: {
     github: "https://github.com/youngcrizzal",
     linkedin: "https://www.linkedin.com/in/dao-tai-61757325a/",
+    facebook: "https://www.facebook.com/YC011",
+    telegram: "https://t.me/kendrick2dt",
   },
   keywords: [
     // Primary diacritic spelling, with ASCII fallbacks so searches typed

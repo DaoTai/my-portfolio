@@ -1,8 +1,10 @@
 import { AnimatedNumber } from "@/components/common/AnimatedNumber";
 import {
+  FacebookIcon,
   GithubIcon,
   GmailIcon,
   LinkedinIcon,
+  TelegramIcon,
 } from "@/components/common/BrandIcons";
 import { Reveal } from "@/components/common/Reveal";
 import { TiltCard } from "@/components/common/TiltCard";
@@ -39,6 +41,18 @@ const CONTACT_LINKS = [
     label: "LinkedIn",
     value: "in/dao-tai",
     icon: <LinkedinIcon size={16} />,
+  },
+  {
+    href: siteConfig.links.facebook,
+    label: "Facebook",
+    value: "facebook.com/YC011",
+    icon: <FacebookIcon size={16} />,
+  },
+  {
+    href: siteConfig.links.telegram,
+    label: "Telegram",
+    value: "@kendrick2dt",
+    icon: <TelegramIcon size={16} />,
   },
 ];
 
