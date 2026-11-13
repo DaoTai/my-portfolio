@@ -2,6 +2,7 @@ import { type Metadata } from "next";
 import Contact from "@/components/portfolio/Contact";
 import ChatLauncher from "@/components/portfolio/Chat";
 import Expertise from "@/components/portfolio/Expertise";
+import Freelance from "@/components/portfolio/Freelance";
 import Hero from "@/components/portfolio/Hero";
 import ProjectsShowcase from "@/components/portfolio/ProjectsShowcase";
 import SiteHeader from "@/components/portfolio/SiteHeader";
@@ -25,6 +26,7 @@ export default function Home() {
         <TechStack />
         <Expertise />
         <ProjectsShowcase />
+        <Freelance />
         <Contact />
       </main>
       <ChatLauncher />

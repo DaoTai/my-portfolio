@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatedNumber } from "@/components/common/AnimatedNumber";
-import { LinkedinIcon } from "@/components/common/BrandIcons";
+import { FacebookIcon, LinkedinIcon, TelegramIcon } from "@/components/common/BrandIcons";
 import { EASE_OUT } from "@/components/common/Reveal";
 import { siteConfig } from "@/lib/config";
 import { YEARS_EXPERIENCE } from "@/lib/experience";
@@ -54,6 +54,16 @@ const SOCIALS: { href: string; label: string; icon: ReactNode }[] = [
     href: siteConfig.links.linkedin,
     label: "LinkedIn",
     icon: <LinkedinIcon size={16} fill={FLOW} />,
+  },
+  {
+    href: siteConfig.links.facebook,
+    label: "Facebook",
+    icon: <FacebookIcon size={16} fill={FLOW} />,
+  },
+  {
+    href: siteConfig.links.telegram,
+    label: "Telegram",
+    icon: <TelegramIcon size={16} fill={FLOW} />,
   },
 ];
 
