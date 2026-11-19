@@ -1,0 +1,26 @@
+/*
+ * Staggered per-character fade-in, held on the first frame until the text scrolls into view.
+ * The characters stay inline (an inline-block per character would let lines wrap mid-word),
+ * so only opacity animates.
+ */
+.typewriter-char {
+  animation: typewriter-in 0.3s ease-out both;
+  animation-delay: calc(var(--tw-i) * var(--tw-step, 0.05s));
+  animation-play-state: paused;
+}
+
+.typewriter--play .typewriter-char {
+  animation-play-state: running;
+}
+
+@keyframes typewriter-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typewriter-char {
+    animation: none;
+  }
+}

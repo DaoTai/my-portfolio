@@ -6,7 +6,7 @@ import { Reveal } from "@/components/common/Reveal";
 import { TiltCard } from "@/components/common/TiltCard";
 import { TypewriterText } from "@/components/common/TypeWriter";
 import { YEARS_EXPERIENCE } from "@/lib/experience";
-import { ExpertiseBackground } from "./ExpertiseBackground";
+import { LazyExpertiseBackground } from "./LazyExpertiseBackground";
 import "./Expertise.css";
 
 const STATS = [
@@ -73,7 +73,7 @@ const Expertise = () => {
           "radial-gradient(ellipse 50% 60% at 90% 20%, rgba(110,116,255,0.1), transparent 70%), var(--bg)",
       }}
     >
-      <ExpertiseBackground />
+      <LazyExpertiseBackground />
       <div className="relative mx-auto flex max-w-[1240px] flex-col gap-10 px-8 pb-24 pt-[88px]">
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-center gap-10">
           <Reveal className="flex flex-col gap-3.5">

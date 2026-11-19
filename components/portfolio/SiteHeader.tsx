@@ -249,42 +249,50 @@ export default function SiteHeader() {
     setActive(id);
   }, []);
 
-  // Nothing here reads layout on scroll (which would force a reflow every frame): the page
-  // height is cached from a ResizeObserver, and the active section comes from an
-  // IntersectionObserver watching a thin band 35% down the viewport.
+  // Scroll-spy runs entirely on IntersectionObservers, so nothing reads layout while scrolling:
+  // `window.scrollY` forces a synchronous reflow whenever an animation has dirtied the page,
+  // which on phones showed up as long main-thread tasks. The active section comes from a thin
+  // band 35% down the viewport; "scrolled to the end" from a zero-height sentinel after the
+  // content. Only the desktop progress bar still reads scrollY, and only on desktop.
   useEffect(() => {
     const se = document.scrollingElement || document.documentElement;
     let docHeight = 0; // set by the ResizeObserver, which also fires on observe()
+    let viewHeight = window.innerHeight;
     let sectionActive = NAV[0].id;
+    let atBottom = false;
+    let lockTimer = 0;
     const crossing = new Set<string>();
     const desktop = window.matchMedia("(min-width: 768px)"); // Tailwind `md`
     let raf = 0;
 
-    const update = () => {
-      raf = 0;
-      const max = docHeight - window.innerHeight;
-      // The progress bar only renders on desktop; skip the work (and re-renders) on mobile.
-      if (desktop.matches) {
-        const progress =
-          max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-        if (Math.abs(progress - progressRef.current) > 0.001) {
-          progressRef.current = progress;
-          setProgress(progress);
-        }
-      }
-      const next =
-        max > 0 && window.scrollY >= max - 2
-          ? NAV[NAV.length - 1].id
-          : sectionActive;
+    const syncActive = () => {
+      const next = atBottom ? NAV[NAV.length - 1].id : sectionActive;
       const lock = navLock.current;
       if (lock) {
-        if (next !== lock.id && performance.now() < lock.until) return;
+        const left = lock.until - performance.now();
+        if (next !== lock.id && left > 0) {
+          // Re-check once the lock lapses, in case no observer fires after the scroll settles.
+          window.clearTimeout(lockTimer);
+          lockTimer = window.setTimeout(syncActive, left);
+          return;
+        }
         navLock.current = null;
       }
       setActive(next);
     };
-    const schedule = () => {
-      if (!raf) raf = requestAnimationFrame(update);
+
+    const updateProgress = () => {
+      raf = 0;
+      const max = docHeight - viewHeight;
+      const progress =
+        max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      if (Math.abs(progress - progressRef.current) > 0.001) {
+        progressRef.current = progress;
+        setProgress(progress);
+      }
+    };
+    const scheduleProgress = () => {
+      if (!raf && desktop.matches) raf = requestAnimationFrame(updateProgress);
     };
 
     const sections = new IntersectionObserver(
@@ -297,7 +305,7 @@ export default function SiteHeader() {
         sectionActive =
           [...NAV].reverse().find((n) => crossing.has(n.id))?.id ??
           sectionActive;
-        schedule();
+        syncActive();
       },
       { rootMargin: "-35% 0px -64% 0px" },
     );
@@ -306,21 +314,44 @@ export default function SiteHeader() {
       if (el) sections.observe(el);
     }
 
+    const sentinel = document.createElement("div");
+    sentinel.setAttribute("aria-hidden", "true");
+    sentinel.style.height = "0";
+    document.body.appendChild(sentinel);
+    const bottom = new IntersectionObserver(
+      ([e]) => {
+        atBottom = e.isIntersecting;
+        syncActive();
+      },
+      // A 2px allowance, like the old `scrollY >= max - 2` check.
+      { rootMargin: "0px 0px 2px 0px" },
+    );
+    bottom.observe(sentinel);
+
     // Callbacks run after layout, so reading scrollHeight here is free.
     const resize = new ResizeObserver(() => {
       docHeight = se.scrollHeight;
-      schedule();
+      scheduleProgress();
     });
     resize.observe(document.body);
 
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
+    const onResize = () => {
+      viewHeight = window.innerHeight;
+      scheduleProgress();
+    };
+    window.addEventListener("scroll", scheduleProgress, { passive: true });
+    window.addEventListener("resize", onResize);
+    desktop.addEventListener("change", scheduleProgress);
 
     return () => {
       sections.disconnect();
+      bottom.disconnect();
+      sentinel.remove();
       resize.disconnect();
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      window.removeEventListener("scroll", scheduleProgress);
+      window.removeEventListener("resize", onResize);
+      desktop.removeEventListener("change", scheduleProgress);
+      window.clearTimeout(lockTimer);
       cancelAnimationFrame(raf);
     };
   }, []);

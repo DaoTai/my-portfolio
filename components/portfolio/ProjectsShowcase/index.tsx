@@ -3,17 +3,24 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import dynamic from "next/dynamic";
-import { MotionConfig, useReducedMotion } from "motion/react";
+import { MotionConfig, useInView, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { AnimatedNumber, TWO_DIGITS } from "@/components/common/AnimatedNumber";
+import { lazyScene } from "@/components/common/LazyMount";
 import { Reveal } from "@/components/common/Reveal";
 import { PROJECTS } from "@/lib/portfolio-data";
-import { CosmicBackground } from "./CosmicBackground";
-import { ProjectsBackground } from "./ProjectsBackground";
 import { ProjectCarousel } from "./ProjectCarousel";
 import { ProjectDetail } from "./ProjectDetail";
 import "./ProjectsShowcase.css";
+
+// Decorative backdrops: their own chunks, mounted once the section is near.
+const ProjectsBackground = lazyScene(() =>
+  import("./ProjectsBackground").then((m) => ({ default: m.ProjectsBackground })),
+);
+const CosmicBackground = lazyScene(() =>
+  import("./CosmicBackground").then((m) => ({ default: m.CosmicBackground })),
+);
 
 // Only fetched once a project is opened, keeping the modal and lightbox out of the first load.
 const ProjectModal = dynamic(() => import("@/components/portfolio/ProjectModal"));
@@ -42,6 +49,9 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
   const heroRef = useRef<HTMLButtonElement>(null);
   // Element the modal was opened from (and for which project), so closing can morph back to it.
   const morphFrom = useRef<{ el: HTMLElement; k: number } | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  /** Off-screen, the cubes, rings and beams hold still instead of restyling every frame. */
+  const inView = useInView(sectionRef, { margin: "160px 0px" });
 
   const n = PROJECTS.length;
   const cur = PROJECTS[i];
@@ -124,9 +134,10 @@ const ProjectsShowcase = ({ autoplay = false }: ProjectsShowcaseProps) => {
 
   return (
     <section
+      ref={sectionRef}
       id="projects"
       data-screen-label="Projects"
-      className="relative overflow-hidden border-t border-pf-ink/[0.06] bg-pf-bg2"
+      className={`relative overflow-hidden border-t border-pf-ink/[0.06] bg-pf-bg2${inView ? "" : " pf-paused"}`}
     >
       <ProjectsBackground />
       <CosmicBackground />

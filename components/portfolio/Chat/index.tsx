@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMascotSound } from "@/lib/hooks/useMascotSound";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
-import { MascotFlyer } from "./MascotFlyer";
 import { MascotSoundToggle } from "./MascotSoundToggle";
 import "./Chat.css";
 
@@ -14,8 +13,14 @@ import "./Chat.css";
 const loadPanel = () => import("./ChatPanel");
 const ChatPanel = dynamic(loadPanel, { ssr: false });
 
-/** Matches Tailwind's `max-sm`, where the mascot is left out. */
-const MOBILE_QUERY = "(max-width: 639.98px)";
+// Desktop-only decoration: its own chunk, never fetched on phones.
+const MascotFlyer = dynamic(
+  () => import("./MascotFlyer").then((m) => m.MascotFlyer),
+  { ssr: false },
+);
+
+/** Tailwind's `sm` and up, where the mascot appears. */
+const DESKTOP_QUERY = "(min-width: 640px)";
 
 const ChatLauncher = () => {
   const [open, setOpen] = useState(false);
@@ -30,7 +35,8 @@ const ChatLauncher = () => {
   } = useMascotSound();
   // Reduced motion means no flights, so there is never a sound to mute.
   const reduce = useReducedMotion();
-  const isMobile = useMediaQuery(MOBILE_QUERY);
+  // False on the server and during hydration, so the mascot only mounts after it, on desktop.
+  const isDesktop = useMediaQuery(DESKTOP_QUERY);
 
   const openPanel = useCallback(() => {
     setMounted(true);
@@ -48,9 +54,9 @@ const ChatLauncher = () => {
     <>
       {mounted && <ChatPanel open={open} onClose={closePanel} />}
       {/* No mascot on phones: unmounted so its flights and sounds never run there. */}
-      {!isMobile && <MascotFlyer hidden={open} onOpen={openPanel} sound={sound} />}
+      {isDesktop && <MascotFlyer hidden={open} onOpen={openPanel} sound={sound} />}
       {/* Shown once the stored choice is known, so its icon never flips on load. */}
-      {!isMobile && !open && !reduce && soundReady && (
+      {isDesktop && !open && !reduce && soundReady && (
         <MascotSoundToggle enabled={soundOn} onToggle={toggleSound} />
       )}
       <button

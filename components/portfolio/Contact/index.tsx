@@ -10,7 +10,7 @@ import { TiltCard } from "@/components/common/TiltCard";
 import { siteConfig } from "@/lib/config";
 import { gmailComposeUrl } from "@/lib/contact";
 import { CoffeeButton } from "./CoffeeButton";
-import { ContactBackground } from "./ContactBackground";
+import { LazyContactBackground } from "./LazyContactBackground";
 import { ContactLink } from "./ContactLink";
 import "./Contact.css";
 import { Logo } from "../SiteHeader";
@@ -60,7 +60,7 @@ const Contact = () => {
       style={CONTACT_BG}
       className="relative overflow-hidden"
     >
-      <ContactBackground />
+      <LazyContactBackground />
 
       <div className="relative mx-auto grid max-w-[1240px] grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-center gap-10 px-8 pb-14 pt-20">
         <Reveal className="flex flex-col gap-3.5">

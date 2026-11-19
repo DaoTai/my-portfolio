@@ -530,6 +530,13 @@ html.light #projects .pf-tile {
   animation-play-state: paused !important;
 }
 
+/* Section scrolled away: hold the cubes, rings and beams too, not just the backdrop. */
+#projects.pf-paused *,
+#projects.pf-paused *::before,
+#projects.pf-paused *::after {
+  animation-play-state: paused !important;
+}
+
 .cbg-layer {
   position: absolute;
   inset: -40px;

@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { memo, useCallback, useState, type CSSProperties } from "react";
 import { CategoryIcon, categoryRgb } from "@/components/common/CategoryIcon";
+import { lazyScene } from "@/components/common/LazyMount";
 import { Reveal } from "@/components/common/Reveal";
 import { TiltCard } from "@/components/common/TiltCard";
 import type { TechDetail } from "@/components/portfolio/TechModal";
@@ -13,7 +14,12 @@ import {
   type Tech,
   type TechGroup,
 } from "@/lib/portfolio-data";
-import { TechStackBackground } from "./TechStackBackground";
+import "./TechStack.css";
+
+// The circuit-board backdrop is decoration: its own chunk, mounted once the section is near.
+const TechStackBackground = lazyScene(() =>
+  import("./TechStackBackground").then((m) => ({ default: m.TechStackBackground })),
+);
 
 // Only fetched once a tech tile is opened.
 const TechModal = dynamic(() => import("@/components/portfolio/TechModal"));
