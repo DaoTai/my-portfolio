@@ -24,7 +24,8 @@ const EDGE_PX = 12;
 const HEADER_PX = 88;
 
 /** Where the flyer and its ground shadow sit: just above the chat launcher. */
-const HOME = "fixed bottom-[76px] right-2 sm:bottom-[84px] sm:right-5";
+// `max-sm:hidden` covers the server render, before the parent knows it is on a phone.
+const HOME = "max-sm:hidden fixed bottom-[calc(76px+var(--tabbar-lift,0px))] right-2 sm:bottom-[calc(84px+var(--tabbar-lift,0px))] sm:right-5";
 
 /** Heading in the screen plane, nod, then roll on the spine (degrees). */
 const turn = (heading: number, pitch: number, roll: number) =>

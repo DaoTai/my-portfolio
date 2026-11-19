@@ -1,0 +1,57 @@
+/*
+ * Mobile tab bar. The bar's outline (with the notch) is a clip-path driven from JS; the frosted
+ * fill lives on the clipped layer so the blur follows the notch. The marble is its own frosted
+ * lens floating over the notch.
+ */
+
+/* Room for the bar: floating elements (chat launcher, mascot) and the page bottom read this. */
+:root {
+  --tabbar-lift: 0px;
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --tabbar-lift: calc(84px + env(safe-area-inset-bottom));
+  }
+
+  body {
+    padding-bottom: var(--tabbar-lift);
+  }
+}
+
+.tabbar {
+  bottom: calc(12px + env(safe-area-inset-bottom));
+}
+
+/* No box-shadow/filter here: clip-path would cut a shadow, and a filtered ancestor breaks the blur. */
+.tabbar-glass {
+  background:
+    linear-gradient(180deg, rgba(var(--ink), 0.08), rgba(var(--ink), 0.02) 60%),
+    rgba(var(--base), 0.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
+}
+
+.tabbar-marble {
+  background:
+    radial-gradient(60% 50% at 32% 24%, rgba(255, 255, 255, 0.55), transparent 70%),
+    radial-gradient(70% 60% at 70% 85%, rgba(var(--glow3), 0.5), transparent 70%),
+    linear-gradient(160deg, rgba(var(--ink), 0.16), rgba(var(--ink), 0.04)),
+    rgba(var(--base), 0.35);
+  -webkit-backdrop-filter: blur(10px) saturate(1.7);
+  backdrop-filter: blur(10px) saturate(1.7);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    inset 0 -3px 8px rgba(var(--glow3), 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 8px 18px -6px rgba(var(--glow3), 0.75),
+    0 3px 6px rgba(0, 0, 0, 0.25);
+  will-change: transform;
+}
+
+.tabbar-label-on {
+  background: linear-gradient(90deg, var(--g1), var(--g2) 50%, var(--g3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

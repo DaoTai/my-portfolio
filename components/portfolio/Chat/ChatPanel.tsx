@@ -175,7 +175,7 @@ const ChatPanel = ({ open, onClose }: ChatPanelProps) => {
           dragConstraints={{ top: 0, bottom: 0 }}
           dragElastic={{ top: 0, bottom: 0.5, left: 0, right: 0 }}
           onDragEnd={onDragEnd}
-          className="chat-panel fixed inset-0 z-50 flex h-[100dvh] flex-col overflow-hidden border-pf-ink/10 bg-pf-bg2 sm:inset-auto sm:bottom-[88px] sm:right-6 sm:h-[min(560px,calc(100dvh-11rem))] sm:w-[380px] sm:origin-bottom-right sm:rounded-3xl sm:border sm:shadow-[0_24px_80px_-20px_rgba(var(--glow3),0.45)]"
+          className="chat-panel fixed inset-0 z-50 flex h-[100dvh] flex-col overflow-hidden border-pf-ink/10 bg-pf-bg2 sm:inset-auto sm:bottom-[calc(88px+var(--tabbar-lift,0px))] sm:right-6 sm:h-[min(560px,calc(100dvh-11rem-var(--tabbar-lift,0px)))] sm:w-[380px] sm:origin-bottom-right sm:rounded-3xl sm:border sm:shadow-[0_24px_80px_-20px_rgba(var(--glow3),0.45)]"
         >
           {/* Grab handle: the sheet's drag region, and the only one — mobile only. */}
           <div

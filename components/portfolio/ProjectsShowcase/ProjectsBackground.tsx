@@ -4,7 +4,9 @@ import { memo, useRef } from "react";
 import type { CSSProperties } from "react";
 import { useInView } from "motion/react";
 
-/** Inline custom properties (`--d`, `--k`…) for the CSS in ProjectsShowcase.css. */
+import "./ProjectsBackground.css";
+
+/** Inline custom properties (`--d`, `--k`…) for the CSS in ProjectsBackground.css. */
 const vars = (v: Record<string, string | number>) => v as CSSProperties;
 
 /** One decimal, so server and client markup match exactly. */
@@ -180,7 +182,7 @@ const Blueprint = () => (
 
     {/* centre lines through the carousel (dash-dot, like a drawing's axis) */}
     <line x1="50%" y1="9%" x2="50%" y2="93%" className="pbg-axis pbg-fade" style={vars({ "--d": "0.8s" })} />
-    <line x1="4%" y1="57%" x2="96%" y2="57%" className="pbg-axis pbg-fade" style={vars({ "--d": "0.9s" })} />
+    <line x1="4%" y1="24%" x2="96%" y2="24%" className="pbg-axis pbg-fade" style={vars({ "--d": "0.9s" })} />
 
     {/* ruler ticks down the right edge */}
     <svg x="100%" y="0" overflow="visible" className="pbg-hide-sm">
@@ -255,7 +257,8 @@ const Chart = () => (
 /**
  * "Blueprint / build workspace" backdrop for the projects section: drafting grid, dimension
  * lines and crosshairs that draw themselves in, floating CSS-3D wireframes at a few depths,
- * a candlestick chart trace across the bottom and orbit rings behind the carousel.
+ * a candlestick chart trace across the bottom and orbit rings behind the carousel (upper ~25%
+ * of the section; the detail panel sits below it).
  * Animations are pure CSS (transform / opacity / stroke-dashoffset) and stay paused until the
  * section is near the viewport, which also makes the draw-in play on arrival.
  */

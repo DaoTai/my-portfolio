@@ -1,21 +1,19 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import {
   Check,
   Cpu,
   FileText,
   Globe,
-  Menu,
   Monitor,
   Moon,
   Rocket,
   Share2,
   Sun,
-  X,
 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import {
   Tooltip,
   TooltipContent,
@@ -25,6 +23,8 @@ import {
 import { siteConfig } from "@/lib/config";
 import { NAV } from "@/lib/portfolio-data";
 import { cn } from "@/lib/utils";
+import { MobileTabBar, type TabItem } from "./MobileTabBar";
+import "./SiteHeader.css";
 
 const NAV_ICONS: Record<string, React.ElementType> = {
   top: Rocket,
@@ -34,13 +34,25 @@ const NAV_ICONS: Record<string, React.ElementType> = {
   contact: FileText,
 };
 
+const TAB_ITEMS: TabItem[] = NAV.map((n) => ({ ...n, Icon: NAV_ICONS[n.id] }));
+
+/** After a nav click, ignore scroll-spy updates for this long (or until the target is reached). */
+const NAV_LOCK_MS = 1500;
+
 const PROGRESS_STYLE = {
   background: "linear-gradient(90deg,var(--g1),var(--g2) 50%,var(--g3))",
   boxShadow: "0 0 10px rgba(143,147,255,0.8)",
 };
 
 const iconButtonClass =
-  "relative grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-pf-ink/10 bg-pf-ink/[0.04] text-pf-t3 [transition:color_.2s,background_.2s,border-color_.2s] hover:border-pf-ink/20 hover:bg-pf-ink/[0.08] hover:text-pf-text";
+  "glass-btn relative grid h-9 w-9 cursor-pointer place-items-center rounded-full text-pf-t3 hover:text-pf-text";
+
+// Glossy lens that slides between nav items (shared layoutId per nav).
+const ACTIVE_PILL_TRANSITION = {
+  type: "spring",
+  stiffness: 420,
+  damping: 34,
+} as const;
 
 const tooltipContentClass =
   "border border-pf-ink/10 bg-pf-base/90 font-medium text-pf-text shadow-[0_8px_30px_-8px_rgba(var(--glow3),0.5)] backdrop-blur-md";
@@ -228,8 +240,14 @@ const ThemeToggle = () => {
 export default function SiteHeader() {
   const [progress, setProgress] = useState(0);
   const [active, setActive] = useState(NAV[0].id);
-  const [menuOpen, setMenuOpen] = useState(false);
   const progressRef = useRef(0);
+  // A clicked target, held while the smooth scroll passes the sections in between.
+  const navLock = useRef<{ id: string; until: number } | null>(null);
+
+  const navigate = useCallback((id: string) => {
+    navLock.current = { id, until: performance.now() + NAV_LOCK_MS };
+    setActive(id);
+  }, []);
 
   // Nothing here reads layout on scroll (which would force a reflow every frame): the page
   // height is cached from a ResizeObserver, and the active section comes from an
@@ -239,22 +257,31 @@ export default function SiteHeader() {
     let docHeight = 0; // set by the ResizeObserver, which also fires on observe()
     let sectionActive = NAV[0].id;
     const crossing = new Set<string>();
+    const desktop = window.matchMedia("(min-width: 768px)"); // Tailwind `md`
     let raf = 0;
 
     const update = () => {
       raf = 0;
       const max = docHeight - window.innerHeight;
-      const progress =
-        max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-      if (Math.abs(progress - progressRef.current) > 0.001) {
-        progressRef.current = progress;
-        setProgress(progress);
+      // The progress bar only renders on desktop; skip the work (and re-renders) on mobile.
+      if (desktop.matches) {
+        const progress =
+          max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+        if (Math.abs(progress - progressRef.current) > 0.001) {
+          progressRef.current = progress;
+          setProgress(progress);
+        }
       }
-      setActive(
+      const next =
         max > 0 && window.scrollY >= max - 2
           ? NAV[NAV.length - 1].id
-          : sectionActive,
-      );
+          : sectionActive;
+      const lock = navLock.current;
+      if (lock) {
+        if (next !== lock.id && performance.now() < lock.until) return;
+        navLock.current = null;
+      }
+      setActive(next);
     };
     const schedule = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -298,20 +325,6 @@ export default function SiteHeader() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (e: KeyboardEvent) =>
-      e.key === "Escape" && setMenuOpen(false);
-    const desktop = window.matchMedia("(min-width: 768px)");
-    const onDesktop = () => desktop.matches && setMenuOpen(false);
-    window.addEventListener("keydown", onKey);
-    desktop.addEventListener("change", onDesktop);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      desktop.removeEventListener("change", onDesktop);
-    };
-  }, [menuOpen]);
-
   return (
     <TooltipProvider delayDuration={300}>
       <header className="fixed left-0 right-0 top-0 z-50">
@@ -325,102 +338,13 @@ export default function SiteHeader() {
               <ShareButton />
 
               <ThemeToggle />
-
-              <button
-                type="button"
-                onClick={() => setMenuOpen((o) => !o)}
-                aria-label={menuOpen ? "Close menu" : "Open menu"}
-                aria-expanded={menuOpen}
-                aria-controls="mobile-menu"
-                className={iconButtonClass}
-              >
-                <Menu
-                  aria-hidden="true"
-                  size={15}
-                  className={cn(
-                    "absolute [transition:transform_.3s,opacity_.2s]",
-                    menuOpen && "rotate-90 scale-50 opacity-0",
-                  )}
-                />
-                <X
-                  aria-hidden="true"
-                  size={15}
-                  className={cn(
-                    "absolute [transition:transform_.3s,opacity_.2s]",
-                    !menuOpen && "-rotate-90 scale-50 opacity-0",
-                  )}
-                />
-              </button>
             </div>
           </div>
-
-          <ProgressBar progress={progress} />
-
-          {/* Mobile dropdown */}
-          <AnimatePresence>
-            {menuOpen && (
-              <>
-                <motion.button
-                  type="button"
-                  aria-label="Close menu"
-                  tabIndex={-1}
-                  onClick={() => setMenuOpen(false)}
-                  className="fixed inset-0 -z-10 cursor-default bg-black/30"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                />
-                <motion.nav
-                  id="mobile-menu"
-                  aria-label="Mobile"
-                  className="absolute left-3 right-3 top-full mt-2 flex flex-col gap-1 rounded-2xl border border-pf-ink/10 bg-pf-base/[0.72] p-2 shadow-[0_24px_60px_-20px_rgba(var(--glow3),0.6)] backdrop-blur-[18px] backdrop-saturate-150"
-                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  {NAV.map((n) => {
-                    const on = n.id === active;
-                    const Icon = NAV_ICONS[n.id];
-                    return (
-                      <a
-                        key={n.id}
-                        href={`#${n.id}`}
-                        onClick={() => {
-                          setActive(n.id);
-                          setMenuOpen(false);
-                        }}
-                        aria-current={on ? "location" : undefined}
-                        className={cn(
-                          "flex items-center gap-3 rounded-xl px-4 py-3 text-[15px] [transition:color_.2s,background_.2s] hover:bg-pf-ink/[0.05] hover:text-pf-text",
-                          on
-                            ? "bg-pf-ink/[0.06] font-semibold text-pf-text"
-                            : "font-medium text-pf-t4",
-                        )}
-                      >
-                        {Icon && (
-                          <Icon
-                            size={16}
-                            aria-hidden="true"
-                            className="shrink-0 opacity-70"
-                          />
-                        )}
-                        <span className="flex-1">{n.label}</span>
-                        {on && (
-                          <span className="h-1.5 w-1.5 rounded-full bg-[linear-gradient(90deg,var(--g2),var(--g3))] shadow-[0_0_10px_2px_rgba(var(--dot-glow),0.8)]" />
-                        )}
-                      </a>
-                    );
-                  })}
-                </motion.nav>
-              </>
-            )}
-          </AnimatePresence>
         </div>
 
         {/* ── Desktop: centered floating pill ── */}
         <div className="hidden justify-center px-3 pt-3 md:flex">
-          <div className="relative flex items-center gap-1 overflow-hidden rounded-full border border-pf-ink/10 bg-pf-base/[0.55] py-2 pl-2.5 pr-4 shadow-[0_12px_40px_-16px_rgba(var(--glow3),0.55)] backdrop-blur-[18px] backdrop-saturate-150">
+          <div className="glass-surface flex items-center gap-1 overflow-hidden rounded-full py-2 pl-2.5 pr-3 backdrop-blur-[18px] backdrop-saturate-150">
             <Logo size={32} />
 
             <span className="mx-1 h-5 w-px bg-pf-ink/10" />
@@ -433,28 +357,36 @@ export default function SiteHeader() {
                   <a
                     key={n.id}
                     href={`#${n.id}`}
-                    onClick={() => setActive(n.id)}
+                    onClick={() => navigate(n.id)}
                     aria-current={on ? "location" : undefined}
                     className={cn(
                       "relative flex items-center gap-2 rounded-full px-3.5 py-2 text-sm [transition:color_.2s,background_.2s]",
                       on
-                        ? "bg-pf-ink/[0.08] font-semibold text-pf-text [text-shadow:0_0_18px_rgba(143,147,255,0.9)]"
+                        ? "font-semibold text-pf-text [text-shadow:0_0_18px_rgba(143,147,255,0.9)]"
                         : "font-medium text-pf-t5 hover:bg-pf-ink/[0.05] hover:text-pf-text",
                     )}
                   >
+                    {on && (
+                      <motion.span
+                        layoutId="nav-active-desktop"
+                        aria-hidden="true"
+                        className="glass-active absolute inset-0 rounded-full"
+                        transition={ACTIVE_PILL_TRANSITION}
+                      />
+                    )}
                     {Icon && (
                       <Icon
                         size={14}
                         aria-hidden="true"
                         className={cn(
-                          "shrink-0 [transition:opacity_.2s]",
+                          "relative shrink-0 [transition:opacity_.2s]",
                           on
                             ? "opacity-100 drop-shadow-[0_0_6px_rgba(143,147,255,0.9)]"
                             : "opacity-60",
                         )}
                       />
                     )}
-                    {n.label}
+                    <span className="relative">{n.label}</span>
                   </a>
                 );
               })}
@@ -470,6 +402,8 @@ export default function SiteHeader() {
           </div>
         </div>
       </header>
+
+      <MobileTabBar items={TAB_ITEMS} active={active} onNavigate={navigate} />
     </TooltipProvider>
   );
 }

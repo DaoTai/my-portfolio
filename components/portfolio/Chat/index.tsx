@@ -5,6 +5,7 @@ import { useReducedMotion } from "motion/react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMascotSound } from "@/lib/hooks/useMascotSound";
+import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 import { MascotFlyer } from "./MascotFlyer";
 import { MascotSoundToggle } from "./MascotSoundToggle";
 import "./Chat.css";
@@ -12,6 +13,9 @@ import "./Chat.css";
 // The panel, and the AI SDK it pulls in, load on first open so they stay off the initial page load.
 const loadPanel = () => import("./ChatPanel");
 const ChatPanel = dynamic(loadPanel, { ssr: false });
+
+/** Matches Tailwind's `max-sm`, where the mascot is left out. */
+const MOBILE_QUERY = "(max-width: 639.98px)";
 
 const ChatLauncher = () => {
   const [open, setOpen] = useState(false);
@@ -26,6 +30,7 @@ const ChatLauncher = () => {
   } = useMascotSound();
   // Reduced motion means no flights, so there is never a sound to mute.
   const reduce = useReducedMotion();
+  const isMobile = useMediaQuery(MOBILE_QUERY);
 
   const openPanel = useCallback(() => {
     setMounted(true);
@@ -42,9 +47,10 @@ const ChatLauncher = () => {
   return (
     <>
       {mounted && <ChatPanel open={open} onClose={closePanel} />}
-      <MascotFlyer hidden={open} onOpen={openPanel} sound={sound} />
+      {/* No mascot on phones: unmounted so its flights and sounds never run there. */}
+      {!isMobile && <MascotFlyer hidden={open} onOpen={openPanel} sound={sound} />}
       {/* Shown once the stored choice is known, so its icon never flips on load. */}
-      {!open && !reduce && soundReady && (
+      {!isMobile && !open && !reduce && soundReady && (
         <MascotSoundToggle enabled={soundOn} onToggle={toggleSound} />
       )}
       <button
@@ -57,7 +63,7 @@ const ChatLauncher = () => {
         aria-expanded={open}
         aria-controls={open ? "chat-panel" : undefined}
         aria-label={open ? "Close chat" : "Ask about me"}
-        className="chat-launcher fixed bottom-5 right-5 z-40 flex h-12 items-center gap-2 rounded-full bg-pf-base2/90 px-4 text-sm font-semibold text-pf-text backdrop-blur transition-transform duration-300 hover:-translate-y-0.5 active:scale-95 max-sm:data-[open=true]:hidden sm:bottom-6 sm:right-6"
+        className="chat-launcher fixed bottom-[calc(1.25rem+var(--tabbar-lift,0px))] right-5 z-40 flex h-12 items-center gap-2 rounded-full bg-pf-base2/90 px-4 text-sm font-semibold text-pf-text backdrop-blur transition-transform duration-300 hover:-translate-y-0.5 active:scale-95 max-sm:data-[open=true]:hidden sm:bottom-[calc(1.5rem+var(--tabbar-lift,0px))] sm:right-6"
       >
         <span className="chat-launcher-icons">
           <MessageCircle
