@@ -11,28 +11,26 @@ export const contentType = "image/png";
 /** Headline split into tokens so keywords can be highlighted (Satori has no inline text runs). */
 const HEADLINE: { text: string; highlight?: boolean }[] = [
   { text: "Building" },
-  { text: "fast", highlight: true },
-  { text: "React", highlight: true },
-  { text: "&" },
-  { text: "Next.js", highlight: true },
-  { text: "apps," },
-  { text: "scalable" },
-  { text: "Node.js", highlight: true },
-  { text: "APIs" },
+  { text: "high-performance", highlight: true },
+  { text: "apps" },
+  { text: "with" },
+  { text: "creative", highlight: true },
+  { text: "UI/UX,", highlight: true },
+  { text: "optimized" },
+  { text: "back-ends", highlight: true },
   { text: "and" },
   { text: "Web3", highlight: true },
   { text: "products." },
 ];
 
 const TAGS = [
-  "NodeJS",
-  "NextJS",
+  "Performance",
+  "UI/UX",
+  "Next.js",
+  "Node.js",
   "NestJS",
   "Web3",
-  "Web App",
-  "Best Performance",
   "TypeScript",
-  "Real-time",
 ];
 
 const loadAvatar = async () => {
