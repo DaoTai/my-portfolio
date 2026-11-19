@@ -180,14 +180,14 @@ const ProjectModal = ({ index, onClose, onNavigate }: ProjectModalProps) => {
                   : "pointer-events-none translate-y-1 opacity-0"
               }`}
             >
-              <span className="grid h-7 w-7 flex-none place-items-center overflow-hidden rounded-lg bg-[linear-gradient(135deg,var(--g1),var(--g2)_50%,var(--g3))] font-display text-[12px] font-bold text-[#0a0b14]">
+              <span className="grid h-10 w-10 flex-none place-items-center overflow-hidden rounded-xl border border-white/15 bg-white/10 font-display text-[15px] font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] backdrop-blur-md">
                 {project.logo ? (
                   <Image
                     src={project.logo}
                     alt=""
-                    width={18}
-                    height={18}
-                    className="h-[18px] w-[18px] object-contain"
+                    width={28}
+                    height={28}
+                    className="h-7 w-7 object-contain"
                   />
                 ) : (
                   project.name[0]
@@ -272,22 +272,20 @@ const ProjectModal = ({ index, onClose, onNavigate }: ProjectModalProps) => {
 
             {/* Below the image on mobile, overlaid on it from sm up. */}
             <div className="mt-4 flex min-w-0 items-center gap-3 px-1 sm:pointer-events-none sm:absolute sm:inset-x-0 sm:bottom-0 sm:z-10 sm:mt-0 sm:gap-4 sm:px-7 sm:py-6">
-              <span className="h-12 w-12 flex-none rounded-[14px] bg-[linear-gradient(135deg,var(--g1),var(--g2)_50%,var(--g3))] p-[1.5px] shadow-[0_0_30px_rgba(var(--pop-glow),0.4)] sm:h-[60px] sm:w-[60px] sm:rounded-2xl">
-                <span className="grid h-full w-full place-items-center overflow-hidden rounded-[12.5px] bg-pf-tilebg sm:rounded-[15px]">
-                  {project.logo ? (
-                    <Image
-                      src={project.logo}
-                      alt=""
-                      width={36}
-                      height={36}
-                      className="h-7 w-7 object-contain sm:h-9 sm:w-9"
-                    />
-                  ) : (
-                    <span className="font-display text-lg font-bold text-pf-text sm:text-[22px]">
-                      {project.name[0]}
-                    </span>
-                  )}
-                </span>
+              <span className="grid h-14 w-14 flex-none place-items-center overflow-hidden rounded-2xl border border-white/15 bg-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] backdrop-blur-md sm:h-[72px] sm:w-[72px] sm:rounded-[18px]">
+                {project.logo ? (
+                  <Image
+                    src={project.logo}
+                    alt=""
+                    width={48}
+                    height={48}
+                    className="h-9 w-9 object-contain sm:h-12 sm:w-12"
+                  />
+                ) : (
+                  <span className="font-display text-xl font-bold text-white sm:text-[26px]">
+                    {project.name[0]}
+                  </span>
+                )}
               </span>
               <div className="flex min-w-0 flex-col gap-2">
                 <h3 className="m-0 font-display text-[clamp(24px,3.4vw,42px)] font-semibold leading-none tracking-[-0.03em] text-pf-text">

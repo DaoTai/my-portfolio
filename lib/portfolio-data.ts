@@ -383,6 +383,57 @@ export const PROJECTS: Project[] = [
   },
 
   {
+    name: "Online Wedding Invitation",
+    role: "Frontend Developer & Designer",
+    logo: "/project-images/wedding-invitation/logo.webp",
+    images: [
+      "/project-images/wedding-invitation/02-mobile-showcase-opening.webp",
+      "/project-images/wedding-invitation/01-personal-cover-desktop.webp",
+      "/project-images/wedding-invitation/03-gallery-desktop.webp",
+      "/project-images/wedding-invitation/04-lightbox-desktop.webp",
+      "/project-images/wedding-invitation/05-mobile-showcase-interactions.webp",
+      "/project-images/wedding-invitation/06-hero-desktop.webp",
+      "/project-images/wedding-invitation/07-v1-hero-desktop.webp",
+      "/project-images/wedding-invitation/08-v1-story-desktop.webp",
+      "/project-images/wedding-invitation/09-v1-album-desktop.webp",
+      "/project-images/wedding-invitation/10-v1-mobile-showcase.webp",
+    ],
+    tags: [
+      "HTML5",
+      "CSS3",
+      "Vanilla JS",
+      "Web Animations API",
+      "Canvas",
+      "Cloudflare Workers",
+    ],
+    blurb:
+      "Online wedding invitation with a personalised sealed-envelope opening, editorial photo gallery, typed love letter, and polished motion on both mobile and desktop.",
+    summary:
+      "A wedding invitation website that guests open from a Zalo or Messenger link. Each guest gets a personal link that greets them by name, both on the opening envelope and in the link preview. The page then walks them through the couple's photos, the calendar and countdown, a letter that types itself out, the ceremony details, a gift envelope and a guestbook. It is built with plain HTML, CSS and JavaScript, with no framework, so it loads quickly on phones, and every section has its own animation. An earlier version used a red and gold traditional theme with a 囍 door-opening intro and a full-width desktop layout.",
+    responsibilities: [
+      "Designed and built the full invitation UI: a mobile-first card column over a decorative backdrop, with a dusty-rose palette, script, serif and rounded fonts (all with Vietnamese subsets), and consistent radius and glass rules.",
+      "Built the personalised opening: a sealed envelope with a wax seal and peony sprays that shows the guest's name and opens on tap, plus a small Cloudflare Worker that rewrites the link-preview title and description so Zalo, Messenger and Facebook greet each guest by name.",
+      "Made an unlisted host tool that turns a guest list (typed or CSV) into one personal link per guest, with copy and CSV export.",
+      "Added scroll-reveal animations (up, zoom, pop, flip, tilt) that replay in both scroll directions, animated icons and ornaments (camera shutter, blooming flower, linking rings, clinking glasses), falling snow on canvas, and hearts, flowers and balloons that rise from the music button.",
+      "Built the interactive sections: a swipeable stacked photo-card carousel, a love letter that types itself out and tilts toward the cursor with a glare, a month calendar with a live countdown and add-to-calendar links (Google, Outlook, Apple .ics), and an envelope that opens into a gift sheet.",
+      "Built a full-screen editorial gallery (every 7th photo as a large feature) and a dark lightbox with swipe-to-follow, thumbnails, slideshow and fullscreen.",
+      "Wrote the guestbook with relative timestamps, backed by Google Apps Script, plus a glass header with scroll spy, bottom sheets with swipe-to-close, and toasts.",
+      "Kept it fast: a Node + sharp script makes responsive WebP sizes with blur-up placeholders, an icon sprite and subset fonts, and the site is cached and served from Cloudflare's edge with SEO meta, Open Graph images and Event structured data.",
+      "Respected accessibility: animations only touch transform and opacity, and all motion turns off under prefers-reduced-motion.",
+    ],
+    highlights: [
+      "Personal guest links: name on the opening envelope and in the Zalo/Messenger/Facebook preview",
+      "Polished motion: scroll reveals, typed letter with 3D tilt, animated ornaments, canvas snow, music-driven hearts and flowers",
+      "Looks right on phone and desktop: mobile-first card layout, editorial gallery and lightbox on large screens",
+      "Swipeable photo cards, gallery lightbox with drag-follow, bottom sheets with swipe-to-close",
+      "Live countdown, month calendar and one-tap add-to-calendar (Google, Outlook, Apple)",
+      "Sealed gift envelope and online guestbook",
+      "No framework or runtime dependencies: plain HTML/CSS/JS, WebP images with blur-up, served from Cloudflare's edge",
+      "Two themes delivered: modern dusty rose (current) and traditional red and gold with a 囍 door intro (v1)",
+    ],
+  },
+
+  {
     name: "NextVault",
     role: "Frontend Developer",
     logo: "/project-images/next-vault/logo.webp",
