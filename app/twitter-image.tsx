@@ -1,4 +1,3 @@
-// Same artwork as the Open Graph image. Route-segment config must be declared
-// literally in this file (Next can't follow re-exports for `runtime`).
-export const runtime = "edge";
+// Same artwork as the Open Graph image. Runs on the Node runtime (the default)
+// because the artwork reads the avatar from disk with `fs`.
 export { alt, size, contentType, default } from "./opengraph-image";
